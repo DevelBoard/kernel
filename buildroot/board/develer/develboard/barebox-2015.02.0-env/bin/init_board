@@ -5,11 +5,12 @@ export PATH
 
 . /env/config
 
+
+# Display splash screen
+
 splash=/env/splash.png
 
 if [ -f ${splash} -a -e /dev/fb0 ]; then
 	splash -o ${splash}
 	fb0.enable=1
 fi
-
-exit 1

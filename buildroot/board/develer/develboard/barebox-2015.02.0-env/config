@@ -11,11 +11,11 @@ ip=dhcp
 #eth0.serverip=a.b.c.d
 
 # can be either 'nfs', 'tftp', 'nor' or 'nand'
-kernel_loc=nfs
+kernel_loc=nand
 # can be either 'net', 'nor', 'nand' or 'initrd'
-rootfs_loc=net
+rootfs_loc=nand
 # can be either 'nfs', 'tftp', 'nand' or empty
-oftree_loc=nfs
+oftree_loc=nand
 
 # can be either 'jffs2' or 'ubifs'
 rootfs_type=ubifs
@@ -24,9 +24,6 @@ ubiroot=rootfs
 
 # The image type of the kernel. Can be uimage, zimage, raw, or raw_lzo
 kernelimage=zImage
-#kernelimage=uImage
-#kernelimage=Image
-#kernelimage=Image.lzo
 
 nand_device=atmel_nand
 nand_parts="256k(at91bootstrap),512k(barebox)ro,256k(bareboxenv),256k(bareboxenv2),256k(spare),512k(oftree),6M(kernel),-(rootfs)"
