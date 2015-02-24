@@ -33,7 +33,7 @@ m25p80_parts="64k(bootstrap),384k(barebox),256k(bareboxenv),256k(bareboxenv2),12
 
 autoboot_timeout=3
 
-bootargs="console=ttyS0,115200 earlyprintk"
+bootargs="console=ttyS0,115200 earlyprintk printk.time=1"
 
 # set a fancy prompt (if support is compiled in)
 PS1="\e[1;32mbarebox@\e[1;31m\h:\w\e[0m\n# "
