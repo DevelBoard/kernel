@@ -1,0 +1,75 @@
+#!/bin/sh
+
+. /env/config
+
+# Mount sdcard
+mkdir -p /sdcard_boot && mount /dev/disk0.0 fat /sdcard_boot
+mkdir -p /sdcard_data && mount /dev/disk0.1 ext4 /sdcard_data
+
+# Flash bootstrap
+bootstrap=/sdcard_boot/at91bootstrap.bin
+if [ -f "$bootstrap" ]; then
+	echo
+	echo "Erase bootstrap partition"
+	erase /dev/nand0.at91bootstrap.bb
+	echo "Flash bootstrap $bootstrap"
+	cp "$bootstrap" /dev/nand0.at91bootstrap.bb
+fi
+
+# Flash barebox
+barebox=/sdcard_boot/u-boot.bin
+if [ -f "$barebox" ]; then
+	echo
+	echo "Erase barebox partition"
+	erase /dev/nand0.barebox.bb
+	echo "Flash barebox $barebox"
+	cp "$barebox" /dev/nand0.barebox.bb
+fi
+
+# Flash environment
+environ=/sdcard_boot/barebox.env
+if [ -f "$environ" ]; then
+	echo
+	echo "Erase environment partition"
+	erase /dev/nand0.bareboxenv.bb
+	erase /dev/nand0.bareboxenv2.bb
+	echo "Flash environment $environ"
+	cp "$environ" /dev/nand0.bareboxenv.bb
+	cp "$environ" /dev/nand0.bareboxenv2.bb
+fi
+
+# Flash kernel
+kernel=/sdcard_boot/$kernelimage
+if [ -f "$kernel" ]; then
+	echo
+	echo "Erase kernel partition"
+	erase /dev/nand0.kernel.bb
+	echo "Flash kernel $kernel"
+	cp "$kernel" /dev/nand0.kernel.bb
+fi
+
+# Flash device tree
+dtb=/sdcard_boot/at91-sama5d4_xplained.dtb
+if [ -f "$dtb" ]; then
+	echo
+	echo "Erase device tree partition"
+	erase /dev/nand0.oftree.bb
+	echo "Flash device tree $dtb"
+	cp "$dtb" /dev/nand0.oftree.bb
+fi
+
+# Flash rootfs
+rootfs=/sdcard_data/$rootfsimage
+if [ -f "$rootfs" ]; then
+	echo
+	echo "Erase rootfs partition"
+	erase /dev/nand0.rootfs.bb
+	echo "Create UBI volume"
+	ubiattach /dev/nand0.rootfs
+	ubimkvol /dev/ubi0 $ubiroot 0
+	echo "Flash rootfs $rootfs"
+	cp "$rootfs" /dev/ubi0.rootfs
+fi
+
+umount /sdcard_boot
+umount /sdcard_data

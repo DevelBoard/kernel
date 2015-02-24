@@ -10,7 +10,7 @@ menu -e -a -m boot -u update -d "update"
 # Update submenu
 menu -r -m update
 menu -a -m update -d "\e[1;36mUpdate\e[0m"
-menu -e -a -m update -c 'update_sdcard' -d "sdcard"
+menu -e -a -m update -c 'flash_sdcard' -d "sdcard"
 menu -e -a -m update -c 'true' -d "back"
 
 menu -s -m boot -A $autoboot_timeout
