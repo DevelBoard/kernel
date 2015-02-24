@@ -4,9 +4,9 @@ clean: clean-buildroot
 
 distclean: distclean-buildroot
 
-COLOR_GREEN = \e[01;32m
-COLOR_RESET = \e[00m
-INFO = @/bin/echo -e "$(COLOR_GREEN)*** Make: $@$(COLOR_RESET)"
+GREEN = \e[01;32m
+NC = \e[00m
+INFO = @/bin/echo -e "$(GREEN)*** Make: $@$(NC)"
 
 
 build-buildroot:
