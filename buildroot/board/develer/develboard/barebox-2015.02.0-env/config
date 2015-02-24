@@ -5,10 +5,10 @@
 ip=none
 
 # or set your networking parameters here
-#eth0.ipaddr=a.b.c.d
-#eth0.netmask=a.b.c.d
+eth0.ipaddr=192.168.7.1
+eth0.netmask=255.255.255.0
+eth0.serverip=192.168.7.11
 #eth0.gateway=a.b.c.d
-#eth0.serverip=a.b.c.d
 
 # can be either 'nfs', 'tftp', 'nor' or 'nand'
 kernel_loc=nand
@@ -24,6 +24,9 @@ rootfsimage=${ubiroot}.${rootfs_type}
 
 # The image type of the kernel. Can be uimage, zimage, raw, or raw_lzo
 kernelimage=zImage
+
+# The device tree image to pass the kernel
+oftreeimage=at91-sama5d4_xplained.dtb
 
 nand_device=atmel_nand
 nand_parts="256k(at91bootstrap),512k(barebox)ro,256k(bareboxenv),256k(bareboxenv2),256k(spare),512k(oftree),6M(kernel),-(rootfs)"

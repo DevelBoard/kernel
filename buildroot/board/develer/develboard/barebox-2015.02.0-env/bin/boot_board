@@ -3,9 +3,11 @@
 # Boot menu
 menu -r -m boot
 menu -a -m boot -d "\e[1;36mWelcome on Barebox Boot Sequence\e[0m"
-menu -e -a -m boot -c 'boot /env/bin/boot' -d "boot nand (default)"
-menu -e -a -m boot -c 'clear' -d "shell"
+menu -e -a -m boot -c 'boot' -d "boot nand (default)"
+menu -e -a -m boot -c 'boot -k tftp -o tftp' -d "boot tftp"
 menu -e -a -m boot -u update -d "update"
+menu -e -a -m boot -c 'clear' -d "shell"
+menu -e -a -m boot -c 'reset' -d "reset"
 
 # Update submenu
 menu -r -m update

@@ -49,7 +49,7 @@ if [ -f "$kernel" ]; then
 fi
 
 # Flash device tree
-dtb=/sdcard_boot/at91-sama5d4_xplained.dtb
+dtb=/sdcard_boot/$oftreeimage
 if [ -f "$dtb" ]; then
 	echo
 	echo "Erase device tree partition"
