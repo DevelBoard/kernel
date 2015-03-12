@@ -1,0 +1,64 @@
+From bed32de281b0ee301192eb3282a5a8b179edaff6 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Thu, 12 Mar 2015 14:47:02 +0100
+Subject: [PATCH] read ethernet mac address from eeprom
+Organization: Develer S.r.l.
+
+---
+ .../arm/boards/sama5d4_xplained/sama5d4_xplained.c | 31 ++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+
+diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+index 8b51d1c..e18a273 100644
+--- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
++++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+@@ -30,6 +30,7 @@
+ #include <input/qt1070.h>
+ #include <readkey.h>
+ #include <spi/spi.h>
++#include <i2c/i2c.h>
+ #include <i2c/at24.h>
+ #include <linux/clk.h>
+ #include <linux/stat.h>
+@@ -97,8 +98,38 @@ static struct macb_platform_data macb0_pdata = {
+ 	.phy_addr = 0,
+ };
+ 
++static void ek_init_ethaddr(int ethid)
++{
++	struct i2c_adapter *adapter;
++	struct i2c_client client;
++	char mac[6];
++	char str[sizeof("xx:xx:xx:xx:xx:xx")];
++	int ret;
++
++	adapter = i2c_get_adapter(0);
++	if (!adapter) {
++		printk(KERN_WARNING "warning: No MAC address set: i2c adapter not found\n");
++		return;
++	}
++
++	client.adapter = adapter;
++	client.addr = 0x5C;
++
++	ret = i2c_read_reg(&client, 0x9A, mac, sizeof(mac));
++	if (ret != sizeof(mac)) {
++		printk(KERN_WARNING "warning: No MAC address set: EEPROM read error\n");
++		return;
++	}
++
++	eth_register_ethaddr(ethid, mac);
++
++	ethaddr_to_string(mac, str);
++	printk(KERN_NOTICE "MAC address read from EEPROM: %s\n", str);
++}
++
+ static void ek_add_device_eth(void)
+ {
++	ek_init_ethaddr(0);
+ 	at91_add_device_eth(0, &macb0_pdata);
+ }
+ #else
+-- 
+1.9.1
+
