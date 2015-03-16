@@ -1,0 +1,38 @@
+From b8e5d5b4bd2f4ad1dce72f8fe94f3a0131cb09e4 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Mon, 16 Mar 2015 15:02:55 +0100
+Subject: [PATCH] net: ping: return an error exit code when connection fails
+Organization: Develer S.r.l.
+
+Signed-off-by: Mirko Damiani <mirko@develer.com>
+---
+ net/ping.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/ping.c b/net/ping.c
+index 2349f4b..4eb77cb 100644
+--- a/net/ping.c
++++ b/net/ping.c
+@@ -67,6 +67,9 @@ static int do_ping(int argc, char *argv[])
+ 		return 1;
+ 	}
+ 
++	ping_state = PING_STATE_INIT;
++	ping_sequence_number = 0;
++
+ 	ping_con = net_icmp_new(net_ping_ip, ping_handler, NULL);
+ 	if (IS_ERR(ping_con)) {
+ 		ret = PTR_ERR(ping_con);
+@@ -78,9 +81,6 @@ static int do_ping(int argc, char *argv[])
+ 	if (ret)
+ 		goto out_unreg;
+ 
+-	ping_state = PING_STATE_INIT;
+-	ping_sequence_number = 0;
+-
+ 	while (ping_state == PING_STATE_INIT) {
+ 		if (ctrlc()) {
+ 			ret = -EINTR;
+-- 
+1.9.1
+
