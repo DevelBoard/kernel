@@ -1,0 +1,8 @@
+#!/bin/sh
+
+. /env/config
+
+echo "Ping ${eth0.serverip}"
+ping ${eth0.serverip}
+
+exit 0

@@ -1,0 +1,41 @@
+#!/bin/sh
+
+. /env/config
+
+echo "Board tests..."
+echo
+
+if test_network; then
+	echo "Test network: PASS"
+else
+	echo "Test network: FAIL"
+	echo "Test board: FAIL"
+	exit 1
+fi
+
+if test_memory; then
+	echo "Test memory: PASS"
+else
+	echo "Test memory: FAIL"
+	echo "Test board: FAIL"
+	exit 1
+fi
+
+if test_nand; then
+	echo "Test nand: PASS"
+else
+	echo "Test nand: FAIL"
+	echo "Test board: FAIL"
+	exit 1
+fi
+
+if test_eeprom; then
+	echo "Test eeprom: PASS"
+else
+	echo "Test eeprom: FAIL"
+	echo "Test board: FAIL"
+	exit 1
+fi
+
+echo "Test board: PASS"
+exit 0

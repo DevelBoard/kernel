@@ -7,13 +7,24 @@ menu -e -a -m boot -c 'boot' -d "boot nand (default)"
 menu -e -a -m boot -c 'boot -k tftp -o tftp' -d "boot tftp (ubi rootfs)"
 menu -e -a -m boot -c 'boot_tftp_initramfs' -d "boot tftp (initrd rootfs)"
 menu -e -a -m boot -u update -d "update"
+menu -e -a -m boot -u test -d 'test'
 menu -e -a -m boot -c 'clear' -d "shell"
 menu -e -a -m boot -c 'reset' -d "reset"
 
 # Update submenu
 menu -r -m update
 menu -a -m update -d "\e[1;36mUpdate\e[0m"
-menu -e -a -m update -c 'flash_sdcard' -d "sdcard"
+menu -e -a -m update -c 'flash_sdcard; sleep 1' -d "sdcard"
 menu -e -a -m update -c 'true' -d "back"
+
+# Test submenu
+menu -r -m test
+menu -a -m test -d "\e[1;36mTest\e[0m"
+menu -e -a -m test -c "test_network; sleep 1" -d "network"
+menu -e -a -m test -c "test_memory; sleep 1" -d "memory"
+menu -e -a -m test -c "test_eeprom; sleep 1" -d "eeprom"
+menu -e -a -m test -c "test_nand; sleep 1" -d "nand"
+menu -e -a -m test -c "test_board; sleep 1" -d "run all tests"
+menu -e -a -m test -c 'true' -d "back"
 
 menu -s -m boot -A $autoboot_timeout
