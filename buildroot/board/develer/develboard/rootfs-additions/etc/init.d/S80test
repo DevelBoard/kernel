@@ -4,25 +4,50 @@
 || exit 0
 
 
-sdcard() {
-	local dataMiB=150
+# Utility functions
 
-	mount /dev/mmcblk0p2 /media/ \
+_genrand_dd() {
+	local chunk=/tmp/randchunk.bin
+
+	dd if=/dev/urandom of=$chunk bs=512K count=1 2>/dev/null \
 	|| return 1
 
-	echo "Writing test data to sdcard..."
-	dd if=/dev/zero bs=${dataMiB}M count=1 2>/dev/null \
-		| pv -s ${dataMiB}m \
-		| dd of=/media/test.bin 2>/dev/null \
-	|| return 1
+	cnt=$(($1*2))
+	while [ $cnt -gt 0 ]; do
+		dd if=$chunk bs=512K count=1 2>/dev/null \
+		|| return 1
 
-	rm -f /media/test.bin
-	umount /media
+		cnt=$(($cnt-1))
+	done
+
+	rm -f $chunk
 	return 0
 }
 
-board() {
-	_runtest sdcard \
+_genrand_pattern() {
+	local destfile="$1"
+	local dataMiB="$2"
+
+	_genrand_dd ${dataMiB} \
+		| pv -s ${dataMiB}m \
+		| dd of="$destfile" 2>/dev/null \
+	&& return 0 \
+	|| return 1
+}
+
+_drop_cache() {
+	sync
+	echo 3 > /proc/sys/vm/drop_caches
+}
+
+_md5_check() {
+	[ -f "$1" ] && [ -f "$2" ] \
+	|| return 1
+
+	local c1=$(md5sum "$1" | awk '{print $1}')
+	local c2=$(md5sum "$2" | awk '{print $1}')
+
+	[ "x$c1" == "x$c2" ] \
 	&& return 0 \
 	|| return 1
 }
@@ -41,6 +66,47 @@ _runtest() {
 	|| echo "Test $testfun: FAIL"
 
 	return $retval
+}
+
+
+# Test functions
+
+sdcard() {
+	local dataMiB=100
+	local testpat=testpattern.bin
+
+	mount /dev/mmcblk0p2 /media/ \
+	|| return 1
+
+	echo "Generate a random pattern of size $dataMiB MiB"
+	_genrand_pattern /tmp/$testpat $dataMiB \
+	|| return 1
+
+	echo "Writing test pattern to sdcard..."
+	pv /tmp/$testpat | dd of=/media/$testpat 2>/dev/null \
+	|| return 1
+
+	echo -n "Syncing data to disk... "
+	_drop_cache
+	echo OK
+
+	echo -n "Check test pattern on sdcard... "
+	_md5_check /tmp/$testpat /media/$testpat
+	retval=$?
+
+	[ $retval -eq 0 ] \
+	&& echo OK \
+	|| echo ERR
+
+	rm -f /media/$testpat
+	umount /media
+	return $retval
+}
+
+board() {
+	_runtest sdcard \
+	&& return 0 \
+	|| return 1
 }
 
 for arg in `cat /proc/cmdline`; do
