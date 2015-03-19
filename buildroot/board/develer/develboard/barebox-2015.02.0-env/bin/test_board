@@ -37,5 +37,6 @@ else
 	exit 1
 fi
 
-echo "Test board: PASS"
+test_linux board
+
 exit 0

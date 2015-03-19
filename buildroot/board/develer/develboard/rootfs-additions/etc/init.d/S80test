@@ -21,17 +21,34 @@ sdcard() {
 	return 0
 }
 
+board() {
+	_runtest sdcard \
+	&& return 0 \
+	|| return 1
+}
+
+_runtest() {
+	local testfun="$1"
+	[ "x$testfun" != "x_runtest" ] \
+	|| return
+
+	echo "Execute test $testfun"
+	eval "$testfun"
+	retval=$?
+
+	[ $retval -eq 0 ] \
+	&& echo "Test $testfun: PASS" \
+	|| echo "Test $testfun: FAIL"
+
+	return $retval
+}
+
 for arg in `cat /proc/cmdline`; do
 	param=`echo $arg | awk 'BEGIN {FS="="} {print $1}'`
 	testfun=`echo $arg | awk 'BEGIN {FS="="} {print $2}'`
 
 	if [ "x$param" == "xtest" ] && [ -n "$testfun" ]; then
-		echo "Execute test $testfun"
-		eval "$testfun"
-		[ $? -eq 0 ] \
-		&& echo "Test $testfun: PASS" \
-		|| echo "Test $testfun: FAIL"
-
+		_runtest "$testfun"
 		sleep 1
 		reboot
 	fi
