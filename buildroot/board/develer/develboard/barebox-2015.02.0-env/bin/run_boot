@@ -1,0 +1,14 @@
+#!/bin/sh
+
+. /env/config
+
+if [ "x${global.boot_loc.kernel}" = "xtftp" ]; then
+	tftp $kernelimage
+	tftp $oftreeimage
+fi
+
+if [ "x${global.boot_loc.rootfs}" = "xtftp" ]; then
+	tftp $initrdimage
+fi
+
+bootm

@@ -3,13 +3,28 @@
 # Boot menu
 menu -r -m boot
 menu -a -m boot -d "\e[1;36mWelcome on Barebox Boot Sequence\e[0m"
-menu -e -a -m boot -c 'boot' -d "boot nand (default)"
-menu -e -a -m boot -c 'boot -k tftp -o tftp' -d "boot tftp (ubi rootfs)"
-menu -e -a -m boot -c 'boot_tftp_initramfs' -d "boot tftp (initrd rootfs)"
+menu -e -a -m boot -c 'run_boot' -d "boot (default nand)"
+menu -e -a -m boot -c 'switch_boot -k tftp -r tftp; run_boot' -d "boot tftp"
+menu -e -a -m boot -u kernel -d "kernel location"
+menu -e -a -m boot -u rootfs -d "rootfs location"
 menu -e -a -m boot -u update -d "update"
 menu -e -a -m boot -u test -d 'test'
 menu -e -a -m boot -c 'clear' -d "shell"
 menu -e -a -m boot -c 'reset' -d "reset"
+
+# Switch kernel submenu
+menu -r -m kernel
+menu -a -m kernel -d "\e[1;36mSwitch kernel location\e[0m"
+menu -e -a -m kernel -c "switch_boot -k nand" -d "nand"
+menu -e -a -m kernel -c "switch_boot -k tftp" -d "tftp"
+menu -e -a -m kernel -c 'true' -d "back"
+
+# Switch rootfs submenu
+menu -r -m rootfs
+menu -a -m rootfs -d "\e[1;36mSwitch rootfs location\e[0m"
+menu -e -a -m rootfs -c "switch_boot -r nand" -d "nand (ubifs)"
+menu -e -a -m rootfs -c "switch_boot -r tftp" -d "tftp (initramfs)"
+menu -e -a -m rootfs -c 'true' -d "back"
 
 # Update submenu
 menu -r -m update
@@ -26,5 +41,8 @@ menu -e -a -m test -c "test_eeprom; sleep 1" -d "eeprom"
 menu -e -a -m test -c "test_nand; sleep 1" -d "nand"
 menu -e -a -m test -c "test_board; sleep 1" -d "run all tests"
 menu -e -a -m test -c 'true' -d "back"
+
+# Boot from nand per default
+switch_boot -k nand -r nand
 
 menu -s -m boot -A $autoboot_timeout
