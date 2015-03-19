@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. /env/config
+
+global linux.bootargs.test="test=$1"
+
+run_boot

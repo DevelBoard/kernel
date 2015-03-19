@@ -1,0 +1,38 @@
+#!/bin/sh
+
+[ "x$1" == "xstart" ] \
+|| exit 0
+
+
+sdcard() {
+	local dataMiB=150
+
+	mount /dev/mmcblk0p2 /media/ \
+	|| return 1
+
+	echo "Writing test data to sdcard..."
+	dd if=/dev/zero bs=${dataMiB}M count=1 2>/dev/null \
+		| pv -s ${dataMiB}m \
+		| dd of=/media/test.bin 2>/dev/null \
+	|| return 1
+
+	rm -f /media/test.bin
+	umount /media
+	return 0
+}
+
+for arg in `cat /proc/cmdline`; do
+	param=`echo $arg | awk 'BEGIN {FS="="} {print $1}'`
+	testfun=`echo $arg | awk 'BEGIN {FS="="} {print $2}'`
+
+	if [ "x$param" == "xtest" ] && [ -n "$testfun" ]; then
+		echo "Execute test $testfun"
+		eval "$testfun"
+		[ $? -eq 0 ] \
+		&& echo "Test $testfun: PASS" \
+		|| echo "Test $testfun: FAIL"
+
+		sleep 1
+		reboot
+	fi
+done

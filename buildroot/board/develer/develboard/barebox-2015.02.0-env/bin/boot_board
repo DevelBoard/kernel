@@ -39,6 +39,7 @@ menu -e -a -m test -c "test_network; sleep 1" -d "network"
 menu -e -a -m test -c "test_memory; sleep 1" -d "memory"
 menu -e -a -m test -c "test_eeprom; sleep 1" -d "eeprom"
 menu -e -a -m test -c "test_nand; sleep 1" -d "nand"
+menu -e -a -m test -c "test_linux sdcard" -d "sdcard"
 menu -e -a -m test -c "test_board; sleep 1" -d "run all tests"
 menu -e -a -m test -c 'true' -d "back"
 
