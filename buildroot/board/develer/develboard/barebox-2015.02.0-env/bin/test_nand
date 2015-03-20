@@ -2,7 +2,7 @@
 
 . /env/config
 
-nandtest -t /dev/nand0.bb
+nandtest -t /dev/nand0
 if [ $? != 0 ]; then
 	exit 1
 fi
