@@ -14,6 +14,15 @@ else
 fi
 echo
 
+if test_eeprom; then
+	echo "Test eeprom: PASS"
+else
+	echo "Test eeprom: FAIL"
+	echo "Test board: FAIL"
+	exit 1
+fi
+echo
+
 if test_memory; then
 	echo "Test memory: PASS"
 else
@@ -27,15 +36,6 @@ if test_nand; then
 	echo "Test nand: PASS"
 else
 	echo "Test nand: FAIL"
-	echo "Test board: FAIL"
-	exit 1
-fi
-echo
-
-if test_eeprom; then
-	echo "Test eeprom: PASS"
-else
-	echo "Test eeprom: FAIL"
 	echo "Test board: FAIL"
 	exit 1
 fi
