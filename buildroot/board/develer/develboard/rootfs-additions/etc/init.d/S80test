@@ -35,6 +35,18 @@ _genrand_pattern() {
 	|| return 1
 }
 
+_wait_device() {
+	local device=$1
+	local tmo_sec=$2
+	while [ ! -b "$device" ]; do
+		[ $tmo_sec -gt 0 ] \
+		|| return 1
+		tmo_sec=$((tmo_sec-1))
+		sleep 1
+	done
+	return 0
+}
+
 _drop_cache() {
 	sync
 	echo 3 > /proc/sys/vm/drop_caches
@@ -52,10 +64,48 @@ _md5_check() {
 	|| return 1
 }
 
+_test_write_device() {
+	local device="$1"
+	local dataMiB=100
+	local testpat=testpattern.bin
+
+	echo -n "Waiting for $device to appear... "
+	_wait_device $device 5 \
+	|| { echo ERR; echo "No such device: $device"; return 1; }
+	echo OK
+
+	mount $device /media/ \
+	|| return 1
+
+	echo "Generate a random pattern of size $dataMiB MiB"
+	_genrand_pattern /tmp/$testpat $dataMiB \
+	|| return 1
+
+	echo "Writing test pattern to $device..."
+	pv /tmp/$testpat | dd of=/media/$testpat 2>/dev/null \
+	|| return 1
+
+	echo -n "Syncing data to disk... "
+	_drop_cache
+	echo OK
+
+	echo -n "Check test pattern on $device... "
+	_md5_check /tmp/$testpat /media/$testpat
+	retval=$?
+
+	[ $retval -eq 0 ] \
+	&& echo OK \
+	|| echo ERR
+
+	rm -f /media/$testpat
+	umount /media
+	return $retval
+}
+
 _runtest() {
 	local testfun="$1"
 	[ "x$testfun" != "x_runtest" ] \
-	|| return
+	|| return 1
 
 	echo "Execute test $testfun"
 	eval "$testfun"
@@ -72,39 +122,16 @@ _runtest() {
 # Test functions
 
 sdcard() {
-	local dataMiB=100
-	local testpat=testpattern.bin
+	_test_write_device /dev/mmcblk0p2
+}
 
-	mount /dev/mmcblk0p2 /media/ \
-	|| return 1
-
-	echo "Generate a random pattern of size $dataMiB MiB"
-	_genrand_pattern /tmp/$testpat $dataMiB \
-	|| return 1
-
-	echo "Writing test pattern to sdcard..."
-	pv /tmp/$testpat | dd of=/media/$testpat 2>/dev/null \
-	|| return 1
-
-	echo -n "Syncing data to disk... "
-	_drop_cache
-	echo OK
-
-	echo -n "Check test pattern on sdcard... "
-	_md5_check /tmp/$testpat /media/$testpat
-	retval=$?
-
-	[ $retval -eq 0 ] \
-	&& echo OK \
-	|| echo ERR
-
-	rm -f /media/$testpat
-	umount /media
-	return $retval
+usbdisk() {
+	_test_write_device /dev/sda1
 }
 
 board() {
 	_runtest sdcard \
+	&& _runtest usbdisk \
 	&& return 0 \
 	|| return 1
 }
