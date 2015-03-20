@@ -3,8 +3,8 @@
 . /env/config
 
 # Mount sdcard
-mkdir -p /sdcard_boot && mount /dev/disk0.0 fat /sdcard_boot
-mkdir -p /sdcard_data && mount /dev/disk0.1 ext4 /sdcard_data
+mkdir -p /sdcard_boot && mount $mmc_bootdev /sdcard_boot
+mkdir -p /sdcard_data && mount $mmc_datadev /sdcard_data
 
 # Flash bootstrap
 bootstrap=/sdcard_boot/at91bootstrap.bin
