@@ -1,15 +1,17 @@
 #!/bin/sh
 
+go_back="timeout -a 3 || menu -m boot -S -n 1"
+
 # Boot menu
 menu -r -m boot
 menu -a -m boot -d "\e[1;36mWelcome on Barebox Boot Sequence\e[0m"
 menu -e -a -m boot -c 'run_boot' -d "boot"
 menu -e -a -m boot -c 'switch_boot -k tftp -r tftp; run_boot' -d "boot tftp"
 menu -e -a -m boot -c 'switch_boot -k mmc -r mmc; run_boot' -d "boot mmc"
-menu -e -a -m boot -u kernel -d "kernel location"
-menu -e -a -m boot -u rootfs -d "rootfs location"
-menu -e -a -m boot -u update -d "update"
-menu -e -a -m boot -u test -d 'test'
+menu -e -a -m boot -u kernel -d "kernel location ->"
+menu -e -a -m boot -u rootfs -d "rootfs location ->"
+menu -e -a -m boot -u update -d "update ->"
+menu -e -a -m boot -u test -d 'test ->'
 menu -e -a -m boot -c 'clear' -d "shell"
 menu -e -a -m boot -c 'reset' -d "reset"
 
@@ -19,7 +21,7 @@ menu -a -m kernel -d "\e[1;36mSwitch kernel location\e[0m"
 menu -e -a -m kernel -c "switch_boot -k nand" -d "nand"
 menu -e -a -m kernel -c "switch_boot -k tftp" -d "tftp"
 menu -e -a -m kernel -c "switch_boot -k mmc" -d "mmc"
-menu -e -a -m kernel -c 'true' -d "back"
+menu -e -a -m kernel -c 'true' -d "<-"
 
 # Switch rootfs submenu
 menu -r -m rootfs
@@ -27,25 +29,25 @@ menu -a -m rootfs -d "\e[1;36mSwitch rootfs location\e[0m"
 menu -e -a -m rootfs -c "switch_boot -r nand" -d "nand (ubifs)"
 menu -e -a -m rootfs -c "switch_boot -r tftp" -d "tftp (initramfs)"
 menu -e -a -m rootfs -c "switch_boot -r mmc" -d "mmc (initramfs)"
-menu -e -a -m rootfs -c 'true' -d "back"
+menu -e -a -m rootfs -c 'true' -d "<-"
 
 # Update submenu
 menu -r -m update
 menu -a -m update -d "\e[1;36mUpdate\e[0m"
-menu -e -a -m update -c 'flash_sdcard; sleep 1' -d "sdcard"
-menu -e -a -m update -c 'true' -d "back"
+menu -e -a -m update -c "flash_sdcard; $go_back" -d "sdcard"
+menu -e -a -m update -c 'true' -d "<-"
 
 # Test submenu
 menu -r -m test
 menu -a -m test -d "\e[1;36mTest\e[0m"
-menu -e -a -m test -c "test_network; sleep 1" -d "network"
-menu -e -a -m test -c "test_memory; sleep 1" -d "memory"
-menu -e -a -m test -c "test_eeprom; sleep 1" -d "eeprom"
-menu -e -a -m test -c "test_nand; sleep 1" -d "nand"
+menu -e -a -m test -c "test_network; $go_back" -d "network"
+menu -e -a -m test -c "test_memory; $go_back" -d "memory"
+menu -e -a -m test -c "test_eeprom; $go_back" -d "eeprom"
+menu -e -a -m test -c "test_nand; $go_back" -d "nand"
 menu -e -a -m test -c "test_linux sdcard" -d "sdcard"
 menu -e -a -m test -c "test_linux usbdisk" -d "usbdisk"
-menu -e -a -m test -c "test_board; sleep 1" -d "run all tests"
-menu -e -a -m test -c 'true' -d "back"
+menu -e -a -m test -c "test_board; $go_back" -d "run all tests"
+menu -e -a -m test -c 'true' -d "<-"
 
 # Boot from nand per default
 switch_boot -k nand -r nand
