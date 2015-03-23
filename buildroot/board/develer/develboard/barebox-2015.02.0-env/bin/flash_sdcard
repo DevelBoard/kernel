@@ -11,7 +11,7 @@ bootstrap=/sdcard_boot/at91bootstrap.bin
 if [ -f "$bootstrap" ]; then
 	echo
 	echo "Erase bootstrap partition"
-	erase /dev/nand0.at91bootstrap.bb
+	erase /dev/nand0.at91bootstrap
 	echo "Flash bootstrap $bootstrap"
 	cp "$bootstrap" /dev/nand0.at91bootstrap.bb
 fi
@@ -21,7 +21,7 @@ barebox=/sdcard_boot/u-boot.bin
 if [ -f "$barebox" ]; then
 	echo
 	echo "Erase barebox partition"
-	erase /dev/nand0.barebox.bb
+	erase /dev/nand0.barebox
 	echo "Flash barebox $barebox"
 	cp "$barebox" /dev/nand0.barebox.bb
 fi
@@ -31,8 +31,8 @@ environ=/sdcard_boot/barebox.env
 if [ -f "$environ" ]; then
 	echo
 	echo "Erase environment partition"
-	erase /dev/nand0.bareboxenv.bb
-	erase /dev/nand0.bareboxenv2.bb
+	erase /dev/nand0.bareboxenv
+	erase /dev/nand0.bareboxenv2
 	echo "Flash environment $environ"
 	cp "$environ" /dev/nand0.bareboxenv.bb
 	cp "$environ" /dev/nand0.bareboxenv2.bb
@@ -43,7 +43,7 @@ kernel=/sdcard_boot/$kernelimage
 if [ -f "$kernel" ]; then
 	echo
 	echo "Erase kernel partition"
-	erase /dev/nand0.kernel.bb
+	erase /dev/nand0.kernel
 	echo "Flash kernel $kernel"
 	cp "$kernel" /dev/nand0.kernel.bb
 fi
@@ -53,7 +53,7 @@ dtb=/sdcard_boot/$oftreeimage
 if [ -f "$dtb" ]; then
 	echo
 	echo "Erase device tree partition"
-	erase /dev/nand0.oftree.bb
+	erase /dev/nand0.oftree
 	echo "Flash device tree $dtb"
 	cp "$dtb" /dev/nand0.oftree.bb
 fi
@@ -63,7 +63,7 @@ rootfs=/sdcard_data/$rootfsimage
 if [ -f "$rootfs" ]; then
 	echo
 	echo "Erase rootfs partition"
-	erase /dev/nand0.rootfs.bb
+	erase /dev/nand0.rootfs
 	echo "Create UBI volume"
 	ubiattach /dev/nand0.rootfs
 	ubimkvol /dev/ubi0 $ubiroot 0
