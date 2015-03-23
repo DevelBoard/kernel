@@ -142,7 +142,11 @@ for arg in `cat /proc/cmdline`; do
 
 	if [ "x$param" == "xtest" ] && [ -n "$testfun" ]; then
 		_runtest "$testfun"
+		retval=$?
 		sleep 1
-		reboot
+
+		[ $retval -eq 0 ] \
+		&& reboot \
+		|| halt
 	fi
 done
