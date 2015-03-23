@@ -69,6 +69,7 @@ if [ -f "$rootfs" ]; then
 	ubimkvol /dev/ubi0 $ubiroot 0
 	echo "Flash rootfs $rootfs"
 	cp "$rootfs" /dev/ubi0.rootfs
+	ubidetach 0
 fi
 
 umount /sdcard_boot
