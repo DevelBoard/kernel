@@ -9,8 +9,9 @@ if [ "x${global.boot_loc.kernel}" = "xtftp" ]; then
 elif [ "x${global.boot_loc.kernel}" = "xmmc" ]; then
 	mkdir -p /mmc_kernel
 	mount $mmc_bootdev /mmc_kernel/
-	ln /mmc_kernel/$kernelimage $kernelimage
-	ln /mmc_kernel/$oftreeimage $oftreeimage
+	cp /mmc_kernel/$kernelimage $kernelimage
+	cp /mmc_kernel/$oftreeimage $oftreeimage
+	umount /mmc_kernel
 fi
 
 
@@ -20,7 +21,8 @@ if [ "x${global.boot_loc.rootfs}" = "xtftp" ]; then
 elif [ "x${global.boot_loc.rootfs}" = "xmmc" ]; then
 	mkdir -p /mmc_rootfs
 	mount $mmc_datadev /mmc_rootfs/
-	ln /mmc_rootfs/$initrdimage $initrdimage
+	cp /mmc_rootfs/$initrdimage $initrdimage
+	umount /mmc_rootfs
 fi
 
 bootm
