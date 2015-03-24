@@ -1,4 +1,4 @@
-From 93f5ba0f39b86f3de9fb7b86c82a7a8e7858d512 Mon Sep 17 00:00:00 2001
+From b49a64f22e67a5557a2b41e7c08d19dba7b1e043 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Fri, 20 Feb 2015 17:44:04 +0100
 Subject: [PATCH] load sd card environment at boot
@@ -9,7 +9,7 @@ Organization: Develer S.r.l.
  1 file changed, 37 insertions(+)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index aa2ed8a..cad38c1 100644
+index aa2ed8a..f9add74 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -31,6 +31,8 @@
@@ -37,24 +37,24 @@ index aa2ed8a..cad38c1 100644
 +
 +	ret = stat(diskdev, &s);
 +	if (ret) {
-+		printf("no %s, using default env\n", diskdev);
++		pr_info("no %s, using default env\n", diskdev);
 +		return 0;
 +	}
 +
 +	mkdir("/boot", 0666);
 +	ret = mount(diskdev, "fat", "/boot", NULL);
 +	if (ret) {
-+		printf("failed to mount %s\n", diskdev);
++		pr_warning("failed to mount %s\n", diskdev);
 +		return 0;
 +	}
 +
 +	ret = stat(bootenv, &s);
 +	if (ret) {
-+		printf("no %s, using default env\n", bootenv);
++		pr_info("no %s, using default env\n", bootenv);
 +		return 0;
 +	}
 +
-+	printf("found boot env %s\n", bootenv);
++	pr_info("found boot env %s\n", bootenv);
 +	default_environment_path_set(bootenv);
 +
 +	return 0;
