@@ -1,15 +1,15 @@
-From 760b7164a19bae8edef49dea915a4383efc25d94 Mon Sep 17 00:00:00 2001
+From 3e0a1eb5a7cb0761f74a9dc5783b1110831717a2 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Thu, 12 Mar 2015 11:08:04 +0100
 Subject: [PATCH] add support for eeprom at24mac402
 Organization: Develer S.r.l.
 
 ---
- .../arm/boards/sama5d4_xplained/sama5d4_xplained.c | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ .../arm/boards/sama5d4_xplained/sama5d4_xplained.c | 31 ++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index cad38c1..8b51d1c 100644
+index f9add74..b45210b 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -30,6 +30,7 @@
@@ -20,7 +20,7 @@ index cad38c1..8b51d1c 100644
  #include <linux/clk.h>
  #include <linux/stat.h>
  #include <envfs.h>
-@@ -175,11 +176,40 @@ struct qt1070_platform_data qt1070_pdata = {
+@@ -175,11 +176,41 @@ struct qt1070_platform_data qt1070_pdata = {
  	.irq_pin	= AT91_PIN_PE10,
  };
  
@@ -38,6 +38,7 @@ index cad38c1..8b51d1c 100644
 + * AT24MAC402 Extended Memory
 + * 128-bit Serial Number: 0x80-0x8F (16 bytes)
 + * EUI-48 Value: 0x9A-0x9F (6 bytes)
++ * EUI-64 Value: 0x98-0x9F (8 bytes)
 + */
 +static struct at24_platform_data at24mac402_eui_sn = {
 +	.byte_len = 256,
@@ -52,11 +53,11 @@ index cad38c1..8b51d1c 100644
  	},
 +	{
 +		.platform_data = &at24mac402_eeprom,
-+		I2C_BOARD_INFO("at24", 0x54),
++		I2C_BOARD_INFO("at24", 0x50),
 +	},
 +	{
 +		.platform_data = &at24mac402_eui_sn,
-+		I2C_BOARD_INFO("at24", 0x5C),
++		I2C_BOARD_INFO("at24", 0x58),
 +	},
  };
  
