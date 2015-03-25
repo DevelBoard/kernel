@@ -13,8 +13,13 @@ build-buildroot:
 	$(INFO)
 	$(MAKE) -C $(@:build-%=%) develer_develboard_defconfig
 	$(MAKE) -C $(@:build-%=%)
-	rm -f buildroot/output/build/at91bootstrap3-*/.stamp*
-	sed -i 's/sama5d4_xplainedsd_uboot_secure/sama5d4_xplainednf_uboot_secure/g' buildroot/.config
+
+	$(eval outdir := buildroot/output/build/at91bootstrap3-v3.7.1)
+	sed -i 's/CONFIG_NANDFLASH=y/CONFIG_SDCARD=y/g' $(outdir)/.config
+	sed -i 's/# CONFIG_SDCARD is not set/# CONFIG_NANDFLASH is not set/g' $(outdir)/.config
+	$(MAKE) -C $(outdir) defconfig
+
+	rm -f $(outdir)/.stamp_built
 	$(MAKE) -C $(@:build-%=%)
 
 clean-buildroot:
