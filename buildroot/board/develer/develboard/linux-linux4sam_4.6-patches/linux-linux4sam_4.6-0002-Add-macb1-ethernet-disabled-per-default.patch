@@ -1,0 +1,121 @@
+From 2b49a66eceebaee61974e0bf8be1be34dd785581 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Tue, 5 May 2015 16:06:28 +0200
+Subject: [PATCH] Add macb1 ethernet (disabled per default)
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts |  5 +++++
+ arch/arm/boot/dts/sama5d4.dtsi              | 26 ++++++++++++++++++++++++++
+ arch/arm/mach-at91/include/mach/sama5d4.h   |  1 +
+ arch/arm/mach-at91/sama5d4.c                |  8 ++++++++
+ 4 files changed, 40 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index f662a70..61f8667 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -56,6 +56,11 @@
+ 				status = "okay";
+ 			};
+ 
++			macb1: ethernet@fc028000 {
++				phy-mode = "rmii";
++				status = "disabled";
++			};
++
+ 			mmc1: mmc@fc000000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3 &pinctrl_mmc1_cd>;
+diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
+index b859916..949f14f 100644
+--- a/arch/arm/boot/dts/sama5d4.dtsi
++++ b/arch/arm/boot/dts/sama5d4.dtsi
+@@ -228,6 +228,15 @@
+ 				status = "disabled";
+ 			};
+ 
++			macb1: ethernet@fc028000 {
++				compatible = "atmel,sama5d4-gem";
++				reg = <0xfc028000 0x100>;
++				interrupts = <55 IRQ_TYPE_LEVEL_HIGH 3>;
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_macb1_rmii>;
++				status = "disabled";
++			};
++
+ 			pwm0: pwm@f800c000 {
+ 				compatible = "atmel,sama5d3-pwm";
+ 				reg = <0xf800c000 0x300>;
+@@ -644,6 +653,23 @@
+ 					};
+ 				};
+ 
++				macb1 {
++					pinctrl_macb1_rmii: macb1_rmii-0 {
++						atmel,pins =
++							<AT91_PIOA 14 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_TX0 */
++							 AT91_PIOA 15 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_TX1 */
++							 AT91_PIOA 12 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_RX0 */
++							 AT91_PIOA 13 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_RX1 */
++							 AT91_PIOA 10 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_RXDV */
++							 AT91_PIOA 11 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_RXER */
++							 AT91_PIOA  4 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_TXEN */
++							 AT91_PIOA  2 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_TXCK */
++							 AT91_PIOA 22 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_MDC */
++							 AT91_PIOA 23 AT91_PERIPH_B AT91_PINCTRL_NONE	/* G1_MDIO */
++							>;
++					};
++				};
++
+ 				mmc0 {
+ 					pinctrl_mmc0_clk_cmd_dat0: mmc0_clk_cmd_dat0 {
+ 						atmel,pins =
+diff --git a/arch/arm/mach-at91/include/mach/sama5d4.h b/arch/arm/mach-at91/include/mach/sama5d4.h
+index c71815c..b857a81 100644
+--- a/arch/arm/mach-at91/include/mach/sama5d4.h
++++ b/arch/arm/mach-at91/include/mach/sama5d4.h
+@@ -68,6 +68,7 @@
+ #define SAMA5D4_ID_ISI		52
+ #define SAMA5D4_ID_TRNG		53
+ #define SAMA5D4_ID_GMAC0	54
++#define SAMA5D4_ID_GMAC1	55
+ #define SAMA5D4_ID_IRQ		56
+ #define SAMA5D4_ID_IRQ		56
+ #define SAMA5D4_ID_SFC		57
+diff --git a/arch/arm/mach-at91/sama5d4.c b/arch/arm/mach-at91/sama5d4.c
+index 75d5776..a4bcd99 100644
+--- a/arch/arm/mach-at91/sama5d4.c
++++ b/arch/arm/mach-at91/sama5d4.c
+@@ -135,6 +135,11 @@ static struct clk macb0_clk = {
+ 	.pid		= SAMA5D4_ID_GMAC0,
+ 	.type		= CLK_TYPE_PERIPHERAL,
+ };
++static struct clk macb1_clk = {
++	.name		= "macb1_clk",
++	.pid		= SAMA5D4_ID_GMAC1,
++	.type		= CLK_TYPE_PERIPHERAL,
++};
+ static struct clk twi0_clk = {
+ 	.name		= "twi0_clk",
+ 	.pid		= SAMA5D4_ID_TWI0,
+@@ -213,6 +218,7 @@ static struct clk *periph_clocks[] __initdata = {
+ 	&lcdc_clk,
+ 	&isi_clk,
+ 	&macb0_clk,
++	&macb1_clk,
+ 	&twi0_clk,
+ 	&twi2_clk,
+ 	&spi0_clk,
+@@ -265,6 +271,8 @@ static struct clk_lookup periph_clocks_lookups[] = {
+ 	CLKDEV_CON_DEV_ID("t0_clk", "f801c000.timer", &tcb0_clk),
+ 	CLKDEV_CON_DEV_ID("hclk", "f8020000.ethernet", &macb0_clk),
+ 	CLKDEV_CON_DEV_ID("pclk", "f8020000.ethernet", &macb0_clk),
++	CLKDEV_CON_DEV_ID("hclk", "fc028000.ethernet", &macb1_clk),
++	CLKDEV_CON_DEV_ID("pclk", "fc028000.ethernet", &macb1_clk),
+ 	CLKDEV_CON_DEV_ID("usart", "f802c000.serial", &usart0_clk),
+ 	CLKDEV_CON_DEV_ID("usart", "fc008000.serial", &usart2_clk),
+ 	CLKDEV_CON_DEV_ID("usart", "fc00c000.serial", &usart3_clk),
+-- 
+1.9.1
+
