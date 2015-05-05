@@ -1,0 +1,43 @@
+From 389e7756603ba55d83402bc6dd2d290a1507fa3e Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Tue, 5 May 2015 10:12:06 +0200
+Subject: [PATCH] Add pioD controller (disabled per default)
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/sama5d4.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
+index b4eb826..b859916 100644
+--- a/arch/arm/boot/dts/sama5d4.dtsi
++++ b/arch/arm/boot/dts/sama5d4.dtsi
+@@ -25,6 +25,7 @@
+ 		gpio0 = &pioA;
+ 		gpio1 = &pioB;
+ 		gpio2 = &pioC;
++		gpio3 = &pioD;
+ 		gpio4 = &pioE;
+ 		tcb0 = &tcb0;
+ 		tcb1 = &tcb1;
+@@ -487,6 +488,17 @@
+ 					#interrupt-cells = <2>;
+ 				};
+ 
++				pioD: gpio@fc068000 {
++					compatible = "atmel,at91sam9x5-gpio", "atmel,at91rm9200-gpio";
++					reg = <0xfc068000 0x100>;
++					interrupts = <27 IRQ_TYPE_LEVEL_HIGH 1>;
++					#gpio-cells = <2>;
++					gpio-controller;
++					interrupt-controller;
++					#interrupt-cells = <2>;
++					status = "disabled";
++				};
++
+ 				pioE: gpio@fc06d000 {
+ 					compatible = "atmel,at91sam9x5-gpio", "atmel,at91rm9200-gpio";
+ 					reg = <0xfc06d000 0x100>;
+-- 
+1.9.1
+
