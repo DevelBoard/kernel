@@ -1,7 +1,7 @@
-From 2b49a66eceebaee61974e0bf8be1be34dd785581 Mon Sep 17 00:00:00 2001
+From 0e574651f438b1f2f78e8ca5a84423159442558f Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Tue, 5 May 2015 16:06:28 +0200
-Subject: [PATCH] Add macb1 ethernet (disabled per default)
+Subject: [PATCH] add macb1 ethernet (disabled per default)
 Organization: Develer S.r.l.
 
 ---

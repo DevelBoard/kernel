@@ -1,7 +1,7 @@
-From 389e7756603ba55d83402bc6dd2d290a1507fa3e Mon Sep 17 00:00:00 2001
+From fdb0556530063b60b86e74a53378e7884b510fb9 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Tue, 5 May 2015 10:12:06 +0200
-Subject: [PATCH] Add pioD controller (disabled per default)
+Subject: [PATCH] add pioD controller (disabled per default)
 Organization: Develer S.r.l.
 
 ---
