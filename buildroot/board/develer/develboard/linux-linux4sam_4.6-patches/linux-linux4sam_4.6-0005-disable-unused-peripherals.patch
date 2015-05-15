@@ -1,0 +1,97 @@
+From f9bd30b162831bfb25de31fadb1fefbba664d8b2 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Fri, 15 May 2015 14:43:27 +0200
+Subject: [PATCH] disable unused peripherals
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 44 +----------------------------
+ 1 file changed, 1 insertion(+), 43 deletions(-)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index 907e7b7..a407fd2 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -34,23 +34,6 @@
+ 
+ 	ahb {
+ 		apb {
+-			adc0: adc@fc034000 {
+-				/* The vref depends on JP22 of EK. If connect 1-2 then use 3.3V. connect 2-3 use 3.0V */
+-				atmel,adc-vref = <3300>;
+-				/*atmel,adc-ts-wires = <4>;*/	/* Set up ADC touch screen */
+-				status = "okay";		/* Enable ADC IIO support */
+-			};
+-
+-			spi0: spi@f8010000 {
+-				cs-gpios = <&pioC 3 0>, <0>, <0>, <0>;
+-				status = "okay";
+-				m25p80@0 {
+-					compatible = "atmel,at25df321a";
+-					spi-max-frequency = <50000000>;
+-					reg = <0>;
+-				};
+-			};
+-
+ 			macb0: ethernet@f8020000 {
+ 				phy-mode = "rmii";
+ 				status = "okay";
+@@ -63,12 +46,11 @@
+ 
+ 			mmc1: mmc@fc000000 {
+ 				pinctrl-names = "default";
+-				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3 &pinctrl_mmc1_cd>;
++				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
+ 				status = "okay";
+ 				slot@0 {
+ 					reg = <0>;
+ 					bus-width = <4>;
+-					cd-gpios = <&pioE 3 0>;
+ 				};
+ 			};
+ 
+@@ -90,18 +72,10 @@
+ 
+ 			pinctrl@fc06a000 {
+ 				board {
+-					pinctrl_mmc1_cd: mmc1_cd {
+-						atmel,pins =
+-							<AT91_PIOE 3 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
+-					};
+ 					pinctrl_usba_vbus: usba_vbus {
+ 						atmel,pins =
+ 							<AT91_PIOE 31 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
+ 					};
+-					pinctrl_key_gpio: key_gpio_0 {
+-						atmel,pins =
+-							<AT91_PIOE 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
+-					};
+ 				};
+ 			};
+ 		};
+@@ -165,22 +139,6 @@
+ 		};
+ 	};
+ 
+-	gpio_keys {
+-		compatible = "gpio-keys";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_key_gpio>;
+-
+-		pb_user1 {
+-			label = "pb_user1";
+-			gpios = <&pioE 8 GPIO_ACTIVE_HIGH>;
+-			linux,code = <0x100>;
+-			gpio-key,wakeup;
+-		};
+-	};
+-
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		status = "okay";
+-- 
+1.9.1
+
