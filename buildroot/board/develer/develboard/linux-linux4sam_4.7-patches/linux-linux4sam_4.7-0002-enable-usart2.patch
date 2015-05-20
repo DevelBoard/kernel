@@ -1,0 +1,30 @@
+From 91207fd3549e52face095a022ebb11b8ce8ee56a Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Wed, 6 May 2015 12:08:58 +0200
+Subject: [PATCH] enable usart2
+Organization: Develer S.r.l.
+
+Conflicts:
+	arch/arm/boot/dts/at91-sama5d4_xplained.dts
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index e63151b..c883923 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -127,6 +127,10 @@
+ 				status = "okay";
+ 			};
+ 
++			usart2: serial@fc008000 {
++				status = "okay";
++			};
++
+ 			adc0: adc@fc034000 {
+ 				atmel,adc-vref = <3300>;
+ 				status = "okay";
+-- 
+1.9.1
+

@@ -1,0 +1,96 @@
+From bf884e349370e8c0ba763b53fd15238d914aa4d1 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Fri, 15 May 2015 14:43:27 +0200
+Subject: [PATCH] disable unused peripherals
+Organization: Develer S.r.l.
+
+Conflicts:
+	arch/arm/boot/dts/at91-sama5d4_xplained.dts
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 41 +----------------------------
+ 1 file changed, 1 insertion(+), 40 deletions(-)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index c883923..127dcb0 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -78,20 +78,6 @@
+ 
+ 	ahb {
+ 		apb {
+-			spi0: spi@f8010000 {
+-				cs-gpios = <&pioC 3 0>, <0>, <0>, <0>;
+-				status = "okay";
+-				m25p80@0 {
+-					compatible = "atmel,at25df321a";
+-					spi-max-frequency = <50000000>;
+-					reg = <0>;
+-				};
+-			};
+-
+-			i2c0: i2c@f8014000 {
+-				status = "okay";
+-			};
+-
+ 			macb0: ethernet@f8020000 {
+ 				phy-mode = "rmii";
+ 				status = "okay";
+@@ -110,12 +96,11 @@
+ 
+ 			mmc1: mmc@fc000000 {
+ 				pinctrl-names = "default";
+-				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3 &pinctrl_mmc1_cd>;
++				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
+ 				status = "okay";
+ 				slot@0 {
+ 					reg = <0>;
+ 					bus-width = <4>;
+-					cd-gpios = <&pioE 3 0>;
+ 				};
+ 			};
+ 
+@@ -142,18 +127,10 @@
+ 
+ 			pinctrl@fc06a000 {
+ 				board {
+-					pinctrl_mmc1_cd: mmc1_cd {
+-						atmel,pins =
+-							<AT91_PIOE 3 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
+-					};
+ 					pinctrl_usba_vbus: usba_vbus {
+ 						atmel,pins =
+ 							<AT91_PIOE 31 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
+ 					};
+-					pinctrl_key_gpio: key_gpio_0 {
+-						atmel,pins =
+-							<AT91_PIOE 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
+-					};
+ 				};
+ 			};
+ 		};
+@@ -217,22 +194,6 @@
+ 		};
+ 	};
+ 
+-	gpio_keys {
+-		compatible = "gpio-keys";
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_key_gpio>;
+-
+-		pb_user1 {
+-			label = "pb_user1";
+-			gpios = <&pioE 8 GPIO_ACTIVE_HIGH>;
+-			linux,code = <0x100>;
+-			gpio-key,wakeup;
+-		};
+-	};
+-
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		status = "okay";
+-- 
+1.9.1
+

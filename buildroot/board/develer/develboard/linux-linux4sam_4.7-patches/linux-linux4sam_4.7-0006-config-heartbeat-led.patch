@@ -1,0 +1,34 @@
+From b90d6786f5da3bb3e68a4b9e6fed16461927f4a4 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Wed, 20 May 2015 11:01:28 +0200
+Subject: [PATCH] config heartbeat led
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index 127dcb0..0bddc67 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -198,15 +198,9 @@
+ 		compatible = "gpio-leds";
+ 		status = "okay";
+ 
+-		d8 {
+-			label = "d8";
+-			gpios = <&pioD 30 GPIO_ACTIVE_HIGH>;
+-			default-state = "on";
+-		};
+-
+ 		d10 {
+ 			label = "d10";
+-			gpios = <&pioE 15 GPIO_ACTIVE_LOW>;
++			gpios = <&pioD 10 GPIO_ACTIVE_LOW>;
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
+-- 
+1.9.1
+
