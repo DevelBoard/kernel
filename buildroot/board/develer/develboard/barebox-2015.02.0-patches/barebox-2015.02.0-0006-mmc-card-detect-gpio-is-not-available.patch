@@ -1,4 +1,4 @@
-From baf41091827045e593d9058f30bb39dd3c514a54 Mon Sep 17 00:00:00 2001
+From c23397bd8d26d640f8068a49b1fc0460d40e585d Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 13 Jul 2015 18:06:44 +0200
 Subject: [PATCH] mmc card detect gpio is not available
@@ -9,10 +9,10 @@ Organization: Develer S.r.l.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index 07ebb94..8438f9b 100644
+index 698b33e..1870943 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-@@ -202,7 +202,7 @@ static void ek_add_device_lcdc(void) {}
+@@ -201,7 +201,7 @@ static void ek_add_device_lcdc(void) {}
  #if defined(CONFIG_MCI_ATMEL)
  static struct atmel_mci_platform_data mci1_data = {
  	.bus_width	= 4,

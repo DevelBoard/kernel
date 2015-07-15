@@ -1,4 +1,4 @@
-From b8e5d5b4bd2f4ad1dce72f8fe94f3a0131cb09e4 Mon Sep 17 00:00:00 2001
+From df124024870b15c1e234b8ba766c1f19059fd0c2 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 16 Mar 2015 15:02:55 +0100
 Subject: [PATCH] net: ping: return an error exit code when connection fails

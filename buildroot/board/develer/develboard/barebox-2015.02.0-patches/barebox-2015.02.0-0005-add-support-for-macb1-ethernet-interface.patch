@@ -1,19 +1,19 @@
-From 78f90e3585b93d7d5baf46340311882facf4f703 Mon Sep 17 00:00:00 2001
+From 41fcd92fa337695d1981cb278074264513cbba39 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Wed, 6 May 2015 10:22:55 +0200
 Subject: [PATCH] add support for macb1 ethernet interface
 Organization: Develer S.r.l.
 
 ---
- arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c | 16 ++++++++++++++++
+ arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c | 15 +++++++++++++++
  arch/arm/mach-at91/include/mach/sama5d4.h           |  1 +
  arch/arm/mach-at91/sama5d4.c                        |  7 +++++++
  arch/arm/mach-at91/sama5d4_devices.c                |  8 ++++----
  drivers/net/Kconfig                                 | 12 ++++++++++++
- 5 files changed, 40 insertions(+), 4 deletions(-)
+ 5 files changed, 39 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index faeacb7..07ebb94 100644
+index 66700e1..698b33e 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -92,11 +92,20 @@ static void ek_add_device_nand(void)
@@ -35,19 +35,18 @@ index faeacb7..07ebb94 100644
 +};
 +#endif
  
- static void ek_init_ethaddr(int ethid)
+ static void ek_init_ethaddr_i2c(int ethid, int addr, int reg)
  {
-@@ -129,8 +138,15 @@ static void ek_init_ethaddr(int ethid)
+@@ -129,8 +138,14 @@ static void ek_init_ethaddr_i2c(int ethid, int addr, int reg)
  
  static void ek_add_device_eth(void)
  {
 +#if defined(CONFIG_DRIVER_NET_MACB)
- 	ek_init_ethaddr(0);
+ 	ek_init_ethaddr_i2c(0, 0x58, 0x9A);
  	at91_add_device_eth(0, &macb0_pdata);
 +#endif
 +
 +#if defined(CONFIG_DRIVER_NET_MACB1)
-+	// TODO: ek_init_ethaddr(1);
 +	at91_add_device_eth(1, &macb1_pdata);
 +#endif
  }
