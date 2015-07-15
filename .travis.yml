@@ -1,1 +1,27 @@
 sudo: false
+
+addons:
+  apt:
+    packages:
+    - bc
+
+cache:
+  directories:
+    - $HOME/output/host
+    - $HOME/output/build/host-autoconf-2.69
+    - $HOME/output/build/host-automake-1.15
+    - $HOME/output/build/host-binutils-2.24
+    - $HOME/output/build/host-gcc-initial-4.8.4
+    - $HOME/output/build/host-gcc-final-4.8.4
+    - $HOME/output/build/host-libtool-2.4.5
+    - $HOME/output/build/host-m4-1.4.17
+    - $HOME/output/build/host-gmp-6.0.0a
+    - $HOME/output/build/host-mpc-1.0.2
+    - $HOME/output/build/host-mpfr-3.1.2
+
+script:
+    - mkdir -p $HOME/output
+    - ln -s $HOME/output buildroot/output
+    - find buildroot/output
+    - make -s
+    - ls -la
