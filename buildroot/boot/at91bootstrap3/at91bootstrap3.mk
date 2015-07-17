@@ -40,6 +40,15 @@ endef
 endif
 
 define AT91BOOTSTRAP3_BUILD_CMDS
+	sed -i "/CONFIG_NANDFLASH/d" $(@D)/.config
+	sed -i "/CONFIG_SDCARD/d" $(@D)/.config
+
+	echo "CONFIG_NANDFLASH=y" >> $(@D)/.config
+	$(MAKE) $(AT91BOOTSTRAP3_MAKE_OPTS) -C $(@D) defconfig
+	$(MAKE) $(AT91BOOTSTRAP3_MAKE_OPTS) -C $(@D)
+
+	sed -i 's/CONFIG_NANDFLASH=y/CONFIG_SDCARD=y/g' $(@D)/.config
+	$(MAKE) $(AT91BOOTSTRAP3_MAKE_OPTS) -C $(@D) defconfig
 	$(MAKE) $(AT91BOOTSTRAP3_MAKE_OPTS) -C $(@D)
 endef
 
