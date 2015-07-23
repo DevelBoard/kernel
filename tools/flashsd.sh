@@ -3,36 +3,39 @@
 set -e
 cd "`dirname "$0"`"
 
+[ $1 == "--quick" ] \
+&& { QUICK=1; shift; }
+
 [ $# -eq 1 ] \
-|| { echo "usage: $(basename $0) </dev/sd?>"; exit 1; }
+|| { echo "usage: $(basename $0) [--quick] </dev/sd?>"; exit 1; }
 
 dev=$1
 [ -b $dev ] \
 || { echo "No such device: $dev"; exit 1; }
 
 
-echo "* Create partitions on $dev"
+[ -z $QUICK ] && echo "* Create partitions on $dev"
 
 # unmount all sd partitions
-mount -l | grep $dev | awk '{print $1}' | while read line; do
+[ -z $QUICK ] && mount -l | grep $dev | awk '{print $1}' | while read line; do
 	[ -n "$line" ] && sudo umount $line
 done
 
-sudo sfdisk -uS --Linux --quiet $dev <<-EOF
+[ -z $QUICK ] && sudo sfdisk -uS --Linux --quiet $dev <<-EOF
 	2048,131072,e,*
 	133120,+,83,
 EOF
 
-sudo partprobe $dev
+[ -z $QUICK ] && sudo partprobe $dev
 
 
-echo "* Format partitions on $dev"
+[ -z $QUICK ] && echo "* Format partitions on $dev"
 
 part_boot=${dev}1
 part_data=${dev}2
 
-sudo mkfs.vfat -F 16 $part_boot -n BOOT
-sudo mkfs.ext2 $part_data -L LINUX
+[ -z $QUICK ] && sudo mkfs.vfat -F 16 $part_boot -n BOOT
+[ -z $QUICK ] && sudo mkfs.ext2 $part_data -L LINUX
 
 mnt_boot=/tmp/$$_boot
 mnt_data=/tmp/$$_data
