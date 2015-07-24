@@ -1,8 +1,8 @@
 #!/bin/bash
 
-ROOTFSDIR=output/target
-OUTPUTDIR=output/images
-BOARDDIR=board/develer/develboard
+ROOTFSDIR="$BASE_DIR/target"
+OUTPUTDIR="$BASE_DIR/images"
+BOARDDIR="$PWD/board/develer/develboard"
 
 echo "Prepend AT91 nand flash header to bootstrap"
 "$BOARDDIR"/at91_nand_header.sh \
