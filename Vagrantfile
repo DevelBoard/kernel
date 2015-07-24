@@ -9,6 +9,7 @@ EOF
 
 Vagrant.configure(2) do |config|
     config.vm.box = "boxcutter/ubuntu1404"
+    config.vm.provision "shell", inline: SETUP_SCRIPT
     config.vm.provider "virtualbox" do |vm|
         vm.memory = 4096
         vm.cpus = 2
