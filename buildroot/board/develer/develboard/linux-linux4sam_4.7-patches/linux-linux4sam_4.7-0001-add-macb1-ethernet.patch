@@ -1,7 +1,7 @@
-From 36cc22ad240fa38055ed2be4eed405687058eb57 Mon Sep 17 00:00:00 2001
+From dff32f9e5b42f09016ad0c4f2caec2b652edb9bd Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Tue, 5 May 2015 16:06:28 +0200
-Subject: [PATCH] add macb1 ethernet (disabled per default)
+Subject: [PATCH] add macb1 ethernet
 Organization: Develer S.r.l.
 
 Conflicts:
@@ -9,26 +9,9 @@ Conflicts:
 	arch/arm/mach-at91/include/mach/sama5d4.h
 	arch/arm/mach-at91/sama5d4.c
 ---
- arch/arm/boot/dts/at91-sama5d4_xplained.dts |  5 +++++
- arch/arm/boot/dts/sama5d4.dtsi              | 30 +++++++++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
+ arch/arm/boot/dts/sama5d4.dtsi | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-index 6a9eff4..e63151b 100644
---- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-@@ -103,6 +103,11 @@
- 				};
- 			};
- 
-+			macb1: ethernet@fc028000 {
-+				phy-mode = "rmii";
-+				status = "disabled";
-+			};
-+
- 			mmc1: mmc@fc000000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3 &pinctrl_mmc1_cd>;
 diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
 index 14de59f..a79ad68 100644
 --- a/arch/arm/boot/dts/sama5d4.dtsi

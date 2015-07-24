@@ -1,4 +1,4 @@
-From bbc316fc02018d501d3792ac8e459b9fb43854f9 Mon Sep 17 00:00:00 2001
+From 5a6fce805d58a3e7afbdb8794c0287bdbf12343d Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Fri, 15 May 2015 14:43:27 +0200
 Subject: [PATCH] disable unused peripherals
@@ -11,7 +11,7 @@ Conflicts:
  1 file changed, 1 insertion(+), 53 deletions(-)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-index c883923..60d5d19 100644
+index 5ee9630..acb8690 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
 @@ -78,20 +78,6 @@
@@ -35,7 +35,7 @@ index c883923..60d5d19 100644
  			macb0: ethernet@f8020000 {
  				phy-mode = "rmii";
  				status = "okay";
-@@ -110,12 +96,11 @@
+@@ -105,12 +91,11 @@
  
  			mmc1: mmc@fc000000 {
  				pinctrl-names = "default";
@@ -49,7 +49,7 @@ index c883923..60d5d19 100644
  				};
  			};
  
-@@ -141,36 +126,15 @@
+@@ -136,36 +121,15 @@
  			};
  
  			pinctrl@fc06a000 {
@@ -86,7 +86,7 @@ index c883923..60d5d19 100644
  			status = "okay";
  		};
  
-@@ -217,22 +181,6 @@
+@@ -212,22 +176,6 @@
  		};
  	};
  

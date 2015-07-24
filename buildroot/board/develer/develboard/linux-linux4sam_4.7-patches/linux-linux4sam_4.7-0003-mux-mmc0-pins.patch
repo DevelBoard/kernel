@@ -1,4 +1,4 @@
-From c82dc0ea4918963201383e3a249fa7ef37a0778d Mon Sep 17 00:00:00 2001
+From b88806223855dd481d0ee7915563c0fd5cce7233 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Fri, 15 May 2015 14:27:11 +0200
 Subject: [PATCH] mux mmc0 pins

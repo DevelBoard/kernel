@@ -1,4 +1,4 @@
-From 9e3af69b982008543aa8a02cad30dcabff1a8c70 Mon Sep 17 00:00:00 2001
+From e072e97506c4a0d0d6c13ee9aff9f493afb8fc05 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Wed, 6 May 2015 12:08:58 +0200
 Subject: [PATCH] enable usart2
@@ -11,10 +11,10 @@ Conflicts:
  1 file changed, 4 insertions(+)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-index e63151b..c883923 100644
+index 6a9eff4..5ee9630 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-@@ -127,6 +127,10 @@
+@@ -122,6 +122,10 @@
  				status = "okay";
  			};
  
