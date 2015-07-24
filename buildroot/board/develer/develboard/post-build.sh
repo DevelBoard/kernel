@@ -15,4 +15,10 @@ echo "Prepend AT91 nand flash header to bootstrap"
 echo "Remove sysvinit compatibility scripts"
 rm -rf "$ROOTFSDIR/etc/init.d"
 
+echo "Disable dropbear.service"
+rm -f "$ROOTFSDIR/etc/systemd/system/multi-user.target.wants/dropbear.service"
+
+echo "Enable dropbear.socket (socket activation)"
+ln -sf "$ROOTFSDIR/etc/systemd/system/dropbear.socket" "$ROOTFSDIR/etc/systemd/system/multi-user.target.wants/dropbear.socket"
+
 echo "Done"
