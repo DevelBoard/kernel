@@ -1,0 +1,281 @@
+From 16e8448c3f6d7ccb28113a255ad5ca1d89e30825 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Wed, 20 May 2015 10:59:33 +0200
+Subject: [PATCH] support wl18xx wifi on at91 sama5d4 board
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts |  28 ++++++
+ arch/arm/mach-at91/board-dt-sama5.c         | 134 ++++++++++++++++++++++++++++
+ drivers/net/wireless/ti/wlcore/sdio.c       |   8 ++
+ include/linux/wl12xx.h                      |   8 ++
+ 4 files changed, 178 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index 8c74ab8..bfaba83 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -89,6 +89,27 @@
+ 				};
+ 			};
+ 
++			mmc0: mmc@f8000000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 &pinctrl_wlan_irq>;
++				status = "disabled";
++
++				non-removable;
++				cap-power-off-card;
++				keep-power-in-suspend;
++
++				slot@1 {
++					compatible = "ti,wilink8";
++					reg = <1>;
++					bus-width = <4>;
++					interrupt-parent = <&pioE>;
++					interrupts = <8 IRQ_TYPE_NONE>;
++					wlan-pwr-gpio = <&pioC 27 GPIO_ACTIVE_HIGH>;
++					wlan-en-gpio = <&pioC 28 GPIO_ACTIVE_HIGH>;
++					status = "disabled";
++				};
++			};
++
+ 			mmc1: mmc@fc000000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
+@@ -121,6 +142,13 @@
+ 			};
+ 
+ 			pinctrl@fc06a000 {
++				board {
++					pinctrl_wlan_irq: wlan_irq {
++						atmel,pins = <
++							AT91_PIOE 8  AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP  /* WLAN_IRQ */
++						>;
++					};
++				};
+ 			};
+ 		};
+ 
+diff --git a/arch/arm/mach-at91/board-dt-sama5.c b/arch/arm/mach-at91/board-dt-sama5.c
+index 38aca65..a4b6879 100644
+--- a/arch/arm/mach-at91/board-dt-sama5.c
++++ b/arch/arm/mach-at91/board-dt-sama5.c
+@@ -14,10 +14,13 @@
+ #include <linux/micrel_phy.h>
+ #include <linux/of.h>
+ #include <linux/of_irq.h>
++#include <linux/of_gpio.h>
+ #include <linux/of_platform.h>
+ #include <linux/phy.h>
+ #include <linux/clk-provider.h>
+ #include <linux/phy.h>
++#include <linux/delay.h>
++#include <linux/wl12xx.h>
+ 
+ #include <asm/setup.h>
+ #include <asm/irq.h>
+@@ -56,6 +59,136 @@ static void __init sama5_dt_device_init(void)
+ 	sam5d3_pm_init();
+ }
+ 
++static struct wl12xx_platform_data sama5d4_wl12xx_wlan_data __initdata = {
++	.irq			= -1,
++	.wlan_pwr.gpio	= -1,
++	.wlan_en.gpio	= -1,
++};
++
++static int wl18xx_set_gpio_output(struct wl12xx_gpio_data *pin, int value)
++{
++	int ret;
++
++	if (!gpio_is_valid(pin->gpio)) {
++		pr_err("wlan gpio %d is not valid\n", pin->gpio);
++		return -ENODEV;
++	}
++
++	if (value)
++		value = !!!pin->alow;
++	else
++		value = !!pin->alow;
++
++	ret = gpio_direction_output(pin->gpio, value);
++	if (ret < 0) {
++		pr_err("wlan gpio %d output error: %d\n", pin->gpio, ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int wl18xx_set_power(int power_on)
++{
++	struct wl12xx_platform_data *pdata = wl12xx_get_platform_data();
++	int ret;
++
++	pr_debug("wl18xx power %s\n", power_on ? "on" : "off");
++
++	if (IS_ERR(pdata)) {
++		ret = PTR_ERR(pdata);
++		pr_err("wlan platform data is missing: %d\n", ret);
++		return ret;
++	}
++
++	if (power_on) {
++		/* Power up sequence */
++		ret = wl18xx_set_gpio_output(&pdata->wlan_pwr, 1);
++		if (ret < 0)
++			return ret;
++
++		udelay(120);
++
++		ret = wl18xx_set_gpio_output(&pdata->wlan_en, 1);
++		if (ret < 0)
++			return ret;
++
++	} else {
++		/* Power down sequence */
++		ret = wl18xx_set_gpio_output(&pdata->wlan_en, 0);
++		if (ret < 0)
++			return ret;
++
++		udelay(120);
++
++		ret = wl18xx_set_gpio_output(&pdata->wlan_pwr, 0);
++		if (ret < 0)
++			return ret;
++	}
++
++	return 0;
++}
++
++static void __init wl18xx_get_of_gpio(struct device_node *np, const char *of_name,
++	struct wl12xx_gpio_data *data)
++{
++	int gpio_pin;
++	enum of_gpio_flags gpio_flags;
++
++	gpio_pin = of_get_named_gpio_flags(np, of_name, 0, &gpio_flags);
++	if (gpio_is_valid(gpio_pin)) {
++		if (gpio_request(gpio_pin, of_name) >= 0) {
++			data->gpio = gpio_pin;
++			data->alow = gpio_flags & OF_GPIO_ACTIVE_LOW;
++		} else {
++			pr_err("wlan gpio %s (%d) request failed\n", of_name, gpio_pin);
++		}
++	} else {
++		pr_err("wlan gpio %s is not valid: %d\n", of_name, gpio_pin);
++	}
++}
++
++static void __init wl18xx_get_of_irq(struct device_node *np, struct wl12xx_platform_data *data)
++{
++	int irq;
++
++	irq = irq_of_parse_and_map(np, 0);
++	if (irq >= 0)
++		data->irq = irq;
++	else
++		pr_err("wlan irq map failed: %d\n", irq);
++}
++
++static void __init sama5_dt_device_init_late(void)
++{
++	struct device_node *np;
++
++	np = of_find_compatible_node(NULL, NULL, "ti,wilink8");
++	if (np) {
++		if (of_device_is_available(np)) {
++			/* Extract wlcore properties form device tree */
++			wl18xx_get_of_gpio(np, "wlan-pwr-gpio", &sama5d4_wl12xx_wlan_data.wlan_pwr);
++			wl18xx_get_of_gpio(np, "wlan-en-gpio", &sama5d4_wl12xx_wlan_data.wlan_en);
++			wl18xx_get_of_irq(np, &sama5d4_wl12xx_wlan_data);
++			sama5d4_wl12xx_wlan_data.set_power = wl18xx_set_power;
++
++			pr_debug("wl18xx wlan-pwr-gpio=%d, wlan-en-gpio=%d, wlan-irq=%d\n",
++				sama5d4_wl12xx_wlan_data.wlan_pwr.gpio,
++				sama5d4_wl12xx_wlan_data.wlan_en.gpio,
++				sama5d4_wl12xx_wlan_data.irq);
++
++			/* Set legacy platform data */
++			if (wl12xx_set_platform_data(&sama5d4_wl12xx_wlan_data))
++				pr_err("can't set wl12xx platform data\n");
++
++			/* Perform power up sequence */
++			wl18xx_set_power(0);
++			wl18xx_set_power(1);
++		}
++	}
++	of_node_put(np);
++}
++
+ static const char *sama5_dt_board_compat[] __initconst = {
+ 	"atmel,sama5",
+ 	NULL
+@@ -87,4 +220,5 @@ DT_MACHINE_START(sama5_alt_dt, "Atmel SAMA5")
+ 	.init_machine	= sama5d4_dt_device_init,
+ 	.dt_compat	= sama5_alt_dt_board_compat,
+ 	.l2c_aux_mask	= ~0UL,
++	.init_late = sama5_dt_device_init_late,
+ MACHINE_END
+diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
+index d3dd7bf..94db5ed 100644
+--- a/drivers/net/wireless/ti/wlcore/sdio.c
++++ b/drivers/net/wireless/ti/wlcore/sdio.c
+@@ -152,6 +152,10 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
+ 	int ret;
+ 	struct sdio_func *func = dev_to_sdio_func(glue->dev);
+ 	struct mmc_card *card = func->card;
++	struct wl12xx_platform_data *pdata = wl12xx_get_platform_data();
++
++	if (!IS_ERR(pdata))
++		pdata->set_power(1);
+ 
+ 	ret = pm_runtime_get_sync(&card->dev);
+ 	if (ret) {
+@@ -180,6 +184,7 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
+ 	int ret;
+ 	struct sdio_func *func = dev_to_sdio_func(glue->dev);
+ 	struct mmc_card *card = func->card;
++	struct wl12xx_platform_data *pdata = wl12xx_get_platform_data();
+ 
+ 	sdio_claim_host(func);
+ 	sdio_disable_func(func);
+@@ -193,6 +198,9 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
+ 	/* Let runtime PM know the card is powered off */
+ 	pm_runtime_put_sync(&card->dev);
+ 
++	if (!IS_ERR(pdata))
++		pdata->set_power(0);
++
+ out:
+ 	return ret;
+ }
+diff --git a/include/linux/wl12xx.h b/include/linux/wl12xx.h
+index a9c723b..d86e7c4 100644
+--- a/include/linux/wl12xx.h
++++ b/include/linux/wl12xx.h
+@@ -55,12 +55,20 @@ struct wl1251_platform_data {
+ 	bool use_eeprom;
+ };
+ 
++struct wl12xx_gpio_data {
++	int gpio;
++	bool alow;
++};
++
+ struct wl12xx_platform_data {
+ 	int irq;
+ 	int board_ref_clock;
+ 	int board_tcxo_clock;
+ 	unsigned long platform_quirks;
+ 	bool pwr_in_suspend;
++	struct wl12xx_gpio_data wlan_pwr;
++	struct wl12xx_gpio_data wlan_en;
++	int (*set_power)(int);
+ };
+ 
+ /* Platform does not support level trigger interrupts */
+-- 
+1.9.1
+
