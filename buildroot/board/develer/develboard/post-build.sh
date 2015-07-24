@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -u
+
 ROOTFSDIR="$BASE_DIR/target"
 OUTPUTDIR="$BASE_DIR/images"
 BOARDDIR="$PWD/board/develer/develboard"
