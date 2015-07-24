@@ -1,4 +1,4 @@
-From 15c75c2cbec2fc62a3422a1a38b5d93de9d34a98 Mon Sep 17 00:00:00 2001
+From b24d1a40cf3cae2a9fa5506230b21014e2bf7e7a Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Wed, 20 May 2015 11:01:28 +0200
 Subject: [PATCH] config heartbeat led
@@ -9,10 +9,10 @@ Organization: Develer S.r.l.
  1 file changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-index 127dcb0..1a1e63c 100644
+index 60d5d19..a2845f9 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-@@ -198,15 +198,9 @@
+@@ -185,15 +185,9 @@
  		compatible = "gpio-leds";
  		status = "okay";
  

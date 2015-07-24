@@ -1,4 +1,4 @@
-From be7a298e7cf884a3ee7a6b94a75c3d4cf8fbac29 Mon Sep 17 00:00:00 2001
+From 748241f0471432bfa0a2b3642d12107b2293b20b Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Tue, 19 May 2015 14:19:43 +0200
 Subject: [PATCH] pinctrl: at91: add support for output config

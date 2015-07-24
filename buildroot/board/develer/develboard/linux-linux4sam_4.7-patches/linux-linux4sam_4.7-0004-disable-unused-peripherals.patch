@@ -1,4 +1,4 @@
-From bf884e349370e8c0ba763b53fd15238d914aa4d1 Mon Sep 17 00:00:00 2001
+From bbc316fc02018d501d3792ac8e459b9fb43854f9 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Fri, 15 May 2015 14:43:27 +0200
 Subject: [PATCH] disable unused peripherals
@@ -7,11 +7,11 @@ Organization: Develer S.r.l.
 Conflicts:
 	arch/arm/boot/dts/at91-sama5d4_xplained.dts
 ---
- arch/arm/boot/dts/at91-sama5d4_xplained.dts | 41 +----------------------------
- 1 file changed, 1 insertion(+), 40 deletions(-)
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 54 +----------------------------
+ 1 file changed, 1 insertion(+), 53 deletions(-)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-index c883923..127dcb0 100644
+index c883923..60d5d19 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
 @@ -78,20 +78,6 @@
@@ -49,26 +49,44 @@ index c883923..127dcb0 100644
  				};
  			};
  
-@@ -142,18 +127,10 @@
+@@ -141,36 +126,15 @@
+ 			};
  
  			pinctrl@fc06a000 {
- 				board {
+-				board {
 -					pinctrl_mmc1_cd: mmc1_cd {
 -						atmel,pins =
 -							<AT91_PIOE 3 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
 -					};
- 					pinctrl_usba_vbus: usba_vbus {
- 						atmel,pins =
- 							<AT91_PIOE 31 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
- 					};
+-					pinctrl_usba_vbus: usba_vbus {
+-						atmel,pins =
+-							<AT91_PIOE 31 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
+-					};
 -					pinctrl_key_gpio: key_gpio_0 {
 -						atmel,pins =
 -							<AT91_PIOE 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
 -					};
- 				};
+-				};
  			};
  		};
-@@ -217,22 +194,6 @@
+ 
+ 		usb0: gadget@00400000 {
+-			atmel,vbus-gpio = <&pioE 31 GPIO_ACTIVE_HIGH>;
+-			pinctrl-names = "default";
+-			pinctrl-0 = <&pinctrl_usba_vbus>;
+ 			status = "okay";
+ 		};
+ 
+ 		usb1: ohci@00500000 {
+ 			num-ports = <3>;
+-			atmel,vbus-gpio = <0
+-					   &pioE 11 GPIO_ACTIVE_HIGH
+-					   &pioE 14 GPIO_ACTIVE_HIGH
+-					  >;
+ 			status = "okay";
+ 		};
+ 
+@@ -217,22 +181,6 @@
  		};
  	};
  

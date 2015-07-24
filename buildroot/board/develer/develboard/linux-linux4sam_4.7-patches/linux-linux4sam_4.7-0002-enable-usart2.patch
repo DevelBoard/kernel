@@ -1,4 +1,4 @@
-From 91207fd3549e52face095a022ebb11b8ce8ee56a Mon Sep 17 00:00:00 2001
+From 9e3af69b982008543aa8a02cad30dcabff1a8c70 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Wed, 6 May 2015 12:08:58 +0200
 Subject: [PATCH] enable usart2
