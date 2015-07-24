@@ -1,71 +1,121 @@
 #!/bin/bash
 
 set -e
-cd "`dirname "$0"`"
+set -u
 
-[ $1 == "--quick" ] \
-&& { QUICK=1; shift; }
-
-[ $# -eq 1 ] \
-|| { echo "usage: $(basename $0) [--quick] </dev/sd?>"; exit 1; }
-
-dev=$1
-[ -b $dev ] \
-|| { echo "No such device: $dev"; exit 1; }
+dev=""
+images=""
+mnt_boot=""
+mnt_data=""
+part_boot=""
+part_data=""
+quick=0
 
 
-[ -z $QUICK ] && echo "* Create partitions on $dev"
+function main {
+    parse_args $@
+    find_imagedir
 
-# unmount all sd partitions
-[ -z $QUICK ] && mount -l | grep $dev | awk '{print $1}' | while read line; do
-	[ -n "$line" ] && sudo umount $line
-done
+    trap cleanup INT ERR TERM EXIT
 
-[ -z $QUICK ] && sudo sfdisk -uS --Linux --quiet $dev <<-EOF
-	2048,131072,e,*
-	133120,+,83,
-EOF
+    if [ $quick -eq 0 ]; then
+        create_partitions
+    fi
 
-[ -z $QUICK ] && sudo partprobe $dev
+    mount_partitions
+    copy_objects
+}
 
+function parse_args {
+    if [ $# -eq 0 ]; then
+        print_usage
+    fi
 
-[ -z $QUICK ] && echo "* Format partitions on $dev"
+    if [ "$1" == "--quick" ]; then
+        quick=1
+        shift
+    fi
 
-part_boot=${dev}1
-part_data=${dev}2
+    dev="$1"
 
-[ -z $QUICK ] && sudo mkfs.vfat -F 16 $part_boot -n BOOT
-[ -z $QUICK ] && sudo mkfs.ext2 $part_data -L LINUX
+    if [ ! -b "$dev" ]; then
+         echo "No such device: $dev"
+         exit 1
+    fi
 
-mnt_boot=/tmp/$$_boot
-mnt_data=/tmp/$$_data
+    mnt_boot=/tmp/$$_boot
+    mnt_data=/tmp/$$_data
+    part_boot=${dev}1
+    part_data=${dev}2
+}
+
+function print_usage {
+    echo "usage: $(basename $0) [--quick] </dev/sd?>"
+    exit 1
+}
+
+function find_imagedir {
+    if [ -d "build" -a -d "host" -a -d "images" ]; then
+        images="$PWD/images"
+    else
+        images="$(dirname "$0")/../buildroot/output/images"
+    fi
+}
 
 function cleanup {
-	echo -n "* Exiting..."
-	grep -q $mnt_boot /proc/mounts && sudo umount $mnt_boot && rm -rf $mnt_boot
-	grep -q $mnt_data /proc/mounts && sudo umount $mnt_data && rm -rf $mnt_data
-	echo "done!"
+    echo -n "* Exiting..."
+    grep -q $mnt_boot /proc/mounts && sudo umount $mnt_boot && rm -rf $mnt_boot
+    grep -q $mnt_data /proc/mounts && sudo umount $mnt_data && rm -rf $mnt_data
+    echo "done!"
 
-	trap - INT ERR TERM EXIT
+    trap - INT ERR TERM EXIT
 }
-trap cleanup INT ERR TERM EXIT
 
-mkdir -p $mnt_boot && sudo mount $part_boot $mnt_boot
-mkdir -p $mnt_data && sudo mount $part_data $mnt_data
+function create_partitions() {
+    echo "* Create partitions on $dev"
 
+    # unmount all sd partitions
+    mount -l | grep $dev | awk '{print $1}' | while read line; do
+        [ -n "$line" ] && sudo umount $line
+    done
 
-echo "* Copy objects to sdcard"
+    sudo sfdisk -uS --Linux --quiet $dev <<-EOF
+2048,131072,e,*
+133120,+,83,
+EOF
 
-images=../buildroot/output/images
+    sudo partprobe $dev
 
-sudo cp $images/*sdcardboot*.bin $mnt_boot/BOOT.BIN
-sudo cp $images/at91bootstrap.bin $mnt_boot/
-sudo cp $images/barebox.bin $mnt_boot/u-boot.bin
-sudo cp $images/barebox-*-env $mnt_boot/barebox.env
-sudo cp $images/zImage $mnt_boot/
-sudo cp $images/*.dtb $mnt_boot/
-sudo cp $images/rootfs.ubifs $mnt_data/
-sudo cp $images/rootfs.cpio.gz $mnt_data/
+    echo "* Format partitions on $dev"
 
-sync
+    part_boot=${dev}1
+    part_data=${dev}2
 
+    sudo mkfs.vfat -F 16 $part_boot -n BOOT
+    sudo mkfs.ext2 $part_data -L LINUX
+}
+
+function copy_objects() {
+    echo "* Copy objects to sdcard"
+
+    sudo cp $images/*sdcardboot*.bin $mnt_boot/BOOT.BIN
+    sudo cp $images/at91bootstrap.bin $mnt_boot/
+    sudo cp $images/barebox.bin $mnt_boot/u-boot.bin
+    sudo cp $images/barebox-*-env $mnt_boot/barebox.env
+    sudo cp $images/zImage $mnt_boot/
+    sudo cp $images/*.dtb $mnt_boot/
+    sudo cp $images/rootfs.ubifs $mnt_data/
+    sudo cp $images/rootfs.cpio.gz $mnt_data/
+
+    echo "* Sync"
+    sync
+}
+
+function mount_partitions() {
+    echo "* Mount partitions"
+
+    mkdir -p $mnt_boot && sudo mount $part_boot $mnt_boot
+    mkdir -p $mnt_data && sudo mount $part_data $mnt_data
+}
+
+main $@
