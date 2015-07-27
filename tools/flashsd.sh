@@ -9,6 +9,8 @@ mnt_boot=""
 mnt_data=""
 part_boot=""
 part_data=""
+
+extract_rootfs=0
 quick=0
 
 
@@ -29,6 +31,11 @@ function main {
 function parse_args {
     if [ $# -eq 0 ]; then
         print_usage
+    fi
+
+    if [ "$1" == "--extract" ]; then
+        extract_rootfs=1
+        shift
     fi
 
     if [ "$1" == "--quick" ]; then
@@ -104,8 +111,14 @@ function copy_objects() {
     sudo cp $images/barebox-*-env $mnt_boot/barebox.env
     sudo cp $images/zImage $mnt_boot/
     sudo cp $images/*.dtb $mnt_boot/
+
+    if [ $extract_rootfs -eq 1 ]; then
+        sudo tar xpf $images/rootfs.tar.gz -C $mnt_data/
+    else
+        sudo cp $images/rootfs.cpio.gz $mnt_data/
+    fi
+
     sudo cp $images/rootfs.ubifs $mnt_data/
-    sudo cp $images/rootfs.cpio.gz $mnt_data/
 
     echo "* Sync"
     sync
