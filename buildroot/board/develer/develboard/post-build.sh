@@ -22,4 +22,8 @@ rm -f "$ROOTFSDIR/etc/systemd/system/multi-user.target.wants/dropbear.service"
 echo "Enable dropbear.socket (socket activation)"
 ln -sf "$ROOTFSDIR/etc/systemd/system/dropbear.socket" "$ROOTFSDIR/etc/systemd/system/multi-user.target.wants/dropbear.socket"
 
+echo "Enforce dynamic hostname regeneration through genhostname.service"
+rm -f "$ROOTFSDIR/etc/hostname"
+ln -sf "$ROOTFSDIR/etc/systemd/system/genhostname.service" "$ROOTFSDIR/etc/systemd/system/multi-user.target.wants/genhostname.service"
+
 echo "Done"
