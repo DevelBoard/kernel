@@ -7,7 +7,10 @@ addons:
 
 cache:
   directories:
+    - $HOME/.buildroot-dl
     - $HOME/.buildroot-ccache
 
 script:
+    - mkdir -p $HOME/.buildroot-dl
+    - ln -s $HOME/.buildroot-dl buildroot/dl
     - make CCACHE_ENABLE=1 -s
