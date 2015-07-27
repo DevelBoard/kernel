@@ -5,6 +5,12 @@ apt-get install -y bc \
     git \
     libncurses-dev \
     unzip
+
+touch /home/vagrant/.bash_aliases
+chown vagrant:vagrant /home/vagrant/.bash_aliases
+echo 'alias cleantarget="rm -rf target build/.root build/*/.stamp_target_installed"' > /home/vagrant/.bash_aliases
+echo 'alias makeflash="make all && /vagrant/tools/flashsd.sh --quick /dev/sdc"' >> /home/vagrant/.bash_aliases
+
 su - vagrant -c "cd /vagrant/buildroot; make O=/home/vagrant/buildroot develer_develboard_defconfig"
 EOF
 
