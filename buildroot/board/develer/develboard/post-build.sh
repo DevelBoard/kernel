@@ -26,4 +26,10 @@ echo "Enforce dynamic hostname regeneration through genhostname.service"
 rm -f "$ROOTFSDIR/etc/hostname"
 ln -sf "$ROOTFSDIR/etc/systemd/system/genhostname.service" "$ROOTFSDIR/etc/systemd/system/multi-user.target.wants/genhostname.service"
 
+echo "Disable unnecessary services"
+find "$ROOTFSDIR" -type f -iname 'systemd-logind.service' -delete
+find "$ROOTFSDIR" -type f -iname 'systemd-remount-fs.service' -delete
+find "$ROOTFSDIR" -type f -iname 'systemd-udev-hwdb-update.service' -delete
+find "$ROOTFSDIR" -type f -iname 'systemd-user-sessions.service' -delete
+
 echo "Done"
