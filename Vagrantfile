@@ -5,6 +5,7 @@ apt-get install -y bc \
     git \
     libncurses-dev \
     unzip
+su - vagrant -c "cd /vagrant/buildroot; make O=/home/vagrant/buildroot develer_develboard_defconfig"
 EOF
 
 Vagrant.configure(2) do |config|
