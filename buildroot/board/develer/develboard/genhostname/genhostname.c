@@ -28,88 +28,90 @@
 #define DEFAULT_PREFIX "DevelBoard"
 #define DEFAULT_IFACE  "eth0"
 
-int main(int argc, char *argv[]) {
-    const char *iface = DEFAULT_IFACE;
-    const char *prefix = DEFAULT_PREFIX;
+int main(int argc, char *argv[])
+{
+        const char *iface = DEFAULT_IFACE;
+        const char *prefix = DEFAULT_PREFIX;
 
-    while (1) {
-        int option_index = 0;
-        static struct option long_options[] = {
-            {"iface",   required_argument, 0,  'i' },
-            {"prefix",  required_argument, 0,  'p' },
-            {"help",    no_argument,       0,  'h' },
-            {0,         0,                 0,  0   }
-        };
+        while (1) {
+                int option_index = 0;
+                static struct option long_options[] = {
+                        {"iface",   required_argument, 0,  'i' },
+                        {"prefix",  required_argument, 0,  'p' },
+                        {"help",    no_argument,       0,  'h' },
+                        {0,         0,                 0,  0   }
+                };
 
-        int c = getopt_long(argc, argv, "i:p:h",
-                 long_options, &option_index);
-        if (c == -1)
-            break;
-
-        switch (c) {
-            case 'i':
-                iface = strdup(optarg);
-                break;
-
-            case 'p':
-                if (strlen(optarg) > 24) {
-                    fprintf(stderr, "specified prefix too long (max 24 chars)\n");
-                    return 2;
+                int c = getopt_long(argc, argv, "i:p:h",
+                                    long_options, &option_index);
+                if (c == -1) {
+                        break;
                 }
-                prefix = strdup(optarg);
-                break;
 
-            default:
-                printf(
-                    "Usage: genhostname [opts]\n"
-                    "\n"
-                    "Options:\n"
-                    "   -i, --iface IFACE       interface to read MAC address from (default: \"" DEFAULT_IFACE "\")\n"
-                    "   -p, --prefix PREFIX     prefix to use in hostname (default: \"" DEFAULT_PREFIX "\")\n"
-                );
-                return 1;
-            }
-    }
+                switch (c) {
+                case 'i':
+                        iface = strdup(optarg);
+                        break;
 
-    char path[256];
-    snprintf(path, sizeof(path), "/sys/class/net/%s/address", iface);
+                case 'p':
+                        if (strlen(optarg) > 24) {
+                                fprintf(stderr, "specified prefix too long (max 24 chars)\n");
+                                return 2;
+                        }
+                        prefix = strdup(optarg);
+                        break;
 
-    FILE *f = fopen(path, "rb");
-    if (!f) {
-        fprintf(stderr, "error: cannot open %s: ", path);
-        perror("");
-        return 2;
-    }
+                default:
+                        printf(
+                                "Usage: genhostname [opts]\n"
+                                "\n"
+                                "Options:\n"
+                                "   -i, --iface IFACE       interface to read MAC address from (default: \"" DEFAULT_IFACE "\")\n"
+                                "   -p, --prefix PREFIX     prefix to use in hostname (default: \"" DEFAULT_PREFIX "\")\n"
+                        );
+                        return 1;
+                }
+        }
 
-    char mac[64];
-    if (!fgets(mac, sizeof(mac), f)) {
-        fprintf(stderr, "error: cannot read from %s: ", path);
-        perror("");
-        return 2;
-    }
-    fclose(f);
+        char path[256];
+        snprintf(path, sizeof(path), "/sys/class/net/%s/address", iface);
 
-    char hostname[64];
-    strcpy(hostname, prefix);
-    char *h = hostname + strlen(prefix);
-    *h++ = '-';
-    *h++ = toupper(mac[9]);
-    *h++ = toupper(mac[10]);
-    *h++ = toupper(mac[12]);
-    *h++ = toupper(mac[13]);
-    *h++ = toupper(mac[15]);
-    *h++ = toupper(mac[16]);
-    *h = 0;
+        FILE *f = fopen(path, "rb");
+        if (!f) {
+                fprintf(stderr, "error: cannot open %s: ", path);
+                perror("");
+                return 2;
+        }
 
-    f = fopen("/etc/hostname", "w");
-    if (!f) {
-        fprintf(stderr, "error: cannot create /etc/hostname: ");
-        perror("");
-        return 2;
-    }
-    fputs(hostname, f);
-    fputc('\n', f);
-    fclose(f);
+        char mac[64];
+        if (!fgets(mac, sizeof(mac), f)) {
+                fprintf(stderr, "error: cannot read from %s: ", path);
+                perror("");
+                return 2;
+        }
+        fclose(f);
 
-    sethostname(hostname, strlen(hostname));
+        char hostname[64];
+        strcpy(hostname, prefix);
+        char *h = hostname + strlen(prefix);
+        *h++ = '-';
+        *h++ = toupper(mac[9]);
+        *h++ = toupper(mac[10]);
+        *h++ = toupper(mac[12]);
+        *h++ = toupper(mac[13]);
+        *h++ = toupper(mac[15]);
+        *h++ = toupper(mac[16]);
+        *h = 0;
+
+        f = fopen("/etc/hostname", "w");
+        if (!f) {
+                fprintf(stderr, "error: cannot create /etc/hostname: ");
+                perror("");
+                return 2;
+        }
+        fputs(hostname, f);
+        fputc('\n', f);
+        fclose(f);
+
+        sethostname(hostname, strlen(hostname));
 }
