@@ -114,4 +114,6 @@ int main(int argc, char *argv[])
         fclose(f);
 
         sethostname(hostname, strlen(hostname));
+
+        return 0;
 }
