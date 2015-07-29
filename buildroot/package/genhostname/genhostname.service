@@ -1,0 +1,12 @@
+[Unit]
+Description=Generate hostname based on DevelBoard's MAC address
+DefaultDependencies=no
+Conflicts=shutdown.target
+After=systemd-remount-fs.service
+Before=systemd-sysusers.service sysinit.target shutdown.target
+ConditionPathExists=!/etc/hostname
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/genhostname

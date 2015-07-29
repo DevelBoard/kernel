@@ -1,0 +1,5 @@
+config BR2_PACKAGE_GENHOSTNAME
+        bool "genhostname"
+        help
+          Generates an hostname based on the MAC address of an ethernet
+          interface on first boot.
