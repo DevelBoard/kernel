@@ -1,0 +1,52 @@
+From 75a3b36803a8b55bb9cda2d71968bde88e7a6228 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Wed, 12 Aug 2015 11:29:47 +0200
+Subject: [PATCH] configure internal eeprom at24mac402
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index bfaba83..4768c44 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -120,6 +120,34 @@
+ 				};
+ 			};
+ 
++			i2c0: i2c@f8014000 {
++				status = "okay";
++
++				/**
++				 * AT24MAC402 Standard 2-Kbit EEPROM
++				 * First half address range: 0x00-0x7F
++				 * Second half address range: 0x80-0xFF
++				 */
++				24c02@50 {
++					compatible = "24c02";
++					reg = <0x50>;
++					pagesize = <16>;
++				};
++
++				/**
++				 * AT24MAC402 Extended Memory
++				 * 128-bit Serial Number: 0x80-0x8F (16 bytes)
++				 * EUI-48 Value: 0x9A-0x9F (6 bytes)
++				 * EUI-64 Value: 0x98-0x9F (8 bytes)
++				 */
++				24c02@58 {
++					compatible = "24c02";
++					reg = <0x58>;
++					pagesize = <1>;
++					read-only;
++				};
++			};
++
+ 			usart3: serial@fc00c000 {
+ 				status = "okay";
+ 			};
+-- 
+1.9.1
+
