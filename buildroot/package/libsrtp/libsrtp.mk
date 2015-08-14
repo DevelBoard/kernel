@@ -4,9 +4,8 @@
 #
 ################################################################################
 
-LIBSRTP_VERSION = v1.5.0
+LIBSRTP_VERSION = v1.5.2
 LIBSRTP_SITE = $(call github,cisco,libsrtp,$(LIBSRTP_VERSION))
-LIBSRTP_AUTORECONF = YES
 LIBSRTP_INSTALL_STAGING = YES
 LIBSRTP_LICENSE = BSD-3c
 LIBSRTP_LICENSE_FILES = LICENSE
@@ -25,7 +24,8 @@ endif
 # host-pkgconf to make sure pkg-config is installed.
 LIBSRTP_DEPENDENCIES = host-pkgconf
 
-ifeq ($(BR2_PACKAGE_OPENSSL),y)
+# openssl handling needs libdl support
+ifeq ($(BR2_PACKAGE_OPENSSL)x$(BR2_STATIC_LIBS),yx)
 LIBSRTP_DEPENDENCIES += openssl
 LIBSRTP_CONF_OPTS += --enable-openssl
 else

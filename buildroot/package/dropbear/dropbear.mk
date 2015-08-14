@@ -53,9 +53,9 @@ endef
 
 define DROPBEAR_INSTALL_INIT_SYSTEMD
 	$(INSTALL) -D -m 644 package/dropbear/dropbear.service \
-		$(TARGET_DIR)/etc/systemd/system/dropbear.service
+		$(TARGET_DIR)/usr/lib/systemd/system/dropbear.service
 	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
-	ln -fs ../dropbear.service \
+	ln -fs ../../../../usr/lib/systemd/system/dropbear.service \
 		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/dropbear.service
 endef
 
@@ -93,7 +93,7 @@ define DROPBEAR_INSTALL_TARGET_CMDS
 	for f in $(DROPBEAR_TARGET_BINS); do \
 		ln -snf ../sbin/dropbear $(TARGET_DIR)/usr/bin/$$f ; \
 	done
-	mkdir -p $(TARGET_DIR)/etc/dropbear
+	ln -snf ../var/run/dropbear $(TARGET_DIR)/etc/dropbear
 endef
 
 $(eval $(autotools-package))

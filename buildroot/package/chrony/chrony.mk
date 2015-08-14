@@ -23,10 +23,6 @@ else
 CHRONY_CONF_OPTS += --disable-readline
 endif
 
-ifneq ($(BR2_INET_IPV6),y)
-CHRONY_CONF_OPTS += --disable-ipv6
-endif
-
 # Ditch the doc build, needs makeinfo and we don't need them
 define CHRONY_DISABLE_DOCS
 	$(SED) 's/chronyc chrony.txt/chronyc/' $(@D)/Makefile.in
@@ -47,6 +43,14 @@ endef
 
 define CHRONY_INSTALL_INIT_SYSV
 	$(INSTALL) -D -m 755 package/chrony/S49chrony $(TARGET_DIR)/etc/init.d/S49chrony
+endef
+
+define CHRONY_INSTALL_INIT_SYSTEMD
+	$(INSTALL) -D -m 644 package/chrony/chrony.service \
+		$(TARGET_DIR)/usr/lib/systemd/system/chrony.service
+	mkdir -p $(TARGET_DIR)/etc/systemd/system/multi-user.target.wants
+	ln -sf ../../../../usr/lib/systemd/system/chrony.service \
+		$(TARGET_DIR)/etc/systemd/system/multi-user.target.wants/chrony.service
 endef
 
 $(eval $(generic-package))
