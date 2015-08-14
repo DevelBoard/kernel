@@ -1,0 +1,94 @@
+From 4702c6917661a8c22a7a346bd2e6b4233aa976a9 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Tue, 11 Aug 2015 10:27:31 +0200
+Subject: [PATCH] support lcd panel sharp lq043t1dg03
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 65 +++++++++++++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index bfaba83..b501cae 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -120,6 +120,22 @@
+ 				};
+ 			};
+ 
++			hlcdc: hlcdc@f0000000 {
++				status = "okay";
++
++				hlcdc-display-controller {
++					pinctrl-names = "default";
++					pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb888>;
++
++					port@0 {
++						hlcdc_panel_output: endpoint@0 {
++							reg = <0>;
++							remote-endpoint = <&panel_input>;
++						};
++					};
++				};
++			};
++
+ 			usart3: serial@fc00c000 {
+ 				status = "okay";
+ 			};
+@@ -214,4 +230,53 @@
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
++
++	bl_reg: backlight_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "backlight-power-supply";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		status = "okay";
++	};
++
++	panel_reg: panel_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "panel-power-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pioA 25 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
++		regulator-boot-on;
++		status = "okay";
++	};
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&hlcdc_pwm 0 50000 0>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++		power-supply = <&bl_reg>;
++		status = "okay";
++	};
++
++	panel: panel {
++		compatible = "innolux,at043tn24", "simple-panel";
++		backlight = <&backlight>;
++		power-supply = <&panel_reg>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&hlcdc_panel_output>;
++			};
++		};
++	};
+ };
+-- 
+1.9.1
+
