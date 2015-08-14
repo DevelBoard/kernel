@@ -23,7 +23,7 @@ elif [ "x${global.boot_loc.kernel}" = "xtftp" ] || [ "x${global.boot_loc.kernel}
 fi
 
 if [ "x${global.boot_loc.rootfs}" = "xnand" ]; then
-	global linux.bootargs.rootfs="root=ubi0:$ubiroot ubi.mtd=$rootfs_mtdblock_nand rootfstype=${rootfs_type} noinitrd"
+	global linux.bootargs.rootfs="root=ubi0:$ubiroot ubi.mtd=$rootfs_mtdblock_nand rootfstype=${rootfs_type} rw noinitrd"
 	global bootm.initrd=
 
 elif [ "x${global.boot_loc.rootfs}" = "xtftp" ] || [ "x${global.boot_loc.rootfs}" = "xmmc" ]; then
