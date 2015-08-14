@@ -1,4 +1,4 @@
-# Hashes from: http://download.qt.io/official_releases/qt/5.4/5.4.0/submodules/qtmultimedia-opensource-src-5.4.0.tar.xz.mirrorlist
-sha256 5ab9dba27ae64123f2d0124b6884da276d8982aa959d65aa44125f758ef9af51 qtmultimedia-opensource-src-5.4.0.tar.xz
-sha1   a66fe5538f554957f60fc160121a3b0e7e72753b                         qtmultimedia-opensource-src-5.4.0.tar.xz
-md5    3a6a415813b54a54cf283a5e2906e012                                 qtmultimedia-opensource-src-5.4.0.tar.xz
+# Hashes from: http://download.qt.io/official_releases/qt/5.5/5.5.0/submodules/qtmultimedia-opensource-src-5.5.0.tar.xz.mirrorlist
+sha256 a8bf1bd59bad74bba2906e6a86faa1cf008c8dba5f5a9cdea72eb0ce5f85355b qtmultimedia-opensource-src-5.5.0.tar.xz
+sha1   3438c16f498e40eaa68cd518b76ddd81c02a5471                         qtmultimedia-opensource-src-5.5.0.tar.xz
+md5    2759807c5d1842ee69e516aacd5e756a                                 qtmultimedia-opensource-src-5.5.0.tar.xz

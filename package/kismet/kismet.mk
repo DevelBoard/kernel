@@ -15,26 +15,22 @@ KISMET_LICENSE_FILES = debian/copyright
 # We touch configure.in:
 KISMET_AUTORECONF = YES
 
-ifeq ($(BR2_STATIC_LIBS),y)
-KISMET_CONF_ENV = LIBS="-lpcap $(shell $(STAGING_DIR)/usr/bin/pcap-config --static --additional-libs)"
-endif
-
 ifeq ($(BR2_PACKAGE_PCRE),y)
-	KISMET_DEPENDENCIES += pcre
+KISMET_DEPENDENCIES += pcre
 endif
 
 ifeq ($(BR2_PACKAGE_KISMET_CLIENT),y)
-	KISMET_TARGET_BINARIES += kismet_client
+KISMET_TARGET_BINARIES += kismet_client
 endif
 
 ifeq ($(BR2_PACKAGE_KISMET_SERVER),y)
-	KISMET_TARGET_BINARIES += kismet_server
-	KISMET_TARGET_CONFIGS += kismet.conf
+KISMET_TARGET_BINARIES += kismet_server
+KISMET_TARGET_CONFIGS += kismet.conf
 endif
 
 ifeq ($(BR2_PACKAGE_KISMET_DRONE),y)
-	KISMET_TARGET_BINARIES += kismet_drone
-	KISMET_TARGET_CONFIGS += kismet_drone.conf
+KISMET_TARGET_BINARIES += kismet_drone
+KISMET_TARGET_CONFIGS += kismet_drone.conf
 endif
 
 ifdef KISMET_TARGET_BINARIES

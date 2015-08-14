@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-BUSYBOX_VERSION = 1.23.1
+BUSYBOX_VERSION = 1.23.2
 BUSYBOX_SITE = http://www.busybox.net/downloads
 BUSYBOX_SOURCE = busybox-$(BUSYBOX_VERSION).tar.bz2
 BUSYBOX_LICENSE = GPLv2
@@ -19,11 +19,11 @@ BUSYBOX_LDFLAGS = \
 # Link against libtirpc if available so that we can leverage its RPC
 # support for NFS mounting with BusyBox
 ifeq ($(BR2_PACKAGE_LIBTIRPC),y)
-BUSYBOX_DEPENDENCIES += libtirpc
-BUSYBOX_CFLAGS += -I$(STAGING_DIR)/usr/include/tirpc/
+BUSYBOX_DEPENDENCIES += libtirpc host-pkgconf
+BUSYBOX_CFLAGS += "`$(PKG_CONFIG_HOST_BINARY) --cflags libtirpc`"
 # Don't use LDFLAGS for -ltirpc, because LDFLAGS is used for
 # the non-final link of modules as well.
-BUSYBOX_CFLAGS_busybox += -ltirpc
+BUSYBOX_CFLAGS_busybox += "`$(PKG_CONFIG_HOST_BINARY) --libs libtirpc`"
 endif
 
 BUSYBOX_BUILD_CONFIG = $(BUSYBOX_DIR)/.config
@@ -46,12 +46,12 @@ ifndef BUSYBOX_CONFIG_FILE
 endif
 
 BUSYBOX_KCONFIG_FILE = $(BUSYBOX_CONFIG_FILE)
+BUSYBOX_KCONFIG_FRAGMENT_FILES = $(call qstrip,$(BR2_PACKAGE_BUSYBOX_CONFIG_FRAGMENT_FILES))
 BUSYBOX_KCONFIG_EDITORS = menuconfig xconfig gconfig
 BUSYBOX_KCONFIG_OPTS = $(BUSYBOX_MAKE_OPTS)
 
 define BUSYBOX_PERMISSIONS
 	/bin/busybox                     f 4755 0  0 - - - - -
-	/usr/share/udhcpc/default.script f 755  0  0 - - - - -
 endef
 
 # If mdev will be used for device creation enable it and copy S10mdev to /etc/init.d
@@ -92,49 +92,20 @@ define BUSYBOX_SET_MMU
 endef
 endif
 
-ifeq ($(BR2_LARGEFILE),y)
 define BUSYBOX_SET_LARGEFILE
 	$(call KCONFIG_ENABLE_OPT,CONFIG_LFS,$(BUSYBOX_BUILD_CONFIG))
 	$(call KCONFIG_ENABLE_OPT,CONFIG_FDISK_SUPPORT_LARGE_DISKS,$(BUSYBOX_BUILD_CONFIG))
 endef
-else
-define BUSYBOX_SET_LARGEFILE
-	$(call KCONFIG_DISABLE_OPT,CONFIG_LFS,$(BUSYBOX_BUILD_CONFIG))
-	$(call KCONFIG_DISABLE_OPT,CONFIG_FDISK_SUPPORT_LARGE_DISKS,$(BUSYBOX_BUILD_CONFIG))
-endef
-endif
 
-# If IPv6 is enabled then enable basic ifupdown support for it
-ifeq ($(BR2_INET_IPV6),y)
 define BUSYBOX_SET_IPV6
 	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_IPV6,$(BUSYBOX_BUILD_CONFIG))
 	$(call KCONFIG_ENABLE_OPT,CONFIG_FEATURE_IFUPDOWN_IPV6,$(BUSYBOX_BUILD_CONFIG))
 endef
-else
-define BUSYBOX_SET_IPV6
-	$(call KCONFIG_DISABLE_OPT,CONFIG_FEATURE_IPV6,$(BUSYBOX_BUILD_CONFIG))
-	$(call KCONFIG_DISABLE_OPT,CONFIG_FEATURE_IFUPDOWN_IPV6,$(BUSYBOX_BUILD_CONFIG))
-endef
-endif
 
 # If we're using static libs do the same for busybox
 ifeq ($(BR2_STATIC_LIBS),y)
 define BUSYBOX_PREFER_STATIC
 	$(call KCONFIG_ENABLE_OPT,CONFIG_STATIC,$(BUSYBOX_BUILD_CONFIG))
-endef
-endif
-
-# Disable usage of inetd if netkit-base package is selected
-ifeq ($(BR2_PACKAGE_NETKITBASE),y)
-define BUSYBOX_NETKITBASE
-	$(call KCONFIG_DISABLE_OPT,CONFIG_INETD,$(BUSYBOX_BUILD_CONFIG))
-endef
-endif
-
-# Disable usage of telnetd if netkit-telnetd package is selected
-ifeq ($(BR2_PACKAGE_NETKITTELNET),y)
-define BUSYBOX_NETKITTELNET
-	$(call KCONFIG_DISABLE_OPT,CONFIG_TELNETD,$(BUSYBOX_BUILD_CONFIG))
 endef
 endif
 
@@ -155,9 +126,26 @@ define BUSYBOX_INTERNAL_SHADOW_PASSWORDS
 endef
 endif
 
+define BUSYBOX_INSTALL_UDHCPC_SCRIPT
+	if grep -q CONFIG_UDHCPC=y $(@D)/.config; then \
+		$(INSTALL) -m 0755 -D package/busybox/udhcpc.script \
+			$(TARGET_DIR)/usr/share/udhcpc/default.script; \
+		$(INSTALL) -m 0755 -d \
+			$(TARGET_DIR)/usr/share/udhcpc/default.script.d; \
+	fi
+endef
+
 ifeq ($(BR2_INIT_BUSYBOX),y)
 define BUSYBOX_SET_INIT
 	$(call KCONFIG_ENABLE_OPT,CONFIG_INIT,$(BUSYBOX_BUILD_CONFIG))
+endef
+endif
+
+ifeq ($(BR2_PACKAGE_BUSYBOX_SELINUX),y)
+BUSYBOX_DEPENDENCIES += host-pkgconf libselinux libsepol
+define BUSYBOX_SET_SELINUX
+	$(call KCONFIG_ENABLE_OPT,CONFIG_SELINUX,$(BUSYBOX_BUILD_CONFIG))
+	$(call KCONFIG_ENABLE_OPT,CONFIG_SELINUXENABLED,$(BUSYBOX_BUILD_CONFIG))
 endef
 endif
 
@@ -167,6 +155,12 @@ define BUSYBOX_INSTALL_LOGGING_SCRIPT
 			$(TARGET_DIR)/etc/init.d/S01logging; \
 	else rm -f $(TARGET_DIR)/etc/init.d/S01logging; fi
 endef
+
+ifeq ($(BR2_INIT_BUSYBOX),y)
+define BUSYBOX_INSTALL_INITTAB
+	$(INSTALL) -D -m 0644 package/busybox/inittab $(TARGET_DIR)/etc/inittab
+endef
+endif
 
 ifeq ($(BR2_PACKAGE_BUSYBOX_WATCHDOG),y)
 define BUSYBOX_SET_WATCHDOG
@@ -179,6 +173,22 @@ define BUSYBOX_INSTALL_WATCHDOG_SCRIPT
 		$(TARGET_DIR)/etc/init.d/S15watchdog
 endef
 endif
+
+# PAM support requires thread support in the toolchain
+ifeq ($(BR2_PACKAGE_LINUX_PAM)$(BR2_TOOLCHAIN_HAS_THREADS),yy)
+define BUSYBOX_LINUX_PAM
+	$(call KCONFIG_ENABLE_OPT,CONFIG_PAM,$(BUSYBOX_BUILD_CONFIG))
+endef
+BUSYBOX_DEPENDENCIES += linux-pam
+endif
+
+# Telnet support
+define BUSYBOX_INSTALL_TELNET_SCRIPT
+	if grep -q CONFIG_FEATURE_TELNETD_STANDALONE=y $(@D)/.config; then \
+		$(INSTALL) -m 0755 -D package/busybox/S50telnet \
+			$(TARGET_DIR)/etc/init.d/S50telnet ; \
+	fi
+endef
 
 # Enable "noclobber" in install.sh, to prevent BusyBox from overwriting any
 # full-blown versions of apps installed by other packages with sym/hard links.
@@ -193,11 +203,11 @@ define BUSYBOX_KCONFIG_FIXUP_CMDS
 	$(BUSYBOX_PREFER_STATIC)
 	$(BUSYBOX_SET_MDEV)
 	$(BUSYBOX_SET_CRYPT_SHA)
-	$(BUSYBOX_NETKITBASE)
-	$(BUSYBOX_NETKITTELNET)
+	$(BUSYBOX_LINUX_PAM)
 	$(BUSYBOX_INTERNAL_SHADOW_PASSWORDS)
 	$(BUSYBOX_SET_INIT)
 	$(BUSYBOX_SET_WATCHDOG)
+	$(BUSYBOX_SET_SELINUX)
 endef
 
 define BUSYBOX_CONFIGURE_CMDS
@@ -210,10 +220,8 @@ endef
 
 define BUSYBOX_INSTALL_TARGET_CMDS
 	$(BUSYBOX_MAKE_ENV) $(MAKE) $(BUSYBOX_MAKE_OPTS) -C $(@D) install
-	$(INSTALL) -m 0755 -D package/busybox/udhcpc.script \
-		$(TARGET_DIR)/usr/share/udhcpc/default.script
-	$(INSTALL) -m 0755 -d \
-		$(TARGET_DIR)/usr/share/udhcpc/default.script.d
+	$(BUSYBOX_INSTALL_INITTAB)
+	$(BUSYBOX_INSTALL_UDHCPC_SCRIPT)
 	$(BUSYBOX_INSTALL_MDEV_CONF)
 endef
 
@@ -221,6 +229,15 @@ define BUSYBOX_INSTALL_INIT_SYSV
 	$(BUSYBOX_INSTALL_MDEV_SCRIPT)
 	$(BUSYBOX_INSTALL_LOGGING_SCRIPT)
 	$(BUSYBOX_INSTALL_WATCHDOG_SCRIPT)
+	$(BUSYBOX_INSTALL_TELNET_SCRIPT)
 endef
+
+# Checks to give errors that the user can understand
+# Must be before we call to kconfig-package
+ifeq ($(BR2_PACKAGE_BUSYBOX)$(BR_BUILDING),yy)
+ifeq ($(call qstrip,$(BR2_PACKAGE_BUSYBOX_CONFIG)),)
+$(error No BusyBox configuration file specified, check your BR2_PACKAGE_BUSYBOX_CONFIG setting)
+endif
+endif
 
 $(eval $(kconfig-package))

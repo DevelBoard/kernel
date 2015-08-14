@@ -52,6 +52,12 @@
 #
 # [End of example]
 
+config BR2_SKIP_LEGACY
+	bool
+	option env="SKIP_LEGACY"
+
+if !BR2_SKIP_LEGACY
+
 config BR2_LEGACY
 	bool
 	help
@@ -99,8 +105,228 @@ comment "----------------------------------------------------"
 endif
 
 ###############################################################################
+comment "Legacy options removed in 2015.08"
 
+config BR2_PACKAGE_KODI_PVR_ADDONS
+	bool "Kodi PVR addon was split"
+	select BR2_LEGACY
+	select BR2_PACKAGE_KODI_PVR_ARGUSTV
+	select BR2_PACKAGE_KODI_PVR_DVBLINK
+	select BR2_PACKAGE_KODI_PVR_DVBVIEWER
+	select BR2_PACKAGE_KODI_PVR_FILMON
+	select BR2_PACKAGE_KODI_PVR_HTS
+	select BR2_PACKAGE_KODI_PVR_IPTVSIMPLE
+	select BR2_PACKAGE_KODI_PVR_MEDIAPORTAL_TVSERVER
+	select BR2_PACKAGE_KODI_PVR_MYTHTV
+	select BR2_PACKAGE_KODI_PVR_NEXTPVR
+	select BR2_PACKAGE_KODI_PVR_NJOY
+	select BR2_PACKAGE_KODI_PVR_PCTV
+	select BR2_PACKAGE_KODI_PVR_STALKER
+	select BR2_PACKAGE_KODI_PVR_VBOX
+	select BR2_PACKAGE_KODI_PVR_VDR_VNSI
+	select BR2_PACKAGE_KODI_PVR_VUPLUS
+	select BR2_PACKAGE_KODI_PVR_WMC
+	help
+	  Kodi PVR addon was split into seperate modules
+
+config BR2_BINUTILS_VERSION_2_23_2
+	bool "binutils 2.23 option renamed"
+	select BR2_LEGACY
+	select BR2_BINUTILS_VERSION_2_23_X
+	help
+	  The binutils version option has been renamed to match the
+	  same patchlevel logic used by gcc. The new option is now
+	  BR2_BINUTILS_VERSION_2_23_X.
+
+config BR2_BINUTILS_VERSION_2_24
+	bool "binutils 2.24 option renamed"
+	select BR2_LEGACY
+	select BR2_BINUTILS_VERSION_2_24_X
+	help
+	  The binutils version option has been renamed to match the
+	  same patchlevel logic used by gcc. The new option is now
+	  BR2_BINUTILS_VERSION_2_24_X.
+
+config BR2_BINUTILS_VERSION_2_25
+	bool "binutils 2.25 option renamed"
+	select BR2_LEGACY
+	select BR2_BINUTILS_VERSION_2_25_X
+	help
+	  The binutils version option has been renamed to match the
+	  same patchlevel logic used by gcc. The new option is now
+	  BR2_BINUTILS_VERSION_2_25_X.
+
+config BR2_PACKAGE_PERF
+	bool "perf option has been renamed"
+	select BR2_LEGACY
+	select BR2_LINUX_KERNEL_TOOL_PERF
+	help
+	  The perf package has been moved as a Linux tools package,
+	  and the option to enable it is now
+	  BR2_LINUX_KERNEL_TOOL_PERF.
+
+config BR2_BINUTILS_VERSION_2_22
+	bool "binutils 2.22 removed"
+	select BR2_LEGACY
+	help
+	  Binutils 2.22 has been removed, using a newer version is
+	  recommended.
+
+config BR2_PACKAGE_GPU_VIV_BIN_MX6Q
+	bool "gpu-viv-bin-mx6q"
+	select BR2_LEGACY
+	select BR2_PACKAGE_IMX_GPU_VIV
+	help
+	  Vivante graphics libraries have been renamed to
+	  BR2_PACKAGE_IMX_GPU_VIV to be aligned with upstream package
+	  name.
+
+config BR2_PACKAGE_LIBSEMANAGE_PYTHON_BINDINGS
+	depends on BR2_PACKAGE_PYTHON
+	bool "libsemanage python bindings removed"
+	help
+	  This option has been removed, since the libsemanage Python
+	  bindings on the target were not useful.
+
+config BR2_TARGET_UBOOT_NETWORK
+	bool "U-Boot custom network settings removed"
+	select BR2_LEGACY
+	help
+	  U-Boot's custom network settings options have been removed.
+
+config BR2_PACKAGE_OPENCV_LIB_CONTRIB
+	bool "opencv contrib module no longer exists"
+	select BR2_LEGACY
+	help
+	  OpenCV >=3.0 does not come with in-tree contrib modules.
+
+	  They have been moved out of the OpenCV base tree, into the opencv_contrib
+	  repository:
+	    https://github.com/Itseez/opencv_contrib
+
+config BR2_PACKAGE_OPENCV_LIB_GPU
+	bool "opencv gpu module no longer exists"
+	select BR2_LEGACY
+	help
+	  opencv_gpu module no longer exists as is in OpenCV >=3.0.
+
+	  It has been split into several modules prefixed with "cuda" that require
+	  Cuda programming toolkit, which is not available in Buildroot. So cuda
+	  modules are forcibly disabled in Buildroot.
+
+config BR2_PACKAGE_OPENCV_LIB_LEGACY
+	bool "opencv legacy module no longer exists"
+	select BR2_LEGACY
+	help
+	  opencv_legacy module no longer exists in OpenCV >=3.0.
+
+config BR2_PACKAGE_OPENCV_LIB_NONFREE
+	bool "opencv nonfree module no longer exists"
+	select BR2_LEGACY
+	help
+	  opencv_nonfree module no longer exists in OpenCV >=3.0.
+
+###############################################################################
+comment "Legacy options removed in 2015.05"
+
+config BR2_TARGET_ROOTFS_JFFS2_NANDFLASH_512_16K
+	bool "jffs2 16kB erasesize NAND flash option renamed"
+	select BR2_LEGACY
+	select BR2_TARGET_ROOTFS_JFFS2_NANDFLASH_16K
+	help
+	  The JFFS2 NAND flash options now longer include the page
+	  size.
+
+config BR2_TARGET_ROOTFS_JFFS2_NANDFLASH_2K_128K
+	bool "jffs2 128kB erasesize NAND flash option renamed"
+	select BR2_LEGACY
+	select BR2_TARGET_ROOTFS_JFFS2_NANDFLASH_128K
+	help
+	  The JFFS2 NAND flash options now longer include the page
+	  size.
+
+config BR2_PACKAGE_MONO_20
+	bool "2.0/3.5 .Net Runtime"
+	select BR2_LEGACY
+	help
+	  This option no longer exists, all versions of the .Net
+	  runtime are now installed.
+
+config BR2_PACKAGE_MONO_40
+	bool "4.0 .Net Runtime"
+	select BR2_LEGACY
+	help
+	  This option no longer exists, all versions of the .Net
+	  runtime are now installed.
+
+config BR2_PACKAGE_MONO_45
+	bool "4.5 .Net Runtime"
+	select BR2_LEGACY
+	help
+	  This option no longer exists, all versions of the .Net
+	  runtime are now installed.
+
+config BR2_CIVETWEB_WITH_LUA
+	bool "civetweb lua option renamed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_CIVETWEB_WITH_LUA
+	help
+	  civetweb's lua option has been renamed to
+	  BR2_PACKAGE_CIVETWEB_WITH_LUA to be aligned with how other
+	  packages name options.
+
+config BR2_PACKAGE_TIFF_TIFF2PDF
+	bool "tiff utility-specific option removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_TIFF_UTILITIES
+	help
+	  utility-specific options have been removed in favour of
+	  the new option BR2_PACKAGE_TIFF_UTILITIES.
+
+config BR2_PACKAGE_TIFF_TIFFCP
+	bool "tiff utility-specific option removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_TIFF_UTILITIES
+	help
+	  utility-specific options have been removed in favour of
+	  the new option BR2_PACKAGE_TIFF_UTILITIES.
+
+config BR2_LINUX_KERNEL_EXT_RTAI_PATCH
+	bool "RTAI patch file path has been removed"
+	help
+	  This option has never worked, so it has been removed.
+
+config BR2_TARGET_GENERIC_PASSWD_DES
+	bool "Encoding passwords with DES has been removed"
+	select BR2_LEGACY
+	help
+	  Paswords can now only be encoded with either of md5, sha256 or sha512.
+	  The default is md5, which is stronger that DES (but still pretty weak).
+
+config BR2_PACKAGE_GTK2_THEME_HICOLOR
+	bool "hicolor (default theme) is a duplicate"
+	select BR2_LEGACY
+	select BR2_PACKAGE_HICOLOR_ICON_THEME
+	help
+	  The option was just a duplicate of hicolor icon theme.
+
+config BR2_PACKAGE_VALGRIND_PTRCHECK
+	bool "valgrind's PTRCheck was renamed to SGCheck"
+	select BR2_LEGACY
+	select BR2_PACKAGE_VALGRIND_SGCHECK
+	help
+	  PTRCheck was renamed to SGCheck in valgrind
+
+###############################################################################
 comment "Legacy options removed in 2015.02"
+
+config BR2_PACKAGE_LIBGC
+	bool "libgc package removed"
+	select BR2_LEGACY
+	select BR2_PACKAGE_BDWGC
+	help
+	  libgc has been removed because we have the same package under a
+	  different name, bdwgc.
 
 config BR2_PACKAGE_WDCTL
 	bool "util-linux' wdctl option has been renamed"
@@ -1257,3 +1483,5 @@ config BR2_BFIN_FLAT
 	select BR2_LEGACY
 
 endmenu
+
+endif # !SKIP_LEGACY

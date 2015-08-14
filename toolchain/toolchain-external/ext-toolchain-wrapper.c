@@ -63,7 +63,7 @@ static char *predef_args[] = {
 #ifdef BR_MIPS_TARGET_LITTLE_ENDIAN
 	"-EL",
 #endif
-#ifdef BR_MIPS_TARGET_BIG_ENDIAN
+#if defined(BR_MIPS_TARGET_BIG_ENDIAN) || defined(BR_ARC_TARGET_BIG_ENDIAN)
 	"-EB",
 #endif
 #ifdef BR_ADDITIONAL_CFLAGS
@@ -177,11 +177,12 @@ int main(int argc, char **argv)
 
 #if defined(BR_ARCH) || \
     defined(BR_CPU)
-	/* Add our -march/cpu/abi flags, but only if none are
-	 * already specified on the commandline
+	/* Add our -march/cpu flags, but only if none of
+	 * -march/mtune/mcpu are already specified on the commandline
 	 */
 	for (i = 1; i < argc; i++) {
 		if (!strncmp(argv[i], "-march=", strlen("-march=")) ||
+		    !strncmp(argv[i], "-mtune=", strlen("-mtune=")) ||
 		    !strncmp(argv[i], "-mcpu=",  strlen("-mcpu=" )))
 			break;
 	}

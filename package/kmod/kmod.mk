@@ -4,12 +4,10 @@
 #
 ################################################################################
 
-KMOD_VERSION = 19
+KMOD_VERSION = 20
 KMOD_SOURCE = kmod-$(KMOD_VERSION).tar.xz
 KMOD_SITE = $(BR2_KERNEL_MIRROR)/linux/utils/kernel/kmod
 KMOD_INSTALL_STAGING = YES
-# For kmod-0002-add-backup-implementation-of-be32toh.patch
-KMOD_AUTORECONF = YES
 KMOD_DEPENDENCIES = host-pkgconf
 HOST_KMOD_DEPENDENCIES = host-pkgconf
 
@@ -39,11 +37,6 @@ KMOD_DEPENDENCIES += $(if $(BR2_PACKAGE_PYTHON),python,python3)
 KMOD_CONF_OPTS += --enable-python
 endif
 
-# --gc-sections triggers a bug in the current Xtensa binutils
-ifeq ($(BR2_xtensa),y)
-KMOD_CONF_ENV += cc_cv_LDFLAGS__Wl___gc_sections=no
-endif
-
 ifeq ($(BR2_PACKAGE_KMOD_TOOLS),y)
 
 # add license info for kmod tools
@@ -62,10 +55,6 @@ endef
 KMOD_POST_INSTALL_TARGET_HOOKS += KMOD_INSTALL_TOOLS
 else
 KMOD_CONF_OPTS += --disable-tools
-endif
-
-ifeq ($(BR2_PACKAGE_BASH),)
-KMOD_CONF_OPTS += --with-bashcompletiondir=
 endif
 
 # We only install depmod, since that's the only tool used for the
