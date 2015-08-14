@@ -1,0 +1,93 @@
+From ea94c7be9a8a5a93330ab2ba7c6baeca40a7e540 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Tue, 11 Aug 2015 15:16:16 +0200
+Subject: [PATCH] support lcd touchscreen sharp lq043t1dg03 via ads7843
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 48 ++++++++++++++++++++++++++---
+ 1 file changed, 43 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index b501cae..79c1a95 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -89,6 +89,38 @@
+ 				};
+ 			};
+ 
++			spi0: spi@f8010000 {
++				cs-gpios = <0>, <0>, <0>, <&pioC 29 GPIO_ACTIVE_HIGH>;
++				status = "okay";
++
++				ads7846@1 {
++					compatible = "ti,ads7843";
++					pinctrl-names = "default";
++					pinctrl-0 = <&pinctrl_ads7846_irq>;
++
++					interrupt-parent = <&pioE>;
++					interrupts = <25 IRQ_TYPE_NONE>;
++					pendown-gpio = <&pioE 25 0>;
++
++					reg = <3>;
++					spi-max-frequency = <3250000>;
++					vcc-supply = <&ads7846reg>;
++
++					ti,x-min = /bits/ 16 <0>;
++					ti,x-max = /bits/ 16 <4096>;
++					ti,y-min = /bits/ 16 <0>;
++					ti,y-max = /bits/ 16 <4096>;
++					ti,vref-delay-usecs = /bits/ 16 <100>;
++					ti,x-plate-ohms = /bits/ 16 <500>;
++					ti,y-plate-ohms = /bits/ 16 <500>;
++					ti,pressure-max = /bits/ 16 <15000>;
++					ti,debounce-max = /bits/ 16 <10>;
++					ti,debounce-rep = /bits/ 16 <5>;
++					ti,debounce-tol = /bits/ 16 <50>;
++					ti,keep-vref-on;
++				};
++			};
++
+ 			mmc0: mmc@f8000000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 &pinctrl_wlan_irq>;
+@@ -148,11 +180,6 @@
+ 				status = "okay";
+ 			};
+ 
+-			adc0: adc@fc034000 {
+-				atmel,adc-vref = <3300>;
+-				status = "okay";
+-			};
+-
+ 			watchdog@fc068640 {
+ 				status = "okay";
+ 			};
+@@ -164,6 +191,10 @@
+ 							AT91_PIOE 8  AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP  /* WLAN_IRQ */
+ 						>;
+ 					};
++					pinctrl_ads7846_irq: ads7846_irq {
++						atmel,pins =
++							<AT91_PIOE 25 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;
++					};
+ 				};
+ 			};
+ 		};
+@@ -231,6 +262,13 @@
+ 		};
+ 	};
+ 
++	ads7846reg: ads7846-reg {
++		compatible = "regulator-fixed";
++		regulator-name = "ads7846-reg";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++	};
++
+ 	bl_reg: backlight_regulator {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "backlight-power-supply";
+-- 
+1.9.1
+
