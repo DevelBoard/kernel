@@ -103,6 +103,10 @@ int main(int argc, char *argv[])
         *h++ = toupper(mac[16]);
         *h = 0;
 
+        // Set the hostname before writing it to /etc/hostname so that the kernel uses the generated
+        // one regardless of whether the fs is writable or not.
+        sethostname(hostname, strlen(hostname));
+
         f = fopen("/etc/hostname", "w");
         if (!f) {
                 fprintf(stderr, "error: cannot create /etc/hostname: ");
@@ -112,8 +116,6 @@ int main(int argc, char *argv[])
         fputs(hostname, f);
         fputc('\n', f);
         fclose(f);
-
-        sethostname(hostname, strlen(hostname));
 
         return 0;
 }
