@@ -21,6 +21,14 @@ if grep -q 'BR2_INIT_SYSTEMD=y' "${BR2_CONFIG}"; then
     rm -rf "$ROOTFSDIR/etc/init.d"
     rm -rf "$ROOTFSDIR/etc/network"
 
+    # NOTE: As of buildroot-2015.08-rc1 /etc/dropbear is a broken symlink to /var/run/dropbear
+    # (which in turn is a symlink to /run/dropbear). We replace the symlink (or the existing
+    # directory in case of incremental builds) with a real directory so that dropbear can store the
+    # generated host keys when the first client connects.
+    rm -rf "$ROOTFSDIR/etc/dropbear"
+    mkdir -p "$ROOTFSDIR/etc/dropbear"
+    chmod 0755 "$ROOTFSDIR/etc/dropbear"
+
     echo "Disable dropbear.service"
     rm -f "$ROOTFSDIR/etc/systemd/system/multi-user.target.wants/dropbear.service"
 
