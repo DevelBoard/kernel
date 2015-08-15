@@ -57,7 +57,7 @@ function parse_args {
 }
 
 function print_usage {
-    echo "usage: $(basename $0) [--quick] </dev/sd?>"
+    echo "usage: $(basename $0) [--extract] [--quick] </dev/sd?>"
     exit 1
 }
 
