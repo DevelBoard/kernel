@@ -32,6 +32,7 @@ if grep -q 'BR2_INIT_SYSTEMD=y' "${BR2_CONFIG}"; then
     ln -sf "$ROOTFSDIR/etc/systemd/system/genhostname.service" "$ROOTFSDIR/etc/systemd/system/multi-user.target.wants/genhostname.service"
 
     echo "Disable unnecessary services"
+    find "$ROOTFSDIR" -type f -iname 'systemd-hwdb-update.service' -delete
     find "$ROOTFSDIR" -type f -iname 'systemd-logind.service' -delete
     find "$ROOTFSDIR" -type f -iname 'systemd-remount-fs.service' -delete
     find "$ROOTFSDIR" -type f -iname 'systemd-udev-hwdb-update.service' -delete
