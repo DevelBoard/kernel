@@ -1,4 +1,5 @@
 # use `make FORCE_CCACHE=1` to force enable ccache
+# use `make FORCE_TOOLCHAIN_EXTERNAL=1` to force enable precompiled external toolchain
 
 all: build-buildroot
 
@@ -12,16 +13,22 @@ INFO = @/bin/echo -e "$(GREEN)*** Make: $@$(NC)"
 
 # don't pass special options to sub-makes (e.g. FORCE_CCACHE=1)
 MAKEOVERRIDES := $(filter-out FORCE_CCACHE=%,$(MAKEOVERRIDES))
+MAKEOVERRIDES := $(filter-out FORCE_TOOLCHAIN_EXTERNAL=%,$(MAKEOVERRIDES))
 
 # internal variables
 _develboard_dir = board/develer/develboard
+_fragments_dir = $(_develboard_dir)/buildroot-fragments
 
 
 build-buildroot:
 	$(INFO)
 	$(MAKE) -C $(@:build-%=%) develer_develboard_defconfig
 ifeq ($(FORCE_CCACHE),1)
-	cat buildroot/$(_develboard_dir)/buildroot-fragments/ccache.config >> $(@:build-%=%)/.config
+	cat buildroot/$(_fragments_dir)/ccache.config >> $(@:build-%=%)/.config
+	yes "" | $(MAKE) -C $(@:build-%=%) oldconfig
+endif
+ifeq ($(FORCE_TOOLCHAIN_EXTERNAL),1)
+	cat buildroot/$(_fragments_dir)/toolchain-external.config >> $(@:build-%=%)/.config
 	yes "" | $(MAKE) -C $(@:build-%=%) oldconfig
 endif
 	$(MAKE) -C $(@:build-%=%)
