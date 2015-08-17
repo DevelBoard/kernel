@@ -1,40 +1,28 @@
+# use `make FORCE_CCACHE=1` to force enable ccache
+
 all: build-buildroot
 
 clean: clean-buildroot
 
 distclean: distclean-buildroot
 
-
 GREEN = \e[01;32m
 NC = \e[00m
 INFO = @/bin/echo -e "$(GREEN)*** Make: $@$(NC)"
 
+# don't pass special options to sub-makes (e.g. FORCE_CCACHE=1)
+MAKEOVERRIDES := $(filter-out FORCE_CCACHE=%,$(MAKEOVERRIDES))
+
 # internal variables
-_defconfig = "develer_develboard_defconfig"
-_opt_ccache = "BR2_CCACHE=y"
-
-# use `make CCACHE_ENABLE=[1|0]` to enable/disable ccache
-CCACHE_ENABLE ?= $(shell grep -q "$(_opt_ccache)" buildroot/configs/$(_defconfig) && echo 1 || echo 0)
-
-# don't pass special options to sub-makes (e.g. CCACHE_ENABLE=1)
-MAKEOVERRIDES := $(filter-out CCACHE_ENABLE=%,$(MAKEOVERRIDES))
+_develboard_dir = board/develer/develboard
 
 
 build-buildroot:
 	$(INFO)
-	$(MAKE) -C $(@:build-%=%) $(_defconfig)
-ifeq ($(CCACHE_ENABLE),0)
-	# ccache disabled
-	@if grep -q "$(_opt_ccache)" $(@:build-%=%)/.config; then \
-		sed -i "/$(_opt_ccache)/d" $(@:build-%=%)/.config; \
-		yes "" | $(MAKE) -C $(@:build-%=%) oldconfig; \
-	fi
-else
-	# ccache enabled
-	@if ! grep -q "$(_opt_ccache)" $(@:build-%=%)/.config; then \
-		echo "$(_opt_ccache)" >> $(@:build-%=%)/.config; \
-		yes "" | $(MAKE) -C $(@:build-%=%) oldconfig; \
-	fi
+	$(MAKE) -C $(@:build-%=%) develer_develboard_defconfig
+ifeq ($(FORCE_CCACHE),1)
+	cat buildroot/$(_develboard_dir)/buildroot-fragments/ccache.config >> $(@:build-%=%)/.config
+	yes "" | $(MAKE) -C $(@:build-%=%) oldconfig
 endif
 	$(MAKE) -C $(@:build-%=%)
 
@@ -47,5 +35,5 @@ distclean-buildroot:
 	$(MAKE) -C $(@:distclean-%=%) distclean
 
 toolchain:
-	$(MAKE) -Cbuildroot BR2_EXTERNAL=board/develer/develboard/arm-toolchain toolchain_defconfig
+	$(MAKE) -Cbuildroot BR2_EXTERNAL=$(_develboard_dir)/arm-toolchain toolchain_defconfig
 	$(MAKE) -Cbuildroot
