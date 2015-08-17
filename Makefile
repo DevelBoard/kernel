@@ -45,3 +45,7 @@ clean-buildroot:
 distclean-buildroot:
 	$(INFO)
 	$(MAKE) -C $(@:distclean-%=%) distclean
+
+toolchain:
+	$(MAKE) -Cbuildroot BR2_EXTERNAL=board/develer/develboard/arm-toolchain toolchain_defconfig
+	$(MAKE) -Cbuildroot
