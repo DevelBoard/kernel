@@ -15,6 +15,9 @@ INFO = @/bin/echo -e "$(GREEN)*** Make: $@$(NC)"
 MAKEOVERRIDES := $(filter-out FORCE_CCACHE=%,$(MAKEOVERRIDES))
 MAKEOVERRIDES := $(filter-out FORCE_TOOLCHAIN_EXTERNAL=%,$(MAKEOVERRIDES))
 
+# Support out-of-tree builds
+O ?= buildroot
+
 # internal variables
 _develboard_dir = board/develer/develboard
 _fragments_dir = $(_develboard_dir)/buildroot-fragments
@@ -24,11 +27,11 @@ build-buildroot:
 	$(INFO)
 	$(MAKE) -C $(@:build-%=%) develer_develboard_defconfig
 ifeq ($(FORCE_CCACHE),1)
-	cat buildroot/$(_fragments_dir)/ccache.config >> $(@:build-%=%)/.config
+	cat buildroot/$(_fragments_dir)/ccache.config >> $(O)/.config
 	yes "" | $(MAKE) -C $(@:build-%=%) oldconfig
 endif
 ifeq ($(FORCE_TOOLCHAIN_EXTERNAL),1)
-	cat buildroot/$(_fragments_dir)/toolchain-external.config >> $(@:build-%=%)/.config
+	cat buildroot/$(_fragments_dir)/toolchain-external.config >> $(O)/.config
 	yes "" | $(MAKE) -C $(@:build-%=%) oldconfig
 endif
 	$(MAKE) -C $(@:build-%=%)
