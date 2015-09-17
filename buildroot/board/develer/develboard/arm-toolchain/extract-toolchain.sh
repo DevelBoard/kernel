@@ -30,4 +30,4 @@ echo -e "\nPatching cross compiler rpath..."
 ./patch-rpath.sh "$tmpdir" "$br_toolchain_dir/$tc_name/lib" "$tc_name/lib"
 
 echo -e "\nCreating toolchain archive $tc_arch"
-fakeroot tar czf "$tc_arch" -C"$tmpdir" .
+fakeroot tar c -C"$tmpdir" . | gzip -9 --rsyncable "$tc_arch"
