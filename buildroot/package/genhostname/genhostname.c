@@ -111,11 +111,30 @@ int main(int argc, char *argv[])
         if (!f) {
                 fprintf(stderr, "error: cannot create /etc/hostname: ");
                 perror("");
-                return 2;
+        } else {
+                fputs(hostname, f);
+                fputc('\n', f);
+                fclose(f);
         }
-        fputs(hostname, f);
-        fputc('\n', f);
-        fclose(f);
+
+        // Generate avahi configuration for autodiscovery
+        f = fopen("/etc/avahi/services/dboard-discover.service", "w");
+        if (!f) {
+                fprintf(stderr, "error: cannot create /etc/avahi/services/dboard-discover.service: ");
+                perror("");
+        } else {
+            fprintf(f, "<service-group>\n");
+            fprintf(f, "\t<name replace-wildcards=\"yes\">%%h</name>\n");
+            fprintf(f, "\t<service>\n");
+            fprintf(f, "\t\t<type>_dboard-discover._tcp</type>\n");
+            fprintf(f, "\t\t<port>22</port>\n");
+            fprintf(f, "\t\t<txt-record>serial=%c%c%c%c%c%c</txt-record>\n",
+                toupper(mac[9]), toupper(mac[10]), toupper(mac[12]),
+                    toupper(mac[13]), toupper(mac[15]), toupper(mac[16]));
+            fprintf(f, "\t</service>\n");
+            fprintf(f, "</service-group>\n");
+            fclose(f);
+        }
 
         return 0;
 }

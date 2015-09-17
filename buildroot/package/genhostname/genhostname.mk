@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-GENHOSTNAME_VERSION = 1.0.0
+GENHOSTNAME_VERSION = 1.1.0
 GENHOSTNAME_LICENSE = MIT
 GENHOSTNAME_SITE = package/genhostname
 GENHOSTNAME_SITE_METHOD = local
