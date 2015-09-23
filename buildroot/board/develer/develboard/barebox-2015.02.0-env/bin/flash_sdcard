@@ -17,7 +17,7 @@ if [ -f "$bootstrap" ]; then
 fi
 
 # Flash barebox
-barebox=/sdcard_boot/u-boot.bin
+barebox=/sdcard_boot/barebox.bin
 if [ -f "$barebox" ]; then
 	echo
 	echo "Erase barebox partition"

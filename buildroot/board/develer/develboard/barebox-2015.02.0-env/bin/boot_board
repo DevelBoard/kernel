@@ -50,7 +50,7 @@ menu -e -a -m test -c "test_linux usbdisk" -d "usbdisk"
 menu -e -a -m test -c "test_board; $go_back" -d "run all tests"
 menu -e -a -m test -c 'true' -d "<-"
 
-# Boot from nand per default
-switch_boot -k nand -r nand
+# Boot from default location specify in config file.
+switch_boot -k $kernel_loc -r $rootfs_loc
 
 menu -s -m boot -A $autoboot_timeout

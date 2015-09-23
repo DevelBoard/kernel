@@ -106,9 +106,9 @@ function copy_objects() {
     echo "* Copy objects to sdcard"
 
     sudo cp $images/*sdcardboot*.bin $mnt_boot/BOOT.BIN
-    sudo cp $images/at91bootstrap.bin $mnt_boot/
-    sudo cp $images/barebox.bin $mnt_boot/u-boot.bin
-    sudo cp $images/barebox-*-env $mnt_boot/barebox.env
+    sudo cp $images/*nandflashboot*.bin $mnt_boot/at91bootstrap.bin
+    sudo cp $images/barebox.bin $mnt_boot/
+    sudo cp $images/barebox.env $mnt_boot/
     sudo cp $images/zImage $mnt_boot/
     sudo cp $images/*.dtb $mnt_boot/
 
