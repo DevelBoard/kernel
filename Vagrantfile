@@ -11,7 +11,7 @@ chown vagrant:vagrant /home/vagrant/.bash_aliases
 echo 'alias cleantarget="rm -rf target build/.root build/*/.stamp_target_installed"' > /home/vagrant/.bash_aliases
 echo 'alias makeflash="make all && /vagrant/tools/flashsd.sh --quick /dev/sdc"' >> /home/vagrant/.bash_aliases
 
-su - vagrant -c "cd /vagrant/buildroot; make O=/home/vagrant/buildroot develer_develboard_defconfig"
+su - vagrant -c "make -C/vagrant O=/home/vagrant/buildroot FORCE_TOOLCHAIN_EXTERNAL=1 configure-buildroot"
 EOF
 
 Vagrant.configure(2) do |config|
