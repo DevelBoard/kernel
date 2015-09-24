@@ -22,4 +22,5 @@ Vagrant.configure(2) do |config|
         vm.memory = 4096
         vm.cpus = 2
     end
+    config.ssh.forward_agent = true
 end
