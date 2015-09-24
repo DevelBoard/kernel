@@ -22,8 +22,7 @@ O ?= buildroot
 _develboard_dir = board/develer/develboard
 _fragments_dir = $(_develboard_dir)/buildroot-fragments
 
-
-build-buildroot:
+configure-buildroot:
 	$(INFO)
 	$(MAKE) -C $(@:build-%=%) develer_develboard_defconfig
 ifeq ($(FORCE_CCACHE),1)
@@ -34,6 +33,9 @@ ifeq ($(FORCE_TOOLCHAIN_EXTERNAL),1)
 	cat buildroot/$(_fragments_dir)/toolchain-external.config >> $(O)/.config
 	yes "" | $(MAKE) -C $(@:build-%=%) oldconfig
 endif
+
+build-buildroot:
+	$(INFO)
 	$(MAKE) -C $(@:build-%=%)
 
 clean-buildroot:
