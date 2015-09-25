@@ -1,0 +1,37 @@
+From fe39cde6b45ea8abc30f0cf27e954e97c7368a13 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Fri, 25 Sep 2015 12:02:01 +0200
+Subject: [PATCH] enable spidev on spi1 peripheral
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index 4768c44..0fce96a 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -120,6 +120,19 @@
+ 				};
+ 			};
+ 
++			spi1: spi@fc018000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_spi1>;
++				cs-gpios = <&pioB 22 0>;
++				status = "okay";
++
++				spi@0 {
++					compatible = "spidev";
++					reg = <0>;
++					spi-max-frequency = <50000000>;
++				};
++			};
++
+ 			i2c0: i2c@f8014000 {
+ 				status = "okay";
+ 
+-- 
+1.9.1
+
