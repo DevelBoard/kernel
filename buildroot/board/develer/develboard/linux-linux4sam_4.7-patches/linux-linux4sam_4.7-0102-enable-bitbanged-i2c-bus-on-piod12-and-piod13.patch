@@ -1,0 +1,36 @@
+From a500acf9a0acd09fa81e1cc71ed88f80459664c7 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Fri, 25 Sep 2015 14:45:28 +0200
+Subject: [PATCH] enable bitbanged i2c bus on piod12 and piod13
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index 0fce96a..9ab40a5 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -255,4 +255,18 @@
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
++
++	i2c@1 {
++		compatible = "i2c-gpio";
++		gpios = < /* conflicts with usart0 */
++			&pioD 12 GPIO_ACTIVE_HIGH /* sda */
++			&pioD 13 GPIO_ACTIVE_HIGH /* scl */
++		>;
++		i2c-gpio,sda-open-drain;
++		i2c-gpio,scl-open-drain;
++		i2c-gpio,delay-us = <2>;	/* ~100 kHz */
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++	};
+ };
+-- 
+1.9.1
+
