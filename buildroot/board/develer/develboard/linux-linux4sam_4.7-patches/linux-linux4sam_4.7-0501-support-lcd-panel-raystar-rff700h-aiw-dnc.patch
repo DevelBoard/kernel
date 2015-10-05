@@ -1,0 +1,141 @@
+From fd6b37c6ae2a2aadba4a708bbce34072a7caec80 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Tue, 11 Aug 2015 10:27:31 +0200
+Subject: [PATCH] support lcd panel raystar rff700h-aiw-dnc
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 66 +++++++++++++++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c        | 27 ++++++++++++
+ 2 files changed, 93 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index 4768c44..39c7f19 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -148,6 +148,22 @@
+ 				};
+ 			};
+ 
++			hlcdc: hlcdc@f0000000 {
++				status = "okay";
++
++				hlcdc-display-controller {
++					pinctrl-names = "default";
++					pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb888>;
++
++					port@0 {
++						hlcdc_panel_output: endpoint@0 {
++							reg = <0>;
++							remote-endpoint = <&panel_input>;
++						};
++					};
++				};
++			};
++
+ 			usart3: serial@fc00c000 {
+ 				status = "okay";
+ 			};
+@@ -242,4 +258,54 @@
+ 			linux,default-trigger = "heartbeat";
+ 		};
+ 	};
++
++	bl_reg: backlight_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "backlight-power-supply";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		status = "okay";
++	};
++
++	panel_reg: panel_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "panel-power-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pioA 25 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
++		regulator-boot-on;
++		status = "okay";
++	};
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&hlcdc_pwm 0 50000 0>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++		power-supply = <&bl_reg>;
++		enable-gpios = <&pioA 24 GPIO_ACTIVE_LOW>;
++		status = "okay";
++	};
++
++	panel: panel {
++		compatible = "raystar,rff700h-aiw-dnc", "simple-panel";
++		backlight = <&backlight>;
++		power-supply = <&panel_reg>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&hlcdc_panel_output>;
++			};
++		};
++	};
+ };
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index a13c771..a821b78 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -552,6 +552,30 @@ static const struct panel_desc foxlink_fl500wvr00_a0t = {
+ 	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
+ };
+ 
++static const struct drm_display_mode raystar_rff700h_aiw_dnc_mode = {
++	.clock = 32260,
++	.hdisplay = 800,
++	.hsync_start = 800,
++	.hsync_end = 800 + 256,
++	.htotal = 800 + 256,
++	.vdisplay = 480,
++	.vsync_start = 480,
++	.vsync_end = 480 + 45,
++	.vtotal = 480 + 45,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc raystar_rff700h_aiw_dnc = {
++	.modes = &raystar_rff700h_aiw_dnc_mode,
++	.num_modes = 1,
++	.bpc = 6,
++	.size = {
++		.width = 152,
++		.height = 91,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB565_1X16,
++};
++
+ static const struct drm_display_mode innolux_at043tn24_mode = {
+ 	.clock = 9000,
+ 	.hdisplay = 480,
+@@ -749,6 +773,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "foxlink,fl500wvr00-a0t",
+ 		.data = &foxlink_fl500wvr00_a0t,
+ 	}, {
++		.compatible = "raystar,rff700h-aiw-dnc",
++		.data = &raystar_rff700h_aiw_dnc,
++	}, {
+ 		.compatible = "innolux,at043tn24",
+ 		.data = &innolux_at043tn24,
+ 	}, {
+-- 
+1.9.1
+

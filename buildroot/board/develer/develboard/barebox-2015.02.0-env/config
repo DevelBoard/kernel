@@ -39,7 +39,7 @@ m25p80_parts="64k(bootstrap),384k(barebox),256k(bareboxenv),256k(bareboxenv2),12
 
 autoboot_timeout=3
 
-bootargs="console=ttyS0,115200 earlyprintk printk.time=1"
+bootargs="console=ttyS0,115200 earlyprintk printk.time=1 video=LVDS-1:800x480-16"
 
 mmc_bootdev="/dev/disk0.0 fat"
 mmc_datadev="/dev/disk0.1 ext4"
