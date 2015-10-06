@@ -1,0 +1,53 @@
+From 082c33c0619494043dbdba37921328e682e90f3d Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Tue, 6 Oct 2015 10:11:30 +0200
+Subject: [PATCH] support lcd touchscreen polytouch edt-ft5x06
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/at91-sama5d4_xplained.dts | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+index 39c7f19..998bc00 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+@@ -148,6 +148,21 @@
+ 				};
+ 			};
+ 
++			i2c1: i2c@f8018000 {
++				status = "okay";
++
++				polytouch: edt-ft5x06@38 {
++					compatible = "edt,edt-ft5x06";
++					reg = <0x38>;
++					pinctrl-names = "default";
++					pintctrl-0 = <&ft5x06_pins>;
++					interrupt-parent = <&pioC>;
++					interrupts = <21 0>;
++					reset-gpios = <&pioC 19 GPIO_ACTIVE_LOW>;
++					wake-gpios = <&pioC 20 GPIO_ACTIVE_HIGH>;
++				};
++			};
++
+ 			hlcdc: hlcdc@f0000000 {
+ 				status = "okay";
+ 
+@@ -192,6 +207,13 @@
+ 							AT91_PIOE 8  AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP  /* WLAN_IRQ */
+ 						>;
+ 					};
++					ft5x06_pins: ft5x06 {
++						atmel,pins = <
++							AT91_PIOC 19 AT91_PERIPH_GPIO AT91_PINCTRL_OUTPUT
++							AT91_PIOC 20 AT91_PERIPH_GPIO AT91_PINCTRL_OUTPUT
++							AT91_PIOC 21 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP
++						>;
++					};
+ 				};
+ 			};
+ 		};
+-- 
+1.9.1
+
