@@ -1,0 +1,66 @@
+From e4852ef3e2f0cda7ae9313aa69795cde90220842 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Fri, 25 Sep 2015 12:59:21 +0200
+Subject: [PATCH] add i2c1 device tree node
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boot/dts/sama5d4.dtsi | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
+index 297e026..07d05b3 100644
+--- a/arch/arm/boot/dts/sama5d4.dtsi
++++ b/arch/arm/boot/dts/sama5d4.dtsi
+@@ -70,6 +70,7 @@
+ 		gpio4 = &pioE;
+ 		tcb0 = &tcb0;
+ 		tcb1 = &tcb1;
++		i2c1 = &i2c1;
+ 		i2c2 = &i2c2;
+ 		pwm0 = &pwm0;
+ 		ssc0 = &ssc0;
+@@ -981,6 +982,25 @@
+ 				status = "disabled";
+ 			};
+ 
++			i2c1: i2c@f8018000 {
++				compatible = "atmel,at91sam9x5-i2c";
++				reg = <0xf8018000 0x4000>;
++				interrupts = <33 IRQ_TYPE_LEVEL_HIGH 6>;
++				dmas = <&dma1
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1))
++					AT91_XDMAC_DT_PERID(4)>,
++				       <&dma1
++					(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1))
++					AT91_XDMAC_DT_PERID(5)>;
++				dma-names = "tx", "rx";
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_i2c1>;
++				#address-cells = <1>;
++				#size-cells = <0>;
++				clocks = <&twi1_clk>;
++				status = "disabled";
++			};
++
+ 			tcb0: timer@f801c000 {
+ 				compatible = "atmel,at91sam9x5-tcb";
+ 				reg = <0xf801c000 0x100>;
+@@ -1454,6 +1474,14 @@
+ 					};
+ 				};
+ 
++				i2c1 {
++					pinctrl_i2c1: i2c1-0 {
++						atmel,pins =
++							<AT91_PIOE 29 AT91_PERIPH_C AT91_PINCTRL_NONE	/* TWD1, conflicts with UART0 RX and DIBP */
++							 AT91_PIOE 30 AT91_PERIPH_C AT91_PINCTRL_NONE>;	/* TWCK1, conflicts with UART0 TX and DIBN */
++					};
++				};
++
+ 				i2c2 {
+ 					pinctrl_i2c2: i2c2-0 {
+ 						atmel,pins =
+-- 
+1.9.1
+
