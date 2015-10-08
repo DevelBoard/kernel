@@ -5,12 +5,22 @@ addons:
     packages:
     - bc
 
+env:
+  global:
+    - GOPATH: $HOME/gopath
+    - PATH: $GOPATH/bin:$PATH
+
 cache:
   directories:
     - $HOME/.buildroot-dl
     - $HOME/.buildroot-ccache
 
+before_install:
+    - eval "$(gimme 1.5.1)"
+    - go get github.com/rasky/multigz/cmd/multigz
+
 script:
     - mkdir -p $HOME/.buildroot-dl
     - ln -s $HOME/.buildroot-dl buildroot/dl
     - make FORCE_CCACHE=1 FORCE_TOOLCHAIN_EXTERNAL=1 -s
+    - multigz --force --rsyncable buildroot/output/images/rootfs.tar
