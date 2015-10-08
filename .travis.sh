@@ -21,10 +21,12 @@ pushd deploy-images
     cp ../buildroot/output/images/{*.bin,*.dtb,*.env,rootfs.tar.gz,zImage} ./
 
     git add -A *.*
-    git commit -m <<EOF ${COMMIT_TITLE}
+
+    cat > .commit-message <<EOF ${COMMIT_TITLE}
 
 Images built automatically from https://github.com/${TRAVIS_REPO_SLUG}/commits/${TRAVIS_COMMIT}
 EOF
+    git commit -F .commit-message
 
     git push origin "${DEPLOY_BRANCH}"
 popd
