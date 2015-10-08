@@ -13,7 +13,7 @@
 nand_header() {
 	# valid for SAMA5D4 Xplained board
 	for i in `seq 1 52`; do
-		printf '\x07\x4e\xe0\xc1'
+		printf '\x05\x24\x90\xc0'
 	done
 }
 

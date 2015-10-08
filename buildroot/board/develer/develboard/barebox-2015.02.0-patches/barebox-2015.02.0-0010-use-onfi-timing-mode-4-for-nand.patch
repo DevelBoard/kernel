@@ -1,0 +1,142 @@
+From 07a6552dbe9d843f2287aef8eb285ade2f9bdaf6 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Thu, 8 Oct 2015 16:56:09 +0200
+Subject: [PATCH] use onfi timing mode 4 for nand
+Organization: Develer S.r.l.
+
+---
+ .../arm/boards/sama5d4_xplained/sama5d4_xplained.c | 111 ++++++++++++++++-----
+ 1 file changed, 85 insertions(+), 26 deletions(-)
+
+diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+index 153dfac..22fbf2a 100644
+--- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
++++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+@@ -48,31 +48,90 @@ static struct atmel_nand_data nand_pdata = {
+ 	.on_flash_bbt	= 1,
+ };
+ 
+-static struct sam9_smc_config cm_nand_smc_config = {
+-	.ncs_read_setup		= 1,
+-	.nrd_setup		= 1,
+-	.ncs_write_setup	= 1,
+-	.nwe_setup		= 1,
+-
+-	.ncs_read_pulse		= 3,
+-	.nrd_pulse		= 2,
+-	.ncs_write_pulse	= 3,
+-	.nwe_pulse		= 2,
+-
+-	.read_cycle		= 5,
+-	.write_cycle		= 5,
+-
+-	.mode			= AT91_SMC_READMODE | AT91_SMC_WRITEMODE | AT91_SMC_EXNWMODE_DISABLE,
+-	.tdf_cycles		= 3,
+-
+-	.tclr			= 2,
+-	.tadl			= 7,
+-	.tar			= 2,
+-	.ocms			= 0,
+-	.trr			= 3,
+-	.twb			= 7,
+-	.rbnsel			= 3,
+-	.nfsel			= 1,
++/**
++ * ONFi 1.0 Timing Modes
++ *
++ *            MODE  0    MODE  1      MODE  2      MODE  3      MODE  4      MODE  5
++ *            Min Max    Min Max      Min Max      Min Max      Min Max      Min Max     Unit
++ *    tADL    200        100          100          100          70           70           ns
++ *    tALH    20         10           10           5            5            5            ns
++ *    tALS    50         25           15           10           10           10           ns
++ *    tAR     25         10           10           10           10           10           ns
++ *    tCEA        100        45           30           25           25           25       ns
++ *    tCH     20         10           10           5            5            5            ns
++ *    tCHZ        100        50           50           50           30           30       ns
++ *    tCLH    20         10           10           5            5            5            ns
++ *    tCLR    20         10           10           10           10           10           ns
++ *    tCLS    50         25           15           10           10           10           ns
++ *    tCOH    0          15           15           15           15           15           ns
++ *    tCS     70         35           25           25           20           15           ns
++ *    tDH     20         10           5            5            5            5            ns
++ *    tDS     40         20           15           10           10           7            ns
++ *    tFEAT       1          1            1            1            1            1        us
++ *    tIR     10         0            0            0            0            0            ns
++ *    tRC     100        50           35           30           25           20           ns
++ *    tREA        40         30           25           20           20           16       ns
++ *    tREH    30         15           15           10           10           7            ns
++ *    tRHOH   0          15           15           15           15           15           ns
++ *    tRHW    200        100          100          100          100          100          ns
++ *    tRHZ        200        100          100          100          100          100      ns
++ *    tRLOH   0          0            0            0            5            5            ns
++ *    tRP     50         25           17           15           12           10           ns
++ *    tRR     40         20           20           20           20           20           ns
++ *    tRST        1000       5/10/500     5/10/500     5/10/500     5/10/500     5/10/500 us
++ *    tWB         200        100          100          100          100          100      ns
++ *    tWC     100        45           35           30           25           20           ns
++ *    tWH     30         15           15           10           10           7            ns
++ *    tWHR    120        80           80           60           60           60           ns
++ *    tWP     50         25           17           15           12           10           ns
++ *    tWW     100        100          100          100          100          100          ns
++ *
++ * Timing Mode 0 shall be supported by all ONFi nand devices.
++ *
++ * The first Read Parameter Page command shall use tR = 200us and tCCS = 500ns,
++ * afterwards correct values are extracted from ONFi page.
++ */
++
++/**
++ * SMC clock frequency is 90MHz (cycle is ~11ns).
++ *
++ * -----------            ------- NCS / NRD
++ * |         |\_________/       |
++ * |         |         |        |
++ * |  setup  |  pulse  |  hold  |
++ * |         |  (tWP)  |  (tWH) |
++ * |         |  (tRP)  | (tREH) |
++ * |                            |
++ * |            cycle           |
++ * |            (tWC)           |
++ * |            (tRC)           |
++ */
++
++static struct sam9_smc_config cm_nand_smc_onfi_mode_4 = {
++	.ncs_read_setup  = 1,
++	.ncs_write_setup = 1,
++	.nrd_setup       = 1,
++	.nwe_setup       = 1,
++
++	.ncs_read_pulse  = 3,
++	.ncs_write_pulse = 3,
++	.nrd_pulse       = 2,
++	.nwe_pulse       = 2,
++
++	.read_cycle      = 3,
++	.write_cycle     = 3,
++
++	.mode            = AT91_SMC_READMODE | AT91_SMC_WRITEMODE | AT91_SMC_EXNWMODE_DISABLE,
++	.tdf_cycles      = 3,
++
++	.tclr            = 2,
++	.tadl            = 7,
++	.tar             = 2,
++	.ocms            = 0,
++	.trr             = 3,
++	.twb             = 7,
++	.rbnsel          = 3,
++	.nfsel           = 1,
+ };
+ 
+ static void ek_add_device_nand(void)
+@@ -82,7 +141,7 @@ static void ek_add_device_nand(void)
+ 	clk_enable(clk);
+ 
+ 	/* configure chip-select 3 (NAND) */
+-	sama5_smc_configure(0, 3, &cm_nand_smc_config);
++	sama5_smc_configure(0, 3, &cm_nand_smc_onfi_mode_4);
+ 
+ 	at91_add_device_nand(&nand_pdata);
+ }
+-- 
+1.9.1
+
