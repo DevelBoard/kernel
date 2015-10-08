@@ -12,6 +12,8 @@ ssh-add .travis.id_rsa
 git config --global user.email "noreply@develer.com"
 git config --global user.name "Develer Bot"
 
+COMMIT_TITLE="$(git log -1 --pretty='%s')"
+
 mkdir deploy-images
 pushd deploy-images
     git clone -b "${DEPLOY_BRANCH}" git@github.com:DevelBoard/images.git .
@@ -19,6 +21,10 @@ pushd deploy-images
     cp ../buildroot/output/images/{*.bin,*.dtb,*.env,rootfs.tar.gz,zImage} ./
 
     git add -A *.*
-    git commit -m "Images built automatically from ${TRAVIS_REPO_SLUG} @ ${TRAVIS_COMMIT}"
+    git commit -m <<EOF ${COMMIT_TITLE}
+
+Images built automatically from https://github.com/${TRAVIS_REPO_SLUG}/commits/${TRAVIS_COMMIT}
+EOF
+
     git push origin "${DEPLOY_BRANCH}"
 popd
