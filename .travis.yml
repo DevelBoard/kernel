@@ -22,7 +22,7 @@ before_install:
 script:
     - mkdir -p $HOME/.buildroot-dl
     - ln -s $HOME/.buildroot-dl buildroot/dl
-    - make FORCE_CCACHE=1 FORCE_TOOLCHAIN_EXTERNAL=1 -s configure-buildroot
+    - make FORCE_CCACHE=1 FORCE_TOOLCHAIN_EXTERNAL=1 configure-buildroot
     - make build-buildroot -s
     - multigz --force --best --rsyncable buildroot/output/images/rootfs.tar
 

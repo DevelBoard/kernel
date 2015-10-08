@@ -24,14 +24,14 @@ _fragments_dir = $(_develboard_dir)/buildroot-fragments
 
 configure-buildroot:
 	$(INFO)
-	$(MAKE) -C $(@:build-%=%) develer_develboard_defconfig
+	$(MAKE) -C $(@:configure-%=%) develer_develboard_defconfig
 ifeq ($(FORCE_CCACHE),1)
 	cat buildroot/$(_fragments_dir)/ccache.config >> $(O)/.config
-	yes "" | $(MAKE) -C $(@:build-%=%) oldconfig
+	yes "" | $(MAKE) -C $(@:configure-%=%) oldconfig
 endif
 ifeq ($(FORCE_TOOLCHAIN_EXTERNAL),1)
 	cat buildroot/$(_fragments_dir)/toolchain-external.config >> $(O)/.config
-	yes "" | $(MAKE) -C $(@:build-%=%) oldconfig
+	yes "" | $(MAKE) -C $(@:configure-%=%) oldconfig
 endif
 
 build-buildroot:
