@@ -22,7 +22,7 @@ pushd deploy-images
 
     git add -A *.*
 
-    cat .commit-message <<EOF
+    cat > .commit-message <<EOF
 ${COMMIT_TITLE}
 
 Images built automatically from https://github.com/${TRAVIS_REPO_SLUG}/commits/${TRAVIS_COMMIT}
