@@ -41,8 +41,8 @@ autoboot_timeout=3
 
 bootargs="console=ttyS0,115200 earlyprintk printk.time=1"
 
-mmc_bootdev="/dev/disk0.0 fat"
-mmc_datadev="/dev/disk0.1 ext4"
+mmc_bootdev=/dev/disk0.0
+mmc_datadev=/dev/disk0.1
 
 # set a fancy prompt (if support is compiled in)
 PS1="\e[1;32mbarebox@\e[1;31m\h:\w\e[0m\n# "
