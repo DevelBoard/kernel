@@ -1,4 +1,4 @@
-From 3f0f0005d187b9715dd1a2f8ea2100e69711b051 Mon Sep 17 00:00:00 2001
+From 03a17ce00c50de20130d3185c138fcec0fe0e5d8 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Tue, 21 Jul 2015 10:49:45 +0200
 Subject: [PATCH] configure heartbeat led
@@ -9,7 +9,7 @@ Organization: Develer S.r.l.
  1 file changed, 1 insertion(+), 7 deletions(-)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index 352ab11..299cbca 100644
+index ec00d1b..aef64c8 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -308,13 +308,7 @@ static void ek_add_device_spi(void) {}
