@@ -68,7 +68,7 @@ if [ -f "$rootfs" ]; then
 	ubiattach /dev/nand0.rootfs
 	ubimkvol /dev/nand0.rootfs.ubi $ubiroot 0
 	echo "Flash rootfs $rootfs"
-	cp "$rootfs" /dev/nand0.rootfs.ubi.rootfs
+	cp -v "$rootfs" /dev/nand0.rootfs.ubi.rootfs
 	ubidetach 0
 fi
 
