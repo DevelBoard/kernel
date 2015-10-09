@@ -17,7 +17,7 @@ pushd deploy-images
     git config user.name "Develer Bot"
 
     cp ../buildroot/output/images/{*.bin,*.dtb,*.env,rootfs.tar.gz,zImage} ./
-    git add -A *.*
+    git add -A .
 
     cat > .commit-message <<EOF
 ${COMMIT_TITLE}
