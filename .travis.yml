@@ -8,6 +8,7 @@ addons:
 env:
   global:
     - GOPATH: $HOME/gopath
+    - GZIP: --rsyncable
     - PATH: $GOPATH/bin:$PATH
 
 cache:
