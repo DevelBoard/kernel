@@ -9,14 +9,13 @@ openssl aes-256-cbc -K $encrypted_bc17f26e8500_key -iv $encrypted_bc17f26e8500_i
 chmod 0600 .travis.id_rsa
 ssh-add .travis.id_rsa
 
-git config --global user.email "noreply@develer.com"
-git config --global user.name "Develer Bot"
-
 COMMIT_TITLE="$(git log -1 --pretty='%s')"
 
 mkdir deploy-images
 pushd deploy-images
     git clone -b "${DEPLOY_BRANCH}" git@github.com:DevelBoard/images.git .
+    git config user.email "noreply@develer.com"
+    git config user.name "Develer Bot"
 
     cp ../buildroot/output/images/{*.bin,*.dtb,*.env,rootfs.tar.gz,zImage} ./
 
