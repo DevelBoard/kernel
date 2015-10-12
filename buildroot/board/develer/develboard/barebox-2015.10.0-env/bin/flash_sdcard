@@ -66,9 +66,9 @@ if [ -f "$rootfs" ]; then
 	erase /dev/nand0.rootfs
 	echo "Create UBI volume"
 	ubiattach /dev/nand0.rootfs
-	ubimkvol /dev/ubi0 $ubiroot 0
+	ubimkvol /dev/nand0.rootfs.ubi $ubiroot 0
 	echo "Flash rootfs $rootfs"
-	cp "$rootfs" /dev/ubi0.rootfs
+	cp -v "$rootfs" /dev/nand0.rootfs.ubi.rootfs
 	ubidetach 0
 fi
 

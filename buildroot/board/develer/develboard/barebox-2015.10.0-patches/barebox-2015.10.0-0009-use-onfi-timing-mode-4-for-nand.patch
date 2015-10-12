@@ -1,4 +1,4 @@
-From 07a6552dbe9d843f2287aef8eb285ade2f9bdaf6 Mon Sep 17 00:00:00 2001
+From 6d66552ac60b6394c8137c69e413809d36682c3b Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Thu, 8 Oct 2015 16:56:09 +0200
 Subject: [PATCH] use onfi timing mode 4 for nand
@@ -9,7 +9,7 @@ Organization: Develer S.r.l.
  1 file changed, 85 insertions(+), 26 deletions(-)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index 153dfac..22fbf2a 100644
+index 5d545bb..c021fc2 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -48,31 +48,90 @@ static struct atmel_nand_data nand_pdata = {

@@ -1,4 +1,4 @@
-From 3e0a1eb5a7cb0761f74a9dc5783b1110831717a2 Mon Sep 17 00:00:00 2001
+From ce42611ace5a5496f481a2e404d5002561e148a4 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Thu, 12 Mar 2015 11:08:04 +0100
 Subject: [PATCH] add support for eeprom at24mac402
@@ -9,7 +9,7 @@ Organization: Develer S.r.l.
  1 file changed, 31 insertions(+)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index f9add74..b45210b 100644
+index 02c178a..3b24d14 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -30,6 +30,7 @@

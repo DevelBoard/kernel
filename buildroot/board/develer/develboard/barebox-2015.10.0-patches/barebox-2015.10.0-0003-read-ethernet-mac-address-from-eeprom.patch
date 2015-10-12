@@ -1,4 +1,4 @@
-From a975543086ec7f41a9dae5cc33961a2f84cfeaf3 Mon Sep 17 00:00:00 2001
+From 83a46dfefa9e7d3414ce1953733d2810f0990049 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Thu, 12 Mar 2015 14:47:02 +0100
 Subject: [PATCH] read ethernet mac address from eeprom
@@ -9,7 +9,7 @@ Organization: Develer S.r.l.
  1 file changed, 31 insertions(+)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index b45210b..66700e1 100644
+index 3b24d14..85edc4f 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -30,6 +30,7 @@

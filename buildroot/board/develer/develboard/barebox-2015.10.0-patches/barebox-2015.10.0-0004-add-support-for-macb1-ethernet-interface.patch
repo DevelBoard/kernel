@@ -1,4 +1,4 @@
-From 41fcd92fa337695d1981cb278074264513cbba39 Mon Sep 17 00:00:00 2001
+From 1634488b6c90be4a82c319bf0d280b0486e00ae7 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Wed, 6 May 2015 10:22:55 +0200
 Subject: [PATCH] add support for macb1 ethernet interface
@@ -13,7 +13,7 @@ Organization: Develer S.r.l.
  5 files changed, 39 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index 66700e1..698b33e 100644
+index 85edc4f..86d243d 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -92,11 +92,20 @@ static void ek_add_device_nand(void)
@@ -116,10 +116,10 @@ index e1b0a64..d8ebf37 100644
  		default:
  			return;
 diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index adb7008..fba4b0e 100644
+index b723a12..6a40912 100644
 --- a/drivers/net/Kconfig
 +++ b/drivers/net/Kconfig
-@@ -126,6 +126,18 @@ config DRIVER_NET_MACB
+@@ -135,6 +135,18 @@ config DRIVER_NET_MACB
  	depends on HAS_MACB
  	select PHYLIB
  

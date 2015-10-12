@@ -1,4 +1,4 @@
-From c23397bd8d26d640f8068a49b1fc0460d40e585d Mon Sep 17 00:00:00 2001
+From 20cb1c0bf2c95c32cc5eac8e8c9de8abdd62e112 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 13 Jul 2015 18:06:44 +0200
 Subject: [PATCH] mmc card detect gpio is not available
@@ -9,7 +9,7 @@ Organization: Develer S.r.l.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index 698b33e..1870943 100644
+index 86d243d..b5718c2 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -201,7 +201,7 @@ static void ek_add_device_lcdc(void) {}
