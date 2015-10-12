@@ -1,6 +1,6 @@
 # use `make FORCE_CCACHE=1` to force enable ccache
 
-all: build-buildroot
+all: configure-buildroot build-buildroot
 
 clean: clean-buildroot
 
