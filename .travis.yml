@@ -27,5 +27,9 @@ script:
     - make build-buildroot -s
     - multigz --force --best --rsyncable buildroot/output/images/rootfs.tar
 
-after_success:
-    - test "${TRAVIS_BRANCH}" = "master" && ./.travis.sh
+deploy:
+    provider: script
+    script: ./.travis.sh
+    skip_cleanup: true
+    on:
+        branch: master
