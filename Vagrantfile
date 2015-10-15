@@ -21,6 +21,8 @@ Vagrant.configure(2) do |config|
     config.vm.provider "virtualbox" do |vm|
         vm.memory = 4096
         vm.cpus = 2
+        vm.customize ["modifyvm", :id, "--usb", "on"]
+        vm.customize ["modifyvm", :id, "--usbehci", "on"]
     end
     config.ssh.forward_agent = true
 end
