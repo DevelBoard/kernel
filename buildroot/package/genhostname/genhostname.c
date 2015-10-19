@@ -21,9 +21,13 @@
  */
 
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
 #include <getopt.h>
 #include <ctype.h>
+#include <endian.h>
 
 #define DEFAULT_PREFIX "DevelBoard"
 #define DEFAULT_IFACE  "eth0"
@@ -91,17 +95,47 @@ int main(int argc, char *argv[])
         }
         fclose(f);
 
+        // Extract hardware revision from EEPROM
+        strncpy(path, "/sys/bus/i2c/devices/0-0050/eeprom", sizeof(path));
+        int fd = open(path, O_RDONLY);
+        if (fd == -1) {
+                fprintf(stderr, "error: cannot open %s: ", path);
+                perror("");
+                return 2;
+        }
+
+        uint16_t protover;
+        if (read(fd, &protover, sizeof(protover)) != sizeof(protover)) {
+                fprintf(stderr, "error: cannot read protocol version from %s: ", path);
+                perror("");
+                return 2;
+        }
+        protover = le16toh(protover);
+
+        uint16_t hwver;
+        if (read(fd, &hwver, sizeof(hwver)) != sizeof(hwver)) {
+                fprintf(stderr, "error: cannot read hardware version from %s: ", path);
+                perror("");
+                return 2;
+        }
+        hwver = le16toh(hwver);
+
+        close(fd);
+
+        char serialfmt[18];
+        if (hwver <= 255)
+            strncpy(serialfmt, "%c%c%c%c%c%c%02X", sizeof(serialfmt));
+        else
+            strncpy(serialfmt, "%c%c%c%c%c%c%04X", sizeof(serialfmt));
+
+        char serialnum[12];
+        snprintf(serialnum, sizeof(serialnum), serialfmt,
+            toupper(mac[9]), toupper(mac[10]), toupper(mac[12]),
+                toupper(mac[13]), toupper(mac[15]), toupper(mac[16]),
+                    hwver);
+
         char hostname[64];
-        strcpy(hostname, prefix);
-        char *h = hostname + strlen(prefix);
-        *h++ = '-';
-        *h++ = toupper(mac[9]);
-        *h++ = toupper(mac[10]);
-        *h++ = toupper(mac[12]);
-        *h++ = toupper(mac[13]);
-        *h++ = toupper(mac[15]);
-        *h++ = toupper(mac[16]);
-        *h = 0;
+        snprintf(hostname, sizeof(hostname), "%s-%s", prefix, serialnum);
 
         // Set the hostname before writing it to /etc/hostname so that the kernel uses the generated
         // one regardless of whether the fs is writable or not.
@@ -128,9 +162,7 @@ int main(int argc, char *argv[])
             fprintf(f, "\t<service>\n");
             fprintf(f, "\t\t<type>_dboard-discover._tcp</type>\n");
             fprintf(f, "\t\t<port>22</port>\n");
-            fprintf(f, "\t\t<txt-record>serial=%c%c%c%c%c%c</txt-record>\n",
-                toupper(mac[9]), toupper(mac[10]), toupper(mac[12]),
-                    toupper(mac[13]), toupper(mac[15]), toupper(mac[16]));
+            fprintf(f, "\t\t<txt-record>serial=%s</txt-record>\n", serialnum);
             fprintf(f, "\t</service>\n");
             fprintf(f, "</service-group>\n");
             fclose(f);
