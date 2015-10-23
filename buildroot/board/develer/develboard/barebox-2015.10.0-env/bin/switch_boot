@@ -27,7 +27,7 @@ if [ "x${global.boot_loc.rootfs}" = "xnand" ]; then
 	global bootm.initrd=
 
 elif [ "x${global.boot_loc.rootfs}" = "xtftp" ] || [ "x${global.boot_loc.rootfs}" = "xmmc" ]; then
-	global linux.bootargs.rootfs="root=/dev/ram0 rdinit=/init"
+	global linux.bootargs.rootfs="root=/dev/ram0 rdinit=/sbin/init"
 	global bootm.initrd="$initrdimage"
 
 elif [ "x${global.boot_loc.rootfs}" = "xmmc-rw" ]; then
