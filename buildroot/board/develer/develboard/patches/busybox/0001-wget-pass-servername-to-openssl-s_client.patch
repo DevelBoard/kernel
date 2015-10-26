@@ -1,0 +1,57 @@
+From fe0e943eedb244536f0b09b43858177803d7d851 Mon Sep 17 00:00:00 2001
+From: Lorenzo Villani <lvillani@develer.com>
+Date: Fri, 23 Oct 2015 17:22:47 +0200
+Subject: [PATCH 1/2] wget: pass -servername to openssl s_client
+
+Required for servers using SNI.
+---
+ networking/wget.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/networking/wget.c b/networking/wget.c
+index 6c8bd90..e70783a 100644
+--- a/networking/wget.c
++++ b/networking/wget.c
+@@ -523,6 +523,7 @@ static FILE* prepare_ftp_session(FILE **dfpp, struct host_info *target, len_and_
+ static int spawn_https_helper(const char *host, unsigned port)
+ {
+ 	char *allocated = NULL;
++	char *hostport = NULL;
+ 	int sp[2];
+ 	int pid;
+ 
+@@ -531,12 +532,14 @@ static int spawn_https_helper(const char *host, unsigned port)
+ 		bb_perror_msg_and_die("socketpair");
+ 
+ 	if (!strchr(host, ':'))
+-		host = allocated = xasprintf("%s:%u", host, port);
++		hostport = allocated = xasprintf("%s:%u", host, port);
++	else
++		hostport = host;
+ 
+ 	pid = BB_MMU ? xfork() : xvfork();
+ 	if (pid == 0) {
+ 		/* Child */
+-		char *argv[6];
++		char *argv[8];
+ 
+ 		close(sp[0]);
+ 		xmove_fd(sp[1], 0);
+@@ -555,9 +558,11 @@ static int spawn_https_helper(const char *host, unsigned port)
+ 		argv[0] = (char*)"openssl";
+ 		argv[1] = (char*)"s_client";
+ 		argv[2] = (char*)"-quiet";
+-		argv[3] = (char*)"-connect";
+-		argv[4] = (char*)host;
+-		argv[5] = NULL;
++		argv[3] = (char*)"-servername";
++		argv[4] = host;
++		argv[5] = (char*)"-connect";
++		argv[6] = hostport;
++		argv[7] = NULL;
+ 		BB_EXECVP(argv[0], argv);
+ 		xmove_fd(3, 2);
+ 		bb_perror_msg_and_die("can't execute '%s'", argv[0]);
+-- 
+2.6.2
+
