@@ -1,0 +1,45 @@
+From 3d037ed901f7723677bcf99b6fe2753405078d7f Mon Sep 17 00:00:00 2001
+From: Lorenzo Villani <lvillani@develer.com>
+Date: Fri, 23 Oct 2015 17:23:16 +0200
+Subject: [PATCH 2/2] wget: verify SSL certificate offered by the server
+
+---
+ networking/wget.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/networking/wget.c b/networking/wget.c
+index e70783a..fc3194d 100644
+--- a/networking/wget.c
++++ b/networking/wget.c
+@@ -539,7 +539,7 @@ static int spawn_https_helper(const char *host, unsigned port)
+ 	pid = BB_MMU ? xfork() : xvfork();
+ 	if (pid == 0) {
+ 		/* Child */
+-		char *argv[8];
++		char *argv[11];
+ 
+ 		close(sp[0]);
+ 		xmove_fd(sp[1], 0);
+@@ -558,11 +558,14 @@ static int spawn_https_helper(const char *host, unsigned port)
+ 		argv[0] = (char*)"openssl";
+ 		argv[1] = (char*)"s_client";
+ 		argv[2] = (char*)"-quiet";
+-		argv[3] = (char*)"-servername";
+-		argv[4] = host;
+-		argv[5] = (char*)"-connect";
+-		argv[6] = hostport;
+-		argv[7] = NULL;
++		argv[3] = (char*)"-verify";
++		argv[4] = (char*)"0";
++		argv[5] = (char*)"-verify_return_error";
++		argv[6] = (char*)"-servername";
++		argv[7] = host;
++		argv[8] = (char*)"-connect";
++		argv[9] = hostport;
++		argv[10] = NULL;
+ 		BB_EXECVP(argv[0], argv);
+ 		xmove_fd(3, 2);
+ 		bb_perror_msg_and_die("can't execute '%s'", argv[0]);
+-- 
+2.6.2
+
