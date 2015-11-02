@@ -6,6 +6,9 @@
 mkdir -p /sdcard_boot && mount $mmc_bootdev /sdcard_boot
 mkdir -p /sdcard_data && mount $mmc_datadev /sdcard_data
 
+# Disable nand write protection
+dboard_nand_protect off
+
 # Flash bootstrap
 bootstrap=/sdcard_boot/at91bootstrap.bin
 if [ -f "$bootstrap" ]; then
@@ -71,6 +74,9 @@ if [ -f "$rootfs" ]; then
 	cp -v "$rootfs" /dev/nand0.rootfs.ubi.rootfs
 	ubidetach 0
 fi
+
+# Enable nand write protection
+dboard_nand_protect on
 
 umount /sdcard_boot
 umount /sdcard_data

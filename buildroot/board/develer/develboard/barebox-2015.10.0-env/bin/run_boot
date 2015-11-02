@@ -25,4 +25,7 @@ elif [ "x${global.boot_loc.rootfs}" = "xmmc" ]; then
 	umount /mmc
 fi
 
+# enable/disable nand write protection
+dboard_nand_protect $nand_write_protection
+
 bootm
