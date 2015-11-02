@@ -1,0 +1,81 @@
+From 5ee0394782c34b860d51df31c78b5a7e73c21c91 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Mon, 2 Nov 2015 10:28:16 +0100
+Subject: [PATCH] enable nand write protection after loading image
+Organization: Develer S.r.l.
+
+---
+ board/sama5d4_xplained/sama5d4_xplained.c |  1 +
+ board/sama5d4_xplained/sama5d4_xplained.h |  1 +
+ driver/nandflash.c                        | 18 ++++++++++++++++++
+ 3 files changed, 20 insertions(+)
+
+diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
+index 31e5f47..8b173ac 100644
+--- a/board/sama5d4_xplained/sama5d4_xplained.c
++++ b/board/sama5d4_xplained/sama5d4_xplained.c
+@@ -772,6 +772,7 @@ void nandflash_hw_init(void)
+ 		{"D5",	AT91C_PIN_PC(10), 0, PIO_PULLUP, PIO_PERIPH_A},
+ 		{"D6",	AT91C_PIN_PC(11), 0, PIO_PULLUP, PIO_PERIPH_A},
+ 		{"D7",	AT91C_PIN_PC(12), 0, PIO_PULLUP, PIO_PERIPH_A},
++		{"WP",	CONFIG_SYS_NAND_WP_PIN, 0, PIO_DEFAULT, PIO_OUTPUT},
+ 		{(char *)0, 0, 0, PIO_DEFAULT, PIO_PERIPH_A},
+ 	};
+ 
+diff --git a/board/sama5d4_xplained/sama5d4_xplained.h b/board/sama5d4_xplained/sama5d4_xplained.h
+index 97f4155..7b8e95a 100644
+--- a/board/sama5d4_xplained/sama5d4_xplained.h
++++ b/board/sama5d4_xplained/sama5d4_xplained.h
+@@ -154,6 +154,7 @@
+ #define CONFIG_SYS_NAND_ALE_PIN		AT91C_PIN_PC(17)
+ #define CONFIG_SYS_NAND_CLE_PIN		AT91C_PIN_PC(18)
+ #define CONFIG_SYS_NAND_ENABLE_PIN      AT91C_PIN_PC(15)
++#define CONFIG_SYS_NAND_WP_PIN      AT91C_PIN_PD(18)
+ 
+ #define	NO_GALOIS_TABLE_IN_ROM
+ 
+diff --git a/driver/nandflash.c b/driver/nandflash.c
+index 17d2c0a..df94c90 100644
+--- a/driver/nandflash.c
++++ b/driver/nandflash.c
+@@ -148,6 +148,20 @@ static void nand_cs_disable(void)
+ #endif
+ }
+ 
++static void nand_wp_enable(void)
++{
++#ifdef CONFIG_SYS_NAND_WP_PIN
++	pio_set_gpio_output(CONFIG_SYS_NAND_WP_PIN, 0);
++#endif
++}
++
++static void nand_wp_disable(void)
++{
++#ifdef CONFIG_SYS_NAND_WP_PIN
++	pio_set_gpio_output(CONFIG_SYS_NAND_WP_PIN, 1);
++#endif
++}
++
+ #ifdef CONFIG_NANDFLASH_SMALL_BLOCKS
+ static void config_nand_ooblayout(struct nand_ooblayout *layout,
+ 				struct nand_info *nand,
+@@ -937,6 +951,8 @@ int load_nandflash(struct image_info *image)
+ 
+ 	nandflash_hw_init();
+ 
++	nand_wp_disable();
++
+ 	if (nandflash_get_type(&nand))
+ 		return -1;
+ 
+@@ -989,5 +1005,7 @@ int load_nandflash(struct image_info *image)
+ 		return ret;
+ #endif
+ 
++	nand_wp_enable();
++
+ 	return 0;
+  }
+-- 
+1.9.1
+
