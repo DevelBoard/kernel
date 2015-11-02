@@ -1,0 +1,92 @@
+From 946b237ec1e8a14f9d8143ab35c3607e3b42b2e5 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Mon, 2 Nov 2015 10:07:23 +0100
+Subject: [PATCH] initialize pio banks as input gpio
+Organization: Develer S.r.l.
+
+---
+ Config.in                                 |  7 +++++++
+ board/sama5d4_xplained/sama5d4_xplained.c | 26 ++++++++++++++++++++++++++
+ toplevel_cpp.mk                           |  4 ++++
+ 3 files changed, 37 insertions(+)
+
+diff --git a/Config.in b/Config.in
+index 29da9ec..ab0330f 100644
+--- a/Config.in
++++ b/Config.in
+@@ -321,6 +321,13 @@ config CONFIG_HW_INIT
+ 	help
+ 	  Initialize Hardware
+ 
++config CONFIG_HW_INIT_PIO
++	bool "Initialize PIO banks as input gpio"
++	default n
++	depends on CONFIG_HW_INIT
++	help
++		Set all PIO pins as input without pull-up/pull-down, before configuration of any other hardware peripheral
++
+ config CONFIG_USER_HW_INIT
+ 	bool "Call User specific Hardware Initialization"
+ 	help
+diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
+index b3bcbb5..31e5f47 100644
+--- a/board/sama5d4_xplained/sama5d4_xplained.c
++++ b/board/sama5d4_xplained/sama5d4_xplained.c
+@@ -92,6 +92,29 @@ static void initialize_dbgu(void)
+ 	usart_init(BAUDRATE(MASTER_CLOCK / 2, baudrate));
+ }
+ 
++#if defined(CONFIG_HW_INIT_PIO)
++static void initialize_pio_bank(unsigned int pio)
++{
++	writel(0xFFFFFFFF, pio + PIO_IDR);
++	writel(0xFFFFFFFF, pio + PIO_IFDR);
++	writel(0xFFFFFFFF, pio + PIO_PPUDR);
++	writel(0xFFFFFFFF, pio + PIO_PPDDR);
++	writel(0xFFFFFFFF, pio + PIO_ODR);
++	writel(0xFFFFFFFF, pio + PIO_PER);
++}
++
++static void initialize_pio_banks(void)
++{
++	initialize_pio_bank(AT91C_BASE_PIOA);
++	initialize_pio_bank(AT91C_BASE_PIOB);
++	initialize_pio_bank(AT91C_BASE_PIOC);
++	initialize_pio_bank(AT91C_BASE_PIOD);
++	initialize_pio_bank(AT91C_BASE_PIOE);
++}
++#else
++static void initialize_pio_banks(void) {}
++#endif
++
+ #ifdef CONFIG_DDR2
+ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
+ {
+@@ -612,6 +635,9 @@ void at91_disable_mac_clock(void)
+ #ifdef CONFIG_HW_INIT
+ void hw_init(void)
+ {
++	/* Initialize all pins as input without pull-up / pull-down */
++	initialize_pio_banks();
++
+ 	/* Disable watchdog */
+ 	at91_disable_wdt();
+ 
+diff --git a/toplevel_cpp.mk b/toplevel_cpp.mk
+index 81ef55e..31a0810 100644
+--- a/toplevel_cpp.mk
++++ b/toplevel_cpp.mk
+@@ -29,6 +29,10 @@ ifeq ($(CONFIG_HW_INIT),y)
+ CPPFLAGS += -DCONFIG_HW_INIT
+ endif
+ 
++ifeq ($(CONFIG_HW_INIT_PIO),y)
++CPPFLAGS += -DCONFIG_HW_INIT_PIO
++endif
++
+ ifeq ($(CONFIG_USER_HW_INIT),y)
+ CPPFLAGS += -DCONFIG_USER_HW_INIT
+ endif
+-- 
+1.9.1
+
