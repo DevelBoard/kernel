@@ -1,0 +1,54 @@
+From 43d37e88aaadcf0b450c0c683a35ecbc8edccd84 Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Tue, 3 Nov 2015 10:39:26 +0100
+Subject: [PATCH] unprotect nand write at startup
+Organization: Develer S.r.l.
+
+---
+ arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c | 1 +
+ arch/arm/mach-at91/include/mach/board.h             | 1 +
+ arch/arm/mach-at91/sama5d4_devices.c                | 4 ++++
+ 3 files changed, 6 insertions(+)
+
+diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+index c021fc2..f152726 100644
+--- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
++++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+@@ -43,6 +43,7 @@ static struct atmel_nand_data nand_pdata = {
+ 	.det_pin	= -EINVAL,
+ 	.rdy_pin	= -EINVAL,
+ 	.enable_pin	= -EINVAL,
++	.wp_pin		= AT91_PIN_PD18,
+ 	.ecc_mode	= NAND_ECC_HW,
+ 	.has_pmecc	= 1,
+ 	.on_flash_bbt	= 1,
+diff --git a/arch/arm/mach-at91/include/mach/board.h b/arch/arm/mach-at91/include/mach/board.h
+index 491b220..7365033 100644
+--- a/arch/arm/mach-at91/include/mach/board.h
++++ b/arch/arm/mach-at91/include/mach/board.h
+@@ -58,6 +58,7 @@ struct atmel_nand_data {
+ 	int		enable_pin;	/* chip enable */
+ 	int		det_pin;	/* card detect */
+ 	int		rdy_pin;	/* ready/busy */
++	int		wp_pin;		/* write protection (active low) */
+ 	u8		ale;		/* address line number connected to ALE */
+ 	u8		cle;		/* address line number connected to CLE */
+ 	u8		bus_width_16;	/* buswidth is 16 bit */
+diff --git a/arch/arm/mach-at91/sama5d4_devices.c b/arch/arm/mach-at91/sama5d4_devices.c
+index d8ebf37..eba69fc 100644
+--- a/arch/arm/mach-at91/sama5d4_devices.c
++++ b/arch/arm/mach-at91/sama5d4_devices.c
+@@ -91,6 +91,10 @@ void __init at91_add_device_nand(struct atmel_nand_data *data)
+ 	if (gpio_is_valid(data->det_pin))
+ 		at91_set_gpio_input(data->det_pin, 1);
+ 
++	/* disable write protection */
++	if (gpio_is_valid(data->wp_pin))
++		at91_set_gpio_output(data->wp_pin, 1);
++
+ 	add_generic_device_res("atmel_nand", 0, nand_resources,
+ 			       ARRAY_SIZE(nand_resources), data);
+ }
+-- 
+1.9.1
+
