@@ -53,4 +53,7 @@ menu -e -a -m test -c 'true' -d "<-"
 # Boot from default location specify in config file.
 switch_boot -k $kernel_loc -r $rootfs_loc
 
+# Enable nand write protection
+dboard_nand_protect on
+
 menu -s -m boot -A $autoboot_timeout

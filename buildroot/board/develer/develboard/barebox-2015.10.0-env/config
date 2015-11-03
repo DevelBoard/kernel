@@ -31,6 +31,7 @@ initrdimage=rootfs.cpio.gz
 # The device tree image to pass the kernel
 oftreeimage=at91-sama5d4_xplained.dtb
 
+nand_write_protection=off
 nand_device=atmel_nand
 nand_parts="256k(at91bootstrap),512k(barebox)ro,256k(bareboxenv),256k(bareboxenv2),256k(spare),512k(oftree),6M(kernel),-(rootfs)"
 rootfs_mtdblock_nand=7
