@@ -122,17 +122,16 @@ int main(int argc, char *argv[])
 
         close(fd);
 
-        char serialfmt[18];
+        char hwrevision[6];
         if (hwver <= 255)
-            strncpy(serialfmt, "%c%c%c%c%c%c%02X", sizeof(serialfmt));
+            snprintf(hwrevision, sizeof(hwrevision), "%02X", hwver);
         else
-            strncpy(serialfmt, "%c%c%c%c%c%c%04X", sizeof(serialfmt));
+            snprintf(hwrevision, sizeof(hwrevision), "%04X", hwver);
 
-        char serialnum[12];
-        snprintf(serialnum, sizeof(serialnum), serialfmt,
+        char serialnum[8];
+        snprintf(serialnum, sizeof(serialnum), "%c%c%c%c%c%c",
             toupper(mac[9]), toupper(mac[10]), toupper(mac[12]),
-                toupper(mac[13]), toupper(mac[15]), toupper(mac[16]),
-                    hwver);
+                toupper(mac[13]), toupper(mac[15]), toupper(mac[16]));
 
         char hostname[64];
         snprintf(hostname, sizeof(hostname), "%s-%s", prefix, serialnum);
@@ -163,6 +162,7 @@ int main(int argc, char *argv[])
             fprintf(f, "\t\t<type>_dboard-discover._tcp</type>\n");
             fprintf(f, "\t\t<port>22</port>\n");
             fprintf(f, "\t\t<txt-record>serial=%s</txt-record>\n", serialnum);
+            fprintf(f, "\t\t<txt-record>hwrev=%s</txt-record>\n", hwrevision);
             fprintf(f, "\t</service>\n");
             fprintf(f, "</service-group>\n");
             fclose(f);
