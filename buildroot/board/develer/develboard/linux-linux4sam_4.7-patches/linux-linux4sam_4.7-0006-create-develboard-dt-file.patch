@@ -1,35 +1,38 @@
-From 5ac3956788ff1dd0c6f4911da50ff5abc4b7fd21 Mon Sep 17 00:00:00 2001
+From 8b8916d775a9c0bf233d392ee7e1a000dee3341d Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Wed, 4 Nov 2015 10:29:03 +0100
 Subject: [PATCH] create develboard dt file
 Organization: Develer S.r.l.
 
 ---
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/at91-sama5d4_develboard.dts | 201 ++++++++++++++++++++++++++
- 2 files changed, 202 insertions(+)
+ arch/arm/boot/dts/Makefile                         |   2 +
+ arch/arm/boot/dts/at91-sama5d4_develboard.dts      | 165 +++++++++++++++++++++
+ .../arm/boot/dts/at91-sama5d4_develboard_eva01.dts |  90 +++++++++++
+ 3 files changed, 257 insertions(+)
  create mode 100644 arch/arm/boot/dts/at91-sama5d4_develboard.dts
+ create mode 100644 arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 69210b1..8f91e2d 100644
+index 69210b1..bbbf346 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -76,6 +76,7 @@ dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_xplained.dtb
+@@ -76,6 +76,8 @@ dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_xplained.dtb
  dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_xplained_hdmi.dtb
  dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_xplained_pda4.dtb
  dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4ek.dtb
 +dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_develboard.dtb
++dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_develboard_eva01.dtb
  
  dtb-$(CONFIG_ARCH_ATLAS6) += atlas6-evb.dtb
  dtb-$(CONFIG_ARCH_AXXIA) += axm5516-amarillo.dtb
 diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard.dts b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
 new file mode 100644
-index 0000000..9f6cca5
+index 0000000..47dbdbc
 --- /dev/null
 +++ b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
-@@ -0,0 +1,201 @@
+@@ -0,0 +1,165 @@
 +/*
-+ * at91-sama5d4_develboard.dts - Device Tree file for SAMA5D4 DevelBoard board
++ * at91-sama5d4_develboard.dtsi - Device Tree file for SAMA5D4 DevelBoard SoC
 + *
 + *  Copyright (C) 2015 Develer,
 + *                2015 Mirko Damiani <mirko@develer.com>
@@ -76,7 +79,7 @@ index 0000000..9f6cca5
 +#include "sama5d4.dtsi"
 +
 +/ {
-+	model = "Atmel SAMA5D4 DevelBoard";
++	model = "Atmel SAMA5D4 DevelBoard SoC";
 +	compatible = "atmel,sama5d4-develboard", "atmel,sama5d4", "atmel,sama5";
 +
 +	chosen {
@@ -119,30 +122,7 @@ index 0000000..9f6cca5
 +				};
 +			};
 +
-+			mmc1: mmc@fc000000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
-+				status = "okay";
-+				slot@0 {
-+					reg = <0>;
-+					bus-width = <4>;
-+				};
-+			};
-+
 +			usart3: serial@fc00c000 {
-+				status = "okay";
-+			};
-+
-+			usart4: serial@fc010000 {
-+				status = "okay";
-+			};
-+
-+			usart2: serial@fc008000 {
-+				status = "okay";
-+			};
-+
-+			adc0: adc@fc034000 {
-+				atmel,adc-vref = <3300>;
 +				status = "okay";
 +			};
 +
@@ -151,7 +131,7 @@ index 0000000..9f6cca5
 +			};
 +
 +			pinctrl@fc06a000 {
-+				board {
++				mmc0 {
 +					pinctrl_mmc0_clk_cmd_dat: mmc0_clk_cmd_dat {
 +						atmel,pins = <
 +							AT91_PIOC 4 AT91_PERIPH_B AT91_PINCTRL_NONE     /* MCI0_CK */
@@ -164,19 +144,6 @@ index 0000000..9f6cca5
 +					};
 +				};
 +			};
-+		};
-+
-+		usb0: gadget@00400000 {
-+			status = "okay";
-+		};
-+
-+		usb1: ohci@00500000 {
-+			num-ports = <3>;
-+			status = "okay";
-+		};
-+
-+		usb2: ehci@00600000 {
-+			status = "okay";
 +		};
 +
 +		nand0: nand@80000000 {
@@ -226,6 +193,102 @@ index 0000000..9f6cca5
 +			label = "d10";
 +			gpios = <&pioB 31 GPIO_ACTIVE_HIGH>;
 +			linux,default-trigger = "heartbeat";
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
+new file mode 100644
+index 0000000..ce3de19
+--- /dev/null
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
+@@ -0,0 +1,90 @@
++/*
++ * at91-sama5d4_develboard_eva01.dts - Device Tree file for SAMA5D4 DevelBoard Evaluation Board
++ *
++ *  Copyright (C) 2015 Develer,
++ *                2015 Mirko Damiani <mirko@develer.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++#include "at91-sama5d4_develboard.dts"
++
++/ {
++	model = "Atmel SAMA5D4 DevelBoard EVA01";
++	compatible = "atmel,sama5d4-develboard-eva01", "atmel,sama5d4-develboard", "atmel,sama5d4", "atmel,sama5";
++
++	ahb {
++		apb {
++			mmc1: mmc@fc000000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
++				status = "okay";
++				slot@0 {
++					reg = <0>;
++					bus-width = <4>;
++				};
++			};
++
++			usart2: serial@fc008000 {
++				status = "okay";
++			};
++
++			usart4: serial@fc010000 {
++				status = "okay";
++			};
++
++			adc0: adc@fc034000 {
++				atmel,adc-vref = <3300>;
++				status = "okay";
++			};
++		};
++
++		usb0: gadget@00400000 {
++			status = "okay";
++		};
++
++		usb1: ohci@00500000 {
++			num-ports = <3>;
++			status = "okay";
++		};
++
++		usb2: ehci@00600000 {
++			status = "okay";
 +		};
 +	};
 +};
