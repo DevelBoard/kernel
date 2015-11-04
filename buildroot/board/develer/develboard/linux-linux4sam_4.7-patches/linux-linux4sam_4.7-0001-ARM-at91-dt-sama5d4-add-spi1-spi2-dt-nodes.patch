@@ -1,18 +1,21 @@
-From 472455a3e74711997385429a2fb3615f06aeb75e Mon Sep 17 00:00:00 2001
-From: Mirko Damiani <mirko@develer.com>
-Date: Fri, 25 Sep 2015 11:53:02 +0200
-Subject: [PATCH] add spi1 and spi2 device tree nodes
+From 11b3383401186ab60cebb73b6b1a5d15acf5a1cb Mon Sep 17 00:00:00 2001
+From: Suchang Ko <suchangko@samul.kr>
+Date: Tue, 12 May 2015 15:34:43 +0900
+Subject: [PATCH] ARM: at91/dt: sama5d4: add spi1, spi2 dt nodes
 Organization: Develer S.r.l.
 
+Signed-off-by: Suchang Ko <suchangko@samul.kr>
+[nicolas.ferre@atmel.com: split patch, reorder & whitespace fixes]
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 ---
  arch/arm/boot/dts/sama5d4.dtsi | 60 ++++++++++++++++++++++++++++++++++++++++++
  1 file changed, 60 insertions(+)
 
 diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 2b07533..297e026 100644
+index 14de59f..2610c71 100644
 --- a/arch/arm/boot/dts/sama5d4.dtsi
 +++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -922,6 +922,46 @@
+@@ -1164,6 +1164,46 @@
  				status = "disabled";
  			};
  
@@ -56,10 +59,10 @@ index 2b07533..297e026 100644
 +				status = "disabled";
 +			};
 +
- 			i2c0: i2c@f8014000 {
- 				compatible = "atmel,at91sam9x5-i2c";
- 				reg = <0xf8014000 0x4000>;
-@@ -1679,6 +1719,26 @@
+ 			tcb1: timer@fc020000 {
+ 				compatible = "atmel,at91sam9x5-tcb";
+ 				reg = <0xfc020000 0x100>;
+@@ -1649,6 +1689,26 @@
  					};
  				};
  

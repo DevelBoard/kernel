@@ -1,0 +1,26 @@
+From 893a46fd5839b999a427cc1e0e3e4c96b012d4c5 Mon Sep 17 00:00:00 2001
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Date: Fri, 6 Feb 2015 15:22:12 +0100
+Subject: [PATCH] ARM: at91/dt: sama5d4: add missing alias for i2c0
+Organization: Develer S.r.l.
+
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+---
+ arch/arm/boot/dts/sama5d4.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
+index 2610c71..9361b45 100644
+--- a/arch/arm/boot/dts/sama5d4.dtsi
++++ b/arch/arm/boot/dts/sama5d4.dtsi
+@@ -70,6 +70,7 @@
+ 		gpio4 = &pioE;
+ 		tcb0 = &tcb0;
+ 		tcb1 = &tcb1;
++		i2c0 = &i2c0;
+ 		i2c2 = &i2c2;
+ 		pwm0 = &pwm0;
+ 		ssc0 = &ssc0;
+-- 
+1.9.1
+

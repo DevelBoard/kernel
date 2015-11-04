@@ -1,7 +1,7 @@
-From dff32f9e5b42f09016ad0c4f2caec2b652edb9bd Mon Sep 17 00:00:00 2001
+From f3c34788a36e7cf667ccad1308e1e729ce90549e Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Tue, 5 May 2015 16:06:28 +0200
-Subject: [PATCH] add macb1 ethernet
+Subject: [PATCH] add macb1 dt node
 Organization: Develer S.r.l.
 
 Conflicts:
@@ -13,10 +13,10 @@ Conflicts:
  1 file changed, 30 insertions(+)
 
 diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 14de59f..a79ad68 100644
+index dbc9dfd..e674e00 100644
 --- a/arch/arm/boot/dts/sama5d4.dtsi
 +++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -962,6 +962,19 @@
+@@ -983,6 +983,19 @@
  				status = "disabled";
  			};
  
@@ -36,7 +36,7 @@ index 14de59f..a79ad68 100644
  			sha@fc050000 {
  				compatible = "atmel,at91sam9g46-sha";
  				reg = <0xfc050000 0x100>;
-@@ -1554,6 +1567,23 @@
+@@ -1623,6 +1636,23 @@
  					};
  				};
  

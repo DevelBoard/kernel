@@ -1,27 +1,27 @@
-From 16e8448c3f6d7ccb28113a255ad5ca1d89e30825 Mon Sep 17 00:00:00 2001
+From 3150567574d7e6ba1640170d9c1d86d68e97011d Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
-Date: Wed, 20 May 2015 10:59:33 +0200
+Date: Wed, 4 Nov 2015 11:20:41 +0100
 Subject: [PATCH] support wl18xx wifi on at91 sama5d4 board
 Organization: Develer S.r.l.
 
 ---
- arch/arm/boot/dts/at91-sama5d4_xplained.dts |  28 ++++++
- arch/arm/mach-at91/board-dt-sama5.c         | 134 ++++++++++++++++++++++++++++
- drivers/net/wireless/ti/wlcore/sdio.c       |   8 ++
- include/linux/wl12xx.h                      |   8 ++
- 4 files changed, 178 insertions(+)
+ arch/arm/boot/dts/at91-sama5d4_develboard.dts |  26 +++++
+ arch/arm/mach-at91/board-dt-sama5.c           | 134 ++++++++++++++++++++++++++
+ drivers/net/wireless/ti/wlcore/sdio.c         |   8 ++
+ include/linux/wl12xx.h                        |   8 ++
+ 4 files changed, 176 insertions(+)
 
-diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-index 8c74ab8..bfaba83 100644
---- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard.dts b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
+index 9f6cca5..d84a51f 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
 @@ -89,6 +89,27 @@
  				};
  			};
  
 +			mmc0: mmc@f8000000 {
 +				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 &pinctrl_wlan_irq>;
++				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat &pinctrl_wlan_irq>;
 +				status = "disabled";
 +
 +				non-removable;
@@ -43,20 +43,18 @@ index 8c74ab8..bfaba83 100644
  			mmc1: mmc@fc000000 {
  				pinctrl-names = "default";
  				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
-@@ -121,6 +142,13 @@
- 			};
- 
- 			pinctrl@fc06a000 {
-+				board {
+@@ -132,6 +153,11 @@
+ 							AT91_PIOE 4 AT91_PERIPH_B AT91_PINCTRL_PULL_UP  /* MCI0_DB3 */
+ 						>;
+ 					};
 +					pinctrl_wlan_irq: wlan_irq {
 +						atmel,pins = <
 +							AT91_PIOE 8  AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP  /* WLAN_IRQ */
 +						>;
 +					};
-+				};
+ 				};
  			};
  		};
- 
 diff --git a/arch/arm/mach-at91/board-dt-sama5.c b/arch/arm/mach-at91/board-dt-sama5.c
 index 38aca65..a4b6879 100644
 --- a/arch/arm/mach-at91/board-dt-sama5.c
