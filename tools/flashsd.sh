@@ -29,22 +29,26 @@ function main {
 }
 
 function parse_args {
-    if [ $# -eq 0 ]; then
+    while [ $# -ge 1 ]; do
+        case "$1" in
+        --extract)
+            extract_rootfs=1
+            shift
+            ;;
+        --quick)
+            quick=1
+            shift
+            ;;
+        *)
+        break
+        esac
+    done
+
+    if [ $# -ne 1 ]; then
         print_usage
     fi
 
-    if [ "$1" == "--extract" ]; then
-        extract_rootfs=1
-        shift
-    fi
-
-    if [ "$1" == "--quick" ]; then
-        quick=1
-        shift
-    fi
-
     dev="$1"
-
     if [ ! -b "$dev" ]; then
          echo "No such device: $dev"
          exit 1
