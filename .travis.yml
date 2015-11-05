@@ -14,6 +14,18 @@ cache:
     - $HOME/.buildroot-dl
     - $HOME/.buildroot-ccache
 
+before_install:
+    # git-lfs
+    - wget "https://github.com/github/git-lfs/releases/download/v1.0.2/git-lfs-linux-amd64-1.0.2.tar.gz"
+    - tar xf git-lfs-linux-amd64-1.0.2.tar.gz
+    - export PATH=$PATH:$PWD/git-lfs-1.0.2
+    - git lfs init
+    # git-credentials
+    - touch ~/.git-credentials
+    - chmod 0600 ~/.git-credentials
+    - echo "https://develbot:${DEVELBOT_OAUTH_TOKEN}@github.com/DevelBoard/images.git" > ~/.git-credentials
+    - git config --global credential.helper store
+
 script:
     - mkdir -p $HOME/.buildroot-dl
     - ln -s $HOME/.buildroot-dl buildroot/dl

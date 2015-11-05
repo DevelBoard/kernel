@@ -12,8 +12,8 @@ ssh-add .travis.id_rsa
 
 mkdir deploy-images
 pushd deploy-images
-    git clone -b "${DEPLOY_BRANCH}" git@github.com:DevelBoard/images.git .
-    git config user.email "noreply@develer.com"
+    git clone -b "${DEPLOY_BRANCH}" https://github.com/DevelBoard/images.git .
+    git config user.email "sysadm@develer.com"
     git config user.name "Develer Bot"
 
     cp ../buildroot/output/images/{*.bin,*.dtb,zImage} ./
