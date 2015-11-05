@@ -1,18 +1,18 @@
-From 75a3b36803a8b55bb9cda2d71968bde88e7a6228 Mon Sep 17 00:00:00 2001
+From 4f44e95ccbacc7790b65c58edc92e49c11622c6f Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
-Date: Wed, 12 Aug 2015 11:29:47 +0200
+Date: Thu, 5 Nov 2015 11:31:09 +0100
 Subject: [PATCH] configure internal eeprom at24mac402
 Organization: Develer S.r.l.
 
 ---
- arch/arm/boot/dts/at91-sama5d4_xplained.dts | 28 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/at91-sama5d4_develboard.dts | 28 +++++++++++++++++++++++++++
  1 file changed, 28 insertions(+)
 
-diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-index bfaba83..4768c44 100644
---- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-@@ -120,6 +120,34 @@
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard.dts b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
+index 47dbdbc..6f97820 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
+@@ -89,6 +89,34 @@
  				};
  			};
  

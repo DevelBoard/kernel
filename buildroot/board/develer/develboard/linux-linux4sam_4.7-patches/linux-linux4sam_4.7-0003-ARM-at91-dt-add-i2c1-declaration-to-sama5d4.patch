@@ -1,26 +1,30 @@
-From e4852ef3e2f0cda7ae9313aa69795cde90220842 Mon Sep 17 00:00:00 2001
-From: Mirko Damiani <mirko@develer.com>
-Date: Fri, 25 Sep 2015 12:59:21 +0200
-Subject: [PATCH] add i2c1 device tree node
+From a8f5edebe7601fce799b168e8a637834e1d6701b Mon Sep 17 00:00:00 2001
+From: Philip Attfield <phil.attfield@seqlabs.com>
+Date: Fri, 6 Feb 2015 14:52:56 +0100
+Subject: [PATCH] ARM: at91/dt: add i2c1 declaration to sama5d4
 Organization: Develer S.r.l.
 
+Add alias, node declaration and pinctrl for i2c1 (aka: twi1).
+
+Signed-off-by: Philip Attfield <phil.attfield@seqlabs.com>
+Signed-off-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 ---
  arch/arm/boot/dts/sama5d4.dtsi | 28 ++++++++++++++++++++++++++++
  1 file changed, 28 insertions(+)
 
 diff --git a/arch/arm/boot/dts/sama5d4.dtsi b/arch/arm/boot/dts/sama5d4.dtsi
-index 297e026..07d05b3 100644
+index 9361b45..af53df9 100644
 --- a/arch/arm/boot/dts/sama5d4.dtsi
 +++ b/arch/arm/boot/dts/sama5d4.dtsi
-@@ -70,6 +70,7 @@
- 		gpio4 = &pioE;
+@@ -71,6 +71,7 @@
  		tcb0 = &tcb0;
  		tcb1 = &tcb1;
+ 		i2c0 = &i2c0;
 +		i2c1 = &i2c1;
  		i2c2 = &i2c2;
  		pwm0 = &pwm0;
  		ssc0 = &ssc0;
-@@ -981,6 +982,25 @@
+@@ -942,6 +943,25 @@
  				status = "disabled";
  			};
  
@@ -46,7 +50,7 @@ index 297e026..07d05b3 100644
  			tcb0: timer@f801c000 {
  				compatible = "atmel,at91sam9x5-tcb";
  				reg = <0xf801c000 0x100>;
-@@ -1454,6 +1474,14 @@
+@@ -1442,6 +1462,14 @@
  					};
  				};
  

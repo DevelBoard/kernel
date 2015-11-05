@@ -1,28 +1,28 @@
-From 16e8448c3f6d7ccb28113a255ad5ca1d89e30825 Mon Sep 17 00:00:00 2001
+From 70e37723e10e9f4a905fde559defaaacc7e3b34f Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
-Date: Wed, 20 May 2015 10:59:33 +0200
+Date: Thu, 5 Nov 2015 11:30:03 +0100
 Subject: [PATCH] support wl18xx wifi on at91 sama5d4 board
 Organization: Develer S.r.l.
 
 ---
- arch/arm/boot/dts/at91-sama5d4_xplained.dts |  28 ++++++
- arch/arm/mach-at91/board-dt-sama5.c         | 134 ++++++++++++++++++++++++++++
- drivers/net/wireless/ti/wlcore/sdio.c       |   8 ++
- include/linux/wl12xx.h                      |   8 ++
- 4 files changed, 178 insertions(+)
+ .../arm/boot/dts/at91-sama5d4_develboard_eva01.dts |  31 +++++
+ arch/arm/mach-at91/board-dt-sama5.c                | 134 +++++++++++++++++++++
+ drivers/net/wireless/ti/wlcore/sdio.c              |   8 ++
+ include/linux/wl12xx.h                             |   8 ++
+ 4 files changed, 181 insertions(+)
 
-diff --git a/arch/arm/boot/dts/at91-sama5d4_xplained.dts b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-index 8c74ab8..bfaba83 100644
---- a/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d4_xplained.dts
-@@ -89,6 +89,27 @@
- 				};
- 			};
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
+index ce3de19..042bc36 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
+@@ -50,6 +50,27 @@
  
+ 	ahb {
+ 		apb {
 +			mmc0: mmc@f8000000 {
 +				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 &pinctrl_wlan_irq>;
-+				status = "disabled";
++				pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat &pinctrl_wlan_irq>;
++				status = "okay";
 +
 +				non-removable;
 +				cap-power-off-card;
@@ -36,27 +36,30 @@ index 8c74ab8..bfaba83 100644
 +					interrupts = <8 IRQ_TYPE_NONE>;
 +					wlan-pwr-gpio = <&pioC 27 GPIO_ACTIVE_HIGH>;
 +					wlan-en-gpio = <&pioC 28 GPIO_ACTIVE_HIGH>;
-+					status = "disabled";
++					status = "okay";
 +				};
 +			};
 +
  			mmc1: mmc@fc000000 {
  				pinctrl-names = "default";
  				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
-@@ -121,6 +142,13 @@
+@@ -72,6 +93,16 @@
+ 				atmel,adc-vref = <3300>;
+ 				status = "okay";
  			};
- 
- 			pinctrl@fc06a000 {
-+				board {
++
++			pinctrl@fc06a000 {
++				wifi {
 +					pinctrl_wlan_irq: wlan_irq {
 +						atmel,pins = <
 +							AT91_PIOE 8  AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP  /* WLAN_IRQ */
 +						>;
 +					};
 +				};
- 			};
++			};
  		};
  
+ 		usb0: gadget@00400000 {
 diff --git a/arch/arm/mach-at91/board-dt-sama5.c b/arch/arm/mach-at91/board-dt-sama5.c
 index 38aca65..a4b6879 100644
 --- a/arch/arm/mach-at91/board-dt-sama5.c
