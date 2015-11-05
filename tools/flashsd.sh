@@ -118,8 +118,6 @@ function copy_objects() {
         sudo cp $images/rootfs.cpio.gz $mnt_data/
     fi
 
-    sudo cp $images/rootfs.ubifs $mnt_data/
-
     echo "* Sync"
     sync
 }
