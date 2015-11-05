@@ -118,8 +118,10 @@ function copy_objects() {
 
     if [ $extract_rootfs -eq 1 ]; then
         sudo tar xpf $images/rootfs.tar.gz -C $mnt_data/
-    else
-        sudo cp $images/rootfs.cpio.gz $mnt_data/
+    fi
+
+    if [ -f $images/rootfs.cpio.gz ]; then
+        sudo cp $images/rootfs.cpio.gz $mnt_boot/
     fi
 
     echo "* Sync"
