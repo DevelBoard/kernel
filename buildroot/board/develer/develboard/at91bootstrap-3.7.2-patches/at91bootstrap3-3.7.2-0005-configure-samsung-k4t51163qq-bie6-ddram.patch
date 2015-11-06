@@ -1,15 +1,15 @@
-From 684c4eda5a6982fc94ffd67d0a2fed77d64946dd Mon Sep 17 00:00:00 2001
+From 2819b6cfe158a229012d2b7c783d46083f0f46b4 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
-Date: Thu, 7 May 2015 17:09:52 +0200
-Subject: [PATCH] adjust ddram timings
+Date: Fri, 6 Nov 2015 12:22:44 +0100
+Subject: [PATCH] configure samsung k4t51163qq-bie6 ddram
 Organization: Develer S.r.l.
 
 ---
- board/sama5d4_xplained/sama5d4_xplained.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ board/sama5d4_xplained/sama5d4_xplained.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
 diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
-index 3a6b03f..d544be9 100644
+index 47eb111..0441eb5 100644
 --- a/board/sama5d4_xplained/sama5d4_xplained.c
 +++ b/board/sama5d4_xplained/sama5d4_xplained.c
 @@ -99,11 +99,11 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
@@ -27,26 +27,31 @@ index 3a6b03f..d544be9 100644
  				| AT91C_DDRC2_DECOD_INTERLEAVED
  				| AT91C_DDRC2_UNAL_SUPPORTED);
  
-@@ -165,7 +165,7 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
- 	ddramc_config->t0pr = (AT91C_DDRC2_TRAS_(8)
+@@ -186,10 +186,11 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
+ 
+ 	ddramc_config->rtr = 0x30e;
+ 
+-	ddramc_config->t0pr = (AT91C_DDRC2_TRAS_(8)
++	/* One clock cycle @ 200 MHz = 5 ns */
++	ddramc_config->t0pr = (AT91C_DDRC2_TRAS_(9)
  			| AT91C_DDRC2_TRCD_(3)
  			| AT91C_DDRC2_TWR_(3)
--			| AT91C_DDRC2_TRC_(10)
-+			| AT91C_DDRC2_TRC_(11)
+-			| AT91C_DDRC2_TRC_(11)
++			| AT91C_DDRC2_TRC_(12)
  			| AT91C_DDRC2_TRP_(3)
  			| AT91C_DDRC2_TRRD_(2)
  			| AT91C_DDRC2_TWTR_(2)
-@@ -173,14 +173,14 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
+@@ -197,14 +198,14 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
  
  	ddramc_config->t1pr = (AT91C_DDRC2_TXP_(2)
  			| AT91C_DDRC2_TXSRD_(200)
--			| AT91C_DDRC2_TXSNR_(25)
--			| AT91C_DDRC2_TRFC_(23));
-+			| AT91C_DDRC2_TXSNR_(21)
-+			| AT91C_DDRC2_TRFC_(19));
+-			| AT91C_DDRC2_TXSNR_(28)
+-			| AT91C_DDRC2_TRFC_(26));
++			| AT91C_DDRC2_TXSNR_(23)
++			| AT91C_DDRC2_TRFC_(21));
  
 -	ddramc_config->t2pr = (AT91C_DDRC2_TFAW_(7)
-+	ddramc_config->t2pr = (AT91C_DDRC2_TFAW_(9)
++	ddramc_config->t2pr = (AT91C_DDRC2_TFAW_(10)
  			| AT91C_DDRC2_TRTP_(2)
  			| AT91C_DDRC2_TRPA_(3)
 -			| AT91C_DDRC2_TXARDS_(2)

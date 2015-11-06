@@ -1,4 +1,4 @@
-From 3e3864d3a678bd2ff44e9703f395dc66a6d222b4 Mon Sep 17 00:00:00 2001
+From 8e690babc2fa49367987281b9bbfbb3c4f762918 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Thu, 8 Oct 2015 17:06:57 +0200
 Subject: [PATCH] use onfi timing mode 0 for nand
@@ -9,10 +9,10 @@ Organization: Develer S.r.l.
  1 file changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
-index d544be9..b3bcbb5 100644
+index 0441eb5..e57e645 100644
 --- a/board/sama5d4_xplained/sama5d4_xplained.c
 +++ b/board/sama5d4_xplained/sama5d4_xplained.c
-@@ -769,22 +769,22 @@ void nandflash_hw_init(void)
+@@ -796,22 +796,22 @@ void nandflash_hw_init(void)
  		| AT91C_SMC_SETUP_NCS_RD(1),
  		(ATMEL_BASE_SMC + SMC_SETUP3));
  

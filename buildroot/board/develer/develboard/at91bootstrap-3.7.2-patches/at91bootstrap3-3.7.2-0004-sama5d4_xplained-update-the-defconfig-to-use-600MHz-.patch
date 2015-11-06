@@ -1,0 +1,40 @@
+From 93924fa33c6f8b83d2febfadf62639168a081255 Mon Sep 17 00:00:00 2001
+From: Josh Wu <josh.wu@atmel.com>
+Date: Thu, 24 Sep 2015 12:07:34 +0800
+Subject: [PATCH] sama5d4_xplained: update the defconfig to use 600MHz as cpu
+ clock
+Organization: Develer S.r.l.
+
+Signed-off-by: Josh Wu <josh.wu@atmel.com>
+---
+ board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig | 3 +--
+ board/sama5d4_xplained/sama5d4_xplainedsd_uboot_secure_defconfig | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig b/board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig
+index decdc8b..ef43ac5 100644
+--- a/board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig
++++ b/board/sama5d4_xplained/sama5d4_xplainednf_uboot_secure_defconfig
+@@ -1,6 +1,5 @@
+ CONFIG_SAMA5D4_XPLAINED=y
+-CONFIG_CPU_CLK_528MHZ=y
+-CONFIG_BUS_SPEED_176MHZ=y
++CONFIG_CPU_CLK_600MHZ=y
+ CONFIG_RAM_512MB=y
+ CONFIG_NANDFLASH=y
+ CONFIG_DEBUG=y
+diff --git a/board/sama5d4_xplained/sama5d4_xplainedsd_uboot_secure_defconfig b/board/sama5d4_xplained/sama5d4_xplainedsd_uboot_secure_defconfig
+index 824a727..5f290ab 100644
+--- a/board/sama5d4_xplained/sama5d4_xplainedsd_uboot_secure_defconfig
++++ b/board/sama5d4_xplained/sama5d4_xplainedsd_uboot_secure_defconfig
+@@ -1,6 +1,5 @@
+ CONFIG_SAMA5D4_XPLAINED=y
+-CONFIG_CPU_CLK_528MHZ=y
+-CONFIG_BUS_SPEED_176MHZ=y
++CONFIG_CPU_CLK_600MHZ=y
+ CONFIG_RAM_512MB=y
+ CONFIG_SDCARD=y
+ CONFIG_DEBUG=y
+-- 
+1.9.1
+

@@ -1,0 +1,109 @@
+From 33225f7d6a34e3a3a643ce36c5b8d4d62aa2c999 Mon Sep 17 00:00:00 2001
+From: Wenyou Yang <wenyou.yang@atmel.com>
+Date: Mon, 20 Jul 2015 13:23:55 +0800
+Subject: [PATCH] board: sama5d4_xplained: add PCK/MCK=600MHz/200MHz support
+Organization: Develer S.r.l.
+
+Add PCK/MCK = 600MHz/200MHz support for the sama5d4 Xplained board.
+The DDR2 timings are calculated by the GlodenSetting table.
+
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+---
+ board/sama5d4_xplained/Config.in.board    |  2 ++
+ board/sama5d4_xplained/sama5d4_xplained.c | 24 ++++++++++++++++++++++++
+ board/sama5d4_xplained/sama5d4_xplained.h | 25 +++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+
+diff --git a/board/sama5d4_xplained/Config.in.board b/board/sama5d4_xplained/Config.in.board
+index 8ce356e..6423d1a 100644
+--- a/board/sama5d4_xplained/Config.in.board
++++ b/board/sama5d4_xplained/Config.in.board
+@@ -10,6 +10,7 @@ config CONFIG_SAMA5D4_XPLAINED
+ 	select ALLOW_CPU_CLK_444MHZ
+ 	select ALLOW_CPU_CLK_510MHZ
+ 	select ALLOW_CPU_CLK_528MHZ
++	select ALLOW_CPU_CLK_600MHZ
+ 	select ALLOW_CRYSTAL_12_000MHZ
+ 	select ALLOW_BOOT_FROM_DATAFLASH_CS0
+ 	select ALLOW_PIO3
+@@ -25,5 +26,6 @@ config CONFIG_SAMA5D4_XPLAINED
+ 	select SUPPORT_BUS_SPEED_176MHZ
+ 	select SUPPORT_BUS_SPEED_170MHZ
+ 	select SUPPORT_BUS_SPEED_148MHZ
++	select SUPPORT_BUS_SPEED_200MHZ
+ 	help
+ 	  Use the SAMA5D4_Xplained Development board
+diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
+index 3a6b03f..2cd1439 100644
+--- a/board/sama5d4_xplained/sama5d4_xplained.c
++++ b/board/sama5d4_xplained/sama5d4_xplained.c
+@@ -182,6 +182,30 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
+ 			| AT91C_DDRC2_TXARDS_(2)
+ 			| AT91C_DDRC2_TXARD_(8));
+ 
++#elif defined(CONFIG_BUS_SPEED_200MHZ)
++
++	ddramc_config->rtr = 0x30e;
++
++	ddramc_config->t0pr = (AT91C_DDRC2_TRAS_(8)
++			| AT91C_DDRC2_TRCD_(3)
++			| AT91C_DDRC2_TWR_(3)
++			| AT91C_DDRC2_TRC_(11)
++			| AT91C_DDRC2_TRP_(3)
++			| AT91C_DDRC2_TRRD_(2)
++			| AT91C_DDRC2_TWTR_(2)
++			| AT91C_DDRC2_TMRD_(2));
++
++	ddramc_config->t1pr = (AT91C_DDRC2_TXP_(2)
++			| AT91C_DDRC2_TXSRD_(200)
++			| AT91C_DDRC2_TXSNR_(28)
++			| AT91C_DDRC2_TRFC_(26));
++
++	ddramc_config->t2pr = (AT91C_DDRC2_TFAW_(7)
++			| AT91C_DDRC2_TRTP_(2)
++			| AT91C_DDRC2_TRPA_(3)
++			| AT91C_DDRC2_TXARDS_(2)
++			| AT91C_DDRC2_TXARD_(8));
++
+ #else
+ #error "No CLK setting defined"
+ #endif
+diff --git a/board/sama5d4_xplained/sama5d4_xplained.h b/board/sama5d4_xplained/sama5d4_xplained.h
+index 97f4155..5792309 100644
+--- a/board/sama5d4_xplained/sama5d4_xplained.h
++++ b/board/sama5d4_xplained/sama5d4_xplained.h
+@@ -108,6 +108,31 @@
+ 
+ #define MASTER_CLOCK		176000000
+ 
++#elif defined(CONFIG_CPU_CLK_600MHZ)
++
++/* PCK: 600MHz, MCK: 200MHz */
++#define BOARD_PLLA_MULA		99
++
++#define BOARD_PCK		((unsigned long)((BOARD_MAINOSC * (BOARD_PLLA_MULA + 1)) / 2))
++#define BOARD_MCK		((unsigned long)((BOARD_MAINOSC * (BOARD_PLLA_MULA + 1)) / 2 / 3))
++
++#define BOARD_CKGR_PLLA		(AT91C_CKGR_SRCA | AT91C_CKGR_OUTA_0)
++#define BOARD_PLLACOUNT		(0x3F << 8)
++#define BOARD_MULA		((AT91C_CKGR_MULA << 2) & (BOARD_PLLA_MULA << 18))
++#define BOARD_DIVA		(AT91C_CKGR_DIVA & 1)
++
++/* Master Clock Register */
++#define BOARD_PRESCALER_MAIN_CLOCK	(AT91C_PMC_PLLADIV2_2 \
++					| AT91C_PMC_MDIV_3 \
++					| AT91C_PMC_CSS_MAIN_CLK)
++
++#define BOARD_PRESCALER_PLLA		(AT91C_PMC_H32MXDIV_H32MXDIV2 \
++					| AT91C_PMC_PLLADIV2_2 \
++					| AT91C_PMC_MDIV_3 \
++					| AT91C_PMC_CSS_PLLA_CLK)
++
++#define MASTER_CLOCK		200000000
++
+ #else
+ #error "No CLK setting defined"
+ #endif
+-- 
+1.9.1
+

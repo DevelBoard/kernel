@@ -1,4 +1,4 @@
-From 5ee0394782c34b860d51df31c78b5a7e73c21c91 Mon Sep 17 00:00:00 2001
+From a0d80c3c4b91aac9a5ad71a2386635f081b6206f Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 2 Nov 2015 10:28:16 +0100
 Subject: [PATCH] enable nand write protection after loading image
@@ -11,10 +11,10 @@ Organization: Develer S.r.l.
  3 files changed, 20 insertions(+)
 
 diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
-index 31e5f47..8b173ac 100644
+index dc15ecb..8083630 100644
 --- a/board/sama5d4_xplained/sama5d4_xplained.c
 +++ b/board/sama5d4_xplained/sama5d4_xplained.c
-@@ -772,6 +772,7 @@ void nandflash_hw_init(void)
+@@ -799,6 +799,7 @@ void nandflash_hw_init(void)
  		{"D5",	AT91C_PIN_PC(10), 0, PIO_PULLUP, PIO_PERIPH_A},
  		{"D6",	AT91C_PIN_PC(11), 0, PIO_PULLUP, PIO_PERIPH_A},
  		{"D7",	AT91C_PIN_PC(12), 0, PIO_PULLUP, PIO_PERIPH_A},
@@ -23,10 +23,10 @@ index 31e5f47..8b173ac 100644
  	};
  
 diff --git a/board/sama5d4_xplained/sama5d4_xplained.h b/board/sama5d4_xplained/sama5d4_xplained.h
-index 97f4155..7b8e95a 100644
+index 5792309..b2debb0 100644
 --- a/board/sama5d4_xplained/sama5d4_xplained.h
 +++ b/board/sama5d4_xplained/sama5d4_xplained.h
-@@ -154,6 +154,7 @@
+@@ -179,6 +179,7 @@
  #define CONFIG_SYS_NAND_ALE_PIN		AT91C_PIN_PC(17)
  #define CONFIG_SYS_NAND_CLE_PIN		AT91C_PIN_PC(18)
  #define CONFIG_SYS_NAND_ENABLE_PIN      AT91C_PIN_PC(15)
