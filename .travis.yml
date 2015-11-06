@@ -10,6 +10,7 @@ env:
     - GZIP: --rsyncable
 
 cache:
+  apt: true
   directories:
     - $HOME/.buildroot-dl
     - $HOME/.buildroot-ccache
