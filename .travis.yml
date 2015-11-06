@@ -24,11 +24,7 @@ before_install:
     - touch ~/.git-credentials
     - chmod 0600 ~/.git-credentials
     - echo "https://develbot:${DEVELBOT_OAUTH_TOKEN}@github.com/DevelBoard/images.git" > ~/.git-credentials
-    - echo "https://develbot:${DEVELBOT_OAUTH_TOKEN}@github.com/DevelBoard/bareboxenv.git" >> ~/.git-credentials
     - git config --global credential.helper store
-    # bareboxenv
-    - rm -rf buildroot/board/develer/develboard/barebox-2015.10.0-env
-    - git clone --depth=1 https://github.com/DevelBoard/bareboxenv.git buildroot/board/develer/develboard/barebox-2015.10.0-env
 
 script:
     - mkdir -p $HOME/.buildroot-dl
