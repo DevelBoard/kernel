@@ -12,13 +12,17 @@ env:
 cache:
   apt: true
   directories:
-    - $HOME/.buildroot-dl
     - $HOME/.buildroot-ccache
+    - $HOME/.buildroot-dl
+    - $HOME/git-lfs-1.0.2
 
 before_install:
-    # git-lfs
+    # git-lfs: download
+    - if [ ! -d git-lfs-1.0.2 ]; then
     - wget "https://github.com/github/git-lfs/releases/download/v1.0.2/git-lfs-linux-amd64-1.0.2.tar.gz"
     - tar xf git-lfs-linux-amd64-1.0.2.tar.gz
+    - fi
+    # git-lfs: init
     - export PATH=$PATH:$PWD/git-lfs-1.0.2
     - git lfs init
     # git-credentials
