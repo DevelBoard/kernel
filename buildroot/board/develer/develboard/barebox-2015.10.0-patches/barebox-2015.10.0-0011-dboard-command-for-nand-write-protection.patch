@@ -1,4 +1,4 @@
-From fa5bf83c51365d0a0502c9c36b5292f3133c90ca Mon Sep 17 00:00:00 2001
+From 36f4c5a449162f36210c23e1a868941855c32b4f Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 2 Nov 2015 15:05:28 +0100
 Subject: [PATCH] dboard command for nand write protection
