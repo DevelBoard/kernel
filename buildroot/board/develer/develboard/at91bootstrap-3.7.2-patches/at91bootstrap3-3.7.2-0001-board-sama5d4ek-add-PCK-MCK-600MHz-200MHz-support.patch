@@ -1,0 +1,198 @@
+From 96895eaf4db1051b4be27f68d7f0f8269795702c Mon Sep 17 00:00:00 2001
+From: Wenyou Yang <wenyou.yang@atmel.com>
+Date: Mon, 23 Mar 2015 11:30:30 +0800
+Subject: [PATCH] board: sama5d4ek: add PCK/MCK=600MHz/200MHz support
+Organization: Develer S.r.l.
+
+Add PCK/MCK=600MHz/200MHz support for the sama5d4ek board.
+The DDR2 timings are calculated by the GlodenSetting table.
+
+[Josh.Wu: the h32mx's clock isn't right, due to missing H32MXDIV bit]
+Reported-by: Josh.Wu <josh.wu@atmel.com>
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+
+Conflicts:
+	board/Config.in
+---
+ board/Config.in                 | 14 ++++++++++++++
+ board/board_cpp.mk              |  8 ++++++++
+ board/sama5d4ek/Config.in.board |  2 ++
+ board/sama5d4ek/sama5d4ek.c     | 26 ++++++++++++++++++++++++++
+ board/sama5d4ek/sama5d4ek.h     | 26 ++++++++++++++++++++++++++
+ 5 files changed, 76 insertions(+)
+
+diff --git a/board/Config.in b/board/Config.in
+index 6dbc4e6..b0df020 100644
+--- a/board/Config.in
++++ b/board/Config.in
+@@ -263,6 +263,10 @@ config CONFIG_CPU_CLK_528MHZ
+ 	bool "528 MHz"
+ 	depends on ALLOW_CPU_CLK_528MHZ
+ 
++config CONFIG_CPU_CLK_600MHZ
++	bool "600 MHz"
++	depends on ALLOW_CPU_CLK_600MHZ
++
+ endchoice
+ 
+ config	ALLOW_CPU_CLK_166MHZ
+@@ -301,6 +305,9 @@ config  ALLOW_CPU_CLK_510MHZ
+ config  ALLOW_CPU_CLK_528MHZ
+ 	bool
+ 
++config  ALLOW_CPU_CLK_600MHZ
++	bool
++
+ config	DISABLE_CPU_CLK_240MHZ
+ 	bool
+ 	default y if CONFIG_AT91SAM9263EK && CONFIG_CRYSTAL_16_36766MHZ
+@@ -344,6 +351,10 @@ config CONFIG_BUS_SPEED_176MHZ
+ 	bool "176 MHz"
+ 	depends on SUPPORT_BUS_SPEED_176MHZ && CONFIG_CPU_CLK_528MHZ
+ 
++config CONFIG_BUS_SPEED_200MHZ
++	bool "200 MHz"
++	depends on SUPPORT_BUS_SPEED_200MHZ && CONFIG_CPU_CLK_600MHZ
++
+ endchoice
+ 
+ config SUPPORT_BUS_SPEED_83MHZ
+@@ -370,6 +381,9 @@ config SUPPORT_BUS_SPEED_170MHZ
+ config SUPPORT_BUS_SPEED_176MHZ
+ 	bool
+ 
++config SUPPORT_BUS_SPEED_200MHZ
++	bool
++
+ config CONFIG_TRUSTZONE
+ 	bool
+ 	default n
+diff --git a/board/board_cpp.mk b/board/board_cpp.mk
+index 284b9de..33df079 100644
+--- a/board/board_cpp.mk
++++ b/board/board_cpp.mk
+@@ -99,6 +99,10 @@ ifeq ($(CONFIG_CPU_CLK_528MHZ),y)
+ CPPFLAGS += -DCONFIG_CPU_CLK_528MHZ
+ endif
+ 
++ifeq ($(CONFIG_CPU_CLK_600MHZ),y)
++CPPFLAGS += -DCONFIG_CPU_CLK_600MHZ
++endif
++
+ # Bus speed
+ 
+ ifeq ($(CONFIG_BUS_SPEED_83MHZ),y)
+@@ -133,6 +137,10 @@ ifeq ($(CONFIG_BUS_SPEED_176MHZ),y)
+ CPPFLAGS += -DCONFIG_BUS_SPEED_176MHZ
+ endif
+ 
++ifeq ($(CONFIG_BUS_SPEED_200MHZ),y)
++CPPFLAGS += -DCONFIG_BUS_SPEED_200MHZ
++endif
++
+ # other
+ 
+ ifeq ($(CONFIG_HAS_PIO3),y)
+diff --git a/board/sama5d4ek/Config.in.board b/board/sama5d4ek/Config.in.board
+index b8ab5ae..0182b38 100644
+--- a/board/sama5d4ek/Config.in.board
++++ b/board/sama5d4ek/Config.in.board
+@@ -10,6 +10,7 @@ config CONFIG_SAMA5D4EK
+ 	select ALLOW_CPU_CLK_444MHZ
+ 	select ALLOW_CPU_CLK_510MHZ
+ 	select ALLOW_CPU_CLK_528MHZ
++	select ALLOW_CPU_CLK_600MHZ
+ 	select ALLOW_CRYSTAL_12_000MHZ
+ 	select ALLOW_BOOT_FROM_DATAFLASH_CS0
+ 	select ALLOW_PIO3
+@@ -27,5 +28,6 @@ config CONFIG_SAMA5D4EK
+ 	select SUPPORT_BUS_SPEED_176MHZ
+ 	select SUPPORT_BUS_SPEED_170MHZ
+ 	select SUPPORT_BUS_SPEED_148MHZ
++	select SUPPORT_BUS_SPEED_200MHZ
+ 	help
+ 	  Use the SAMA5D4EK Development board
+diff --git a/board/sama5d4ek/sama5d4ek.c b/board/sama5d4ek/sama5d4ek.c
+index 88f0c1d..00938b5 100644
+--- a/board/sama5d4ek/sama5d4ek.c
++++ b/board/sama5d4ek/sama5d4ek.c
+@@ -183,6 +183,30 @@ static void ddramc_reg_config(struct ddramc_register *ddramc_config)
+ 			| AT91C_DDRC2_TXARDS_(2)
+ 			| AT91C_DDRC2_TXARD_(8));
+ 
++#elif defined(CONFIG_BUS_SPEED_200MHZ)
++
++	ddramc_config->rtr = 0x30e;
++
++	ddramc_config->t0pr = (AT91C_DDRC2_TRAS_(8)
++			| AT91C_DDRC2_TRCD_(3)
++			| AT91C_DDRC2_TWR_(3)
++			| AT91C_DDRC2_TRC_(11)
++			| AT91C_DDRC2_TRP_(3)
++			| AT91C_DDRC2_TRRD_(2)
++			| AT91C_DDRC2_TWTR_(2)
++			| AT91C_DDRC2_TMRD_(2));
++
++	ddramc_config->t1pr = (AT91C_DDRC2_TXP_(2)
++			| AT91C_DDRC2_TXSRD_(200)
++			| AT91C_DDRC2_TXSNR_(28)
++			| AT91C_DDRC2_TRFC_(26));
++
++	ddramc_config->t2pr = (AT91C_DDRC2_TFAW_(7)
++			| AT91C_DDRC2_TRTP_(2)
++			| AT91C_DDRC2_TRPA_(3)
++			| AT91C_DDRC2_TXARDS_(2)
++			| AT91C_DDRC2_TXARD_(8));
++
+ #else
+ #error "No CLK setting defined"
+ #endif
+@@ -202,6 +226,8 @@ static void ddramc_init(void)
+ 	/* configure Shift Sampling Point of Data */
+ #if defined(CONFIG_BUS_SPEED_148MHZ)
+ 	reg = AT91C_MPDDRC_RD_DATA_PATH_NO_SHIFT;
++#elif defined(CONFIG_BUS_SPEED_200MHZ)
++	reg = AT91C_MPDDRC_RD_DATA_PATH_TWO_CYCLES;
+ #else
+ 	reg = AT91C_MPDDRC_RD_DATA_PATH_ONE_CYCLES;
+ #endif
+diff --git a/board/sama5d4ek/sama5d4ek.h b/board/sama5d4ek/sama5d4ek.h
+index 6bae7e2..2839505 100644
+--- a/board/sama5d4ek/sama5d4ek.h
++++ b/board/sama5d4ek/sama5d4ek.h
+@@ -108,6 +108,32 @@
+ 
+ #define MASTER_CLOCK		176000000
+ 
++#elif defined(CONFIG_CPU_CLK_600MHZ)
++
++/* PCK: 600MHz, MCK: 200MHz */
++#define BOARD_PLLA_MULA		99
++
++#define BOARD_PCK		((unsigned long)((BOARD_MAINOSC * (BOARD_PLLA_MULA + 1)) / 2))
++#define BOARD_MCK		((unsigned long)((BOARD_MAINOSC * (BOARD_PLLA_MULA + 1)) / 2 / 3))
++
++#define BOARD_CKGR_PLLA		(AT91C_CKGR_SRCA | AT91C_CKGR_OUTA_0)
++#define BOARD_PLLACOUNT		(0x3F << 8)
++#define BOARD_MULA		((AT91C_CKGR_MULA << 2) & (BOARD_PLLA_MULA << 18))
++#define BOARD_DIVA		(AT91C_CKGR_DIVA & 1)
++
++/* Master Clock Register */
++#define BOARD_PRESCALER_MAIN_CLOCK	(AT91C_PMC_PLLADIV2_2 \
++					| AT91C_PMC_MDIV_3 \
++					| AT91C_PMC_CSS_MAIN_CLK)
++
++#define BOARD_PRESCALER_PLLA		(AT91C_PMC_H32MXDIV_H32MXDIV2 \
++					| AT91C_PMC_PLLADIV2_2 \
++					| AT91C_PMC_MDIV_3 \
++					| AT91C_PMC_CSS_PLLA_CLK)
++
++
++#define MASTER_CLOCK		200000000
++
+ #else
+ #error "No CLK setting defined"
+ #endif
+-- 
+1.9.1
+

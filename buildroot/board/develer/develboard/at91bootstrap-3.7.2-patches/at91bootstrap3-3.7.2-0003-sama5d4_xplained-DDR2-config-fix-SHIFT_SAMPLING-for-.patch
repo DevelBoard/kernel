@@ -1,0 +1,30 @@
+From e0f0caf0e0902762e5fea61c1aa422d36f08a7a6 Mon Sep 17 00:00:00 2001
+From: Wenyou Yang <wenyou.yang@atmel.com>
+Date: Wed, 19 Aug 2015 11:44:48 +0800
+Subject: [PATCH] sama5d4_xplained: DDR2 config: fix SHIFT_SAMPLING for 200MHz
+Organization: Develer S.r.l.
+
+According to GoldenSetting, for MCK = 200MHz, change SHIFT_SAMPLING
+field of MPDDRC_RD_DATA_PATH register to 2(SHIFT_TWO_CYCLES).
+
+Signed-off-by: Wenyou Yang <wenyou.yang@atmel.com>
+---
+ board/sama5d4_xplained/sama5d4_xplained.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
+index 2cd1439..47eb111 100644
+--- a/board/sama5d4_xplained/sama5d4_xplained.c
++++ b/board/sama5d4_xplained/sama5d4_xplained.c
+@@ -225,6 +225,8 @@ static void ddramc_init(void)
+ 	/* configure Shift Sampling Point of Data */
+ #if defined(CONFIG_BUS_SPEED_148MHZ)
+ 	reg = AT91C_MPDDRC_RD_DATA_PATH_NO_SHIFT;
++#elif defined(CONFIG_BUS_SPEED_200MHZ)
++	reg = AT91C_MPDDRC_RD_DATA_PATH_TWO_CYCLES;
+ #else
+ 	reg = AT91C_MPDDRC_RD_DATA_PATH_ONE_CYCLES;
+ #endif
+-- 
+1.9.1
+
