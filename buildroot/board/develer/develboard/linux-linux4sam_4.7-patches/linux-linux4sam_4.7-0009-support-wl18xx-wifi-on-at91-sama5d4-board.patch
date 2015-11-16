@@ -1,4 +1,4 @@
-From 962bcf296ff205b5767b9e60851dc09fa5eb1603 Mon Sep 17 00:00:00 2001
+From 4e9449450b98f4885e078f4a99f4345c3fe23ca1 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 16 Nov 2015 15:37:33 +0100
 Subject: [PATCH] support wl18xx wifi on at91 sama5d4 board

@@ -1,14 +1,14 @@
-From dc3bd150999942b558bbadfa71ea145907f4a421 Mon Sep 17 00:00:00 2001
+From a8d403bb2a983b4fb7654884020972569c51bca4 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
-Date: Mon, 16 Nov 2015 15:54:32 +0100
+Date: Mon, 16 Nov 2015 19:05:51 +0100
 Subject: [PATCH] create develboard dt file
 Organization: Develer S.r.l.
 
 ---
  arch/arm/boot/dts/Makefile                         |   2 +
- arch/arm/boot/dts/at91-sama5d4_develboard.dts      | 201 +++++++++++++++++++++
+ arch/arm/boot/dts/at91-sama5d4_develboard.dts      | 188 +++++++++++++++++++++
  .../arm/boot/dts/at91-sama5d4_develboard_eva01.dts |  55 ++++++
- 3 files changed, 258 insertions(+)
+ 3 files changed, 245 insertions(+)
  create mode 100644 arch/arm/boot/dts/at91-sama5d4_develboard.dts
  create mode 100644 arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
 
@@ -27,10 +27,10 @@ index 69210b1..bbbf346 100644
  dtb-$(CONFIG_ARCH_AXXIA) += axm5516-amarillo.dtb
 diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard.dts b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
 new file mode 100644
-index 0000000..9f46f3c
+index 0000000..1eaba41
 --- /dev/null
 +++ b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
-@@ -0,0 +1,201 @@
+@@ -0,0 +1,188 @@
 +/*
 + * at91-sama5d4_develboard.dtsi - Device Tree file for SAMA5D4 DevelBoard SoC
 + *
@@ -205,19 +205,6 @@ index 0000000..9f46f3c
 +				label = "rootfs";
 +				reg = <0x800000 0x0f800000>;
 +			};
-+		};
-+
-+		usb0: gadget@00400000 {
-+			status = "okay";
-+		};
-+
-+		usb1: ohci@00500000 {
-+			num-ports = <3>;
-+			status = "okay";
-+		};
-+
-+		usb2: ehci@00600000 {
-+			status = "okay";
 +		};
 +	};
 +
