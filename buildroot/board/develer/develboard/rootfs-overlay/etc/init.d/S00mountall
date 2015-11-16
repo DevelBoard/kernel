@@ -1,0 +1,26 @@
+#!/bin/sh
+
+do_start()
+{
+	mount /proc
+	mount /dev
+	mkdir -p /dev/pts
+	mkdir -p /dev/shm
+	mount -a
+}
+
+# Utility functions
+case "x$1" in
+"xstart")
+	do_start
+	;;
+
+"xstop")
+	# No-op
+	;;
+
+*)
+	echo "Usage: "$(basename "$0")" [start|stop]" >&2
+	exit 1
+	;;
+esac

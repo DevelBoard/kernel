@@ -1,0 +1,22 @@
+#!/bin/sh
+
+do_start()
+{
+	hostname -F /etc/hostname
+}
+
+# Utility functions
+case "x$1" in
+"xstart")
+	do_start
+	;;
+
+"xstop")
+	# No-op
+	;;
+
+*)
+	echo "Usage: "$(basename "$0")" [start|stop]" >&2
+	exit 1
+	;;
+esac
