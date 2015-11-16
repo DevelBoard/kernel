@@ -30,6 +30,7 @@ before_install:
     # bareboxenv
     - rm -rf buildroot/board/develer/develboard/barebox-2015.10.0-env
     - git clone --depth=1 https://github.com/DevelBoard/bareboxenv.git buildroot/board/develer/develboard/barebox-2015.10.0-env
+    - rm -rf buildroot/board/develer/develboard/barebox-2015.10.0-env/.git
 
 script:
     - mkdir -p $HOME/.buildroot-dl
