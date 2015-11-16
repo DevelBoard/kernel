@@ -1,21 +1,21 @@
-From 70e37723e10e9f4a905fde559defaaacc7e3b34f Mon Sep 17 00:00:00 2001
+From 962bcf296ff205b5767b9e60851dc09fa5eb1603 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
-Date: Thu, 5 Nov 2015 11:30:03 +0100
+Date: Mon, 16 Nov 2015 15:37:33 +0100
 Subject: [PATCH] support wl18xx wifi on at91 sama5d4 board
 Organization: Develer S.r.l.
 
 ---
- .../arm/boot/dts/at91-sama5d4_develboard_eva01.dts |  31 +++++
+ .../arm/boot/dts/at91-sama5d4_develboard_eva01.dts |  30 +++++
  arch/arm/mach-at91/board-dt-sama5.c                | 134 +++++++++++++++++++++
  drivers/net/wireless/ti/wlcore/sdio.c              |   8 ++
  include/linux/wl12xx.h                             |   8 ++
- 4 files changed, 181 insertions(+)
+ 4 files changed, 180 insertions(+)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
-index ce3de19..042bc36 100644
+index e1094cd..e996909 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
-@@ -50,6 +50,27 @@
+@@ -50,6 +50,36 @@
  
  	ahb {
  		apb {
@@ -40,14 +40,6 @@ index ce3de19..042bc36 100644
 +				};
 +			};
 +
- 			mmc1: mmc@fc000000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
-@@ -72,6 +93,16 @@
- 				atmel,adc-vref = <3300>;
- 				status = "okay";
- 			};
-+
 +			pinctrl@fc06a000 {
 +				wifi {
 +					pinctrl_wlan_irq: wlan_irq {
@@ -58,8 +50,8 @@ index ce3de19..042bc36 100644
 +				};
 +			};
  		};
- 
- 		usb0: gadget@00400000 {
+ 	};
+ };
 diff --git a/arch/arm/mach-at91/board-dt-sama5.c b/arch/arm/mach-at91/board-dt-sama5.c
 index 38aca65..a4b6879 100644
 --- a/arch/arm/mach-at91/board-dt-sama5.c
