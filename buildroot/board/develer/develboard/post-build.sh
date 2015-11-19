@@ -25,6 +25,6 @@ mv "$OUTPUTDIR"/barebox-*-env "$OUTPUTDIR"/barebox.env || true
 
 
 echo "Export kernel modules"
-tar czf "$OUTPUTDIR"/modules.tar.gz -C"$ROOTFSDIR" lib/modules
+tar czf "$OUTPUTDIR"/modules.tar.gz -C"$ROOTFSDIR" lib/modules -C"$BOARDDIR"/rootfs-overlay-wifi lib/firmware
 
 echo "Done"
