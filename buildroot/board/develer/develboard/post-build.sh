@@ -23,4 +23,8 @@ rm "$OUTPUTDIR"/at91bootstrap.bin
 
 mv "$OUTPUTDIR"/barebox-*-env "$OUTPUTDIR"/barebox.env || true
 
+
+echo "Export kernel modules"
+tar czf "$OUTPUTDIR"/modules.tar.gz -C"$ROOTFSDIR" lib/modules
+
 echo "Done"
