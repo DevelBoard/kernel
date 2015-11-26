@@ -1,6 +1,6 @@
-From 0744260bd5bdd4b6c09a967df3f8a637990f4f33 Mon Sep 17 00:00:00 2001
+From b4b626b32293a26a3658a9df19571983acb2f0eb Mon Sep 17 00:00:00 2001
 From: Pietro Lorefice <pietro@develer.com>
-Date: Thu, 26 Nov 2015 12:32:25 +0100
+Date: Thu, 26 Nov 2015 14:02:54 +0100
 Subject: [PATCH] dboard_info command to show misc info
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] dboard_info command to show misc info
  1 file changed, 115 insertions(+)
 
 diff --git a/commands/dboard.c b/commands/dboard.c
-index 12a5e08..aa90148 100644
+index 12a5e08..cd5d713 100644
 --- a/commands/dboard.c
 +++ b/commands/dboard.c
 @@ -13,7 +13,10 @@
@@ -51,6 +51,7 @@ index 12a5e08..aa90148 100644
 +{
 +	int fd;
 +	int r;
++	int ret = 0;
 +
 +	fd = open_and_lseek(dev, stride | O_RDONLY, start);
 +	if (fd < 0)
@@ -58,11 +59,10 @@ index 12a5e08..aa90148 100644
 +
 +	r = read(fd, buff, size);
 +	if (r != size)
-+		return 1;
++		ret = 1;
 +
 +	close(fd);
-+
-+	return 0;
++	return ret;
 +}
 +
 +static int do_read_mac(uint8_t mac[])
