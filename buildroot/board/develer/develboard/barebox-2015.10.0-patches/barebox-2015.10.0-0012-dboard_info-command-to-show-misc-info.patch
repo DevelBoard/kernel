@@ -1,28 +1,30 @@
-From b4b626b32293a26a3658a9df19571983acb2f0eb Mon Sep 17 00:00:00 2001
+From 037b8b05e12c18ce5cbfd1f7252d66481bd6f5e1 Mon Sep 17 00:00:00 2001
 From: Pietro Lorefice <pietro@develer.com>
-Date: Thu, 26 Nov 2015 14:02:54 +0100
+Date: Thu, 26 Nov 2015 15:31:13 +0100
 Subject: [PATCH] dboard_info command to show misc info
 
 ---
- commands/dboard.c | 115 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 115 insertions(+)
+ commands/dboard.c | 171 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 171 insertions(+)
 
 diff --git a/commands/dboard.c b/commands/dboard.c
-index 12a5e08..cd5d713 100644
+index 12a5e08..eef19c2 100644
 --- a/commands/dboard.c
 +++ b/commands/dboard.c
-@@ -13,7 +13,10 @@
+@@ -13,7 +13,12 @@
   */
  #include <common.h>
  #include <command.h>
 +#include <complete.h>
++#include <environment.h>
  #include <errno.h>
 +#include <fs.h>
 +#include <fcntl.h>
++#include <getopt.h>
  #include <gpio.h>
  #include <string.h>
  #include <mach/iomux.h>
-@@ -51,3 +54,115 @@ BAREBOX_CMD_START(dboard_nand_protect)
+@@ -51,3 +56,169 @@ BAREBOX_CMD_START(dboard_nand_protect)
  	BAREBOX_CMD_OPTS("[on|off]")
  	BAREBOX_CMD_GROUP(CMD_GRP_HWMANIP)
  BAREBOX_CMD_END
@@ -32,12 +34,18 @@ index 12a5e08..cd5d713 100644
 + *   dboard_info command
 + */
 +
-+static const char * db_prod_codes[] = {
-+	"DBB512R512F-R0",
-+	"DBB512R512F-R1",
-+	"DBB128R128F-R2",
-+	"DBB128R128F-R3",
-+	"DBB256R512F-R4"
++struct db_model_t {
++	uint16_t rev;
++	uint16_t ram;
++	uint16_t flash;
++};
++
++static const struct db_model_t db_models[] = {
++	{ 0, 512, 512 },
++	{ 1, 512, 512 },
++	{ 2, 128, 128 },
++	{ 3, 128, 128 },
++	{ 4, 256, 512 }
 +};
 +
 +
@@ -103,40 +111,88 @@ index 12a5e08..cd5d713 100644
 +
 +static int do_dbinfo(int argc, char *argv[])
 +{
++	char model[128];
 +	uint8_t mac[6];
 +	uint8_t uuid[16];
 +	uint16_t pcol, rev;
 +	uint64_t date;
 +
++	int opt;
++	int revonly = 0;
++	char *varname = 0;
++
++	while ((opt = getopt(argc, argv, "rv:")) > 0) {
++		switch (opt) {
++		case 'r':
++			revonly = 1;
++			break;
++		case 'v':
++			varname = optarg;
++			break;
++		default:
++			return 1;
++		}
++	}
++
++
 +	if (do_read_mac(mac) || do_read_uuid(uuid) || do_read_protocol(&pcol) ||
-+		do_read_rev(&rev) || do_read_date(&date))
++	    do_read_rev(&rev) || do_read_date(&date))
 +		return 1;
 +
-+	  printf("MAC:       "); do_print_hex(mac, 6);
-+	printf("\nUUID:      "); do_print_hex(uuid, 16);
-+	printf("\n");
 +
 +	/* EEPROM magic pattern or new EEPROM */
 +	if (rev == 0x0302 || rev == 0xffff)
 +	{
-+		printf("\nNot tested. Unknown revision.\n");
++		fprintf(stderr, "Not tested. Unknown revision.\n");
++		return 1;
 +	}
 +	else
 +	{
-+		printf("\nCode:      %s", db_prod_codes[rev]);
-+		printf("\nProtocol:  %hu", pcol);
++		// Option "-r"
++		if (revonly) {
++			printf("r%hu\n", rev);
++			return 0;
++		}
++
++		// Option "-v"
++		if (varname) {
++			sprintf(model, "Model: r%hu, RAM %huGB, Flash %huGB",
++				rev, db_models[rev].ram, db_models[rev].flash);
++			setenv(varname, model);
++			return 0;
++		}
++
++		  printf("Code:      DBB%huR%huF-R%hu", db_models[rev].ram, db_models[rev].flash, rev);
 +		printf("\nRevision:  %hu", rev);
++		printf("\nRAM:       %huGB", db_models[rev].ram);
++		printf("\nFlash:     %huGB", db_models[rev].flash);
++		printf("\nProtocol:  %hu", pcol);
 +		printf("\nTested on: %llu (Unix epoch time)\n", date);
++
++		printf("\nMAC:       "); do_print_hex(mac, 6);
++		printf("\nUUID:      "); do_print_hex(uuid, 16);
++		printf("\n");
 +	}
 +
 +	return 0;
 +}
++
++
++BAREBOX_CMD_HELP_START(dboard_info)
++BAREBOX_CMD_HELP_TEXT("dboard_info [-r|-v <var>]")
++BAREBOX_CMD_HELP_TEXT("")
++BAREBOX_CMD_HELP_TEXT("Options:")
++BAREBOX_CMD_HELP_OPT ("-r",  "print revision only")
++BAREBOX_CMD_HELP_OPT ("-v",  "set environment variable with human-readable model string")
++BAREBOX_CMD_HELP_END
++
 +
 +BAREBOX_CMD_START(dboard_info)
 +	.cmd		= do_dbinfo,
 +	BAREBOX_CMD_DESC("Show information about this DevelBoard")
 +	BAREBOX_CMD_GROUP(CMD_GRP_INFO)
 +	BAREBOX_CMD_COMPLETE(empty_complete)
++	BAREBOX_CMD_HELP(cmd_dboard_info_help)
 +BAREBOX_CMD_END
 -- 
 1.9.1
