@@ -1,6 +1,6 @@
-From 037b8b05e12c18ce5cbfd1f7252d66481bd6f5e1 Mon Sep 17 00:00:00 2001
+From 5b8d3f7820e8df489aacecb446b8cdb4a8ec7905 Mon Sep 17 00:00:00 2001
 From: Pietro Lorefice <pietro@develer.com>
-Date: Thu, 26 Nov 2015 15:31:13 +0100
+Date: Thu, 26 Nov 2015 15:57:41 +0100
 Subject: [PATCH] dboard_info command to show misc info
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH] dboard_info command to show misc info
  1 file changed, 171 insertions(+)
 
 diff --git a/commands/dboard.c b/commands/dboard.c
-index 12a5e08..eef19c2 100644
+index 12a5e08..0f49a3b 100644
 --- a/commands/dboard.c
 +++ b/commands/dboard.c
 @@ -13,7 +13,12 @@
@@ -156,7 +156,7 @@ index 12a5e08..eef19c2 100644
 +
 +		// Option "-v"
 +		if (varname) {
-+			sprintf(model, "Model: r%hu, RAM %huGB, Flash %huGB",
++			sprintf(model, "Model: r%hu, RAM %huMB, Flash %huMB",
 +				rev, db_models[rev].ram, db_models[rev].flash);
 +			setenv(varname, model);
 +			return 0;
@@ -164,8 +164,8 @@ index 12a5e08..eef19c2 100644
 +
 +		  printf("Code:      DBB%huR%huF-R%hu", db_models[rev].ram, db_models[rev].flash, rev);
 +		printf("\nRevision:  %hu", rev);
-+		printf("\nRAM:       %huGB", db_models[rev].ram);
-+		printf("\nFlash:     %huGB", db_models[rev].flash);
++		printf("\nRAM:       %huMB", db_models[rev].ram);
++		printf("\nFlash:     %huMB", db_models[rev].flash);
 +		printf("\nProtocol:  %hu", pcol);
 +		printf("\nTested on: %llu (Unix epoch time)\n", date);
 +
