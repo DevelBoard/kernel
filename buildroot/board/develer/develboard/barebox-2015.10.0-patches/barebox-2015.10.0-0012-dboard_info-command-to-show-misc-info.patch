@@ -1,0 +1,143 @@
+From 0744260bd5bdd4b6c09a967df3f8a637990f4f33 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Thu, 26 Nov 2015 12:32:25 +0100
+Subject: [PATCH] dboard_info command to show misc info
+
+---
+ commands/dboard.c | 115 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+
+diff --git a/commands/dboard.c b/commands/dboard.c
+index 12a5e08..aa90148 100644
+--- a/commands/dboard.c
++++ b/commands/dboard.c
+@@ -13,7 +13,10 @@
+  */
+ #include <common.h>
+ #include <command.h>
++#include <complete.h>
+ #include <errno.h>
++#include <fs.h>
++#include <fcntl.h>
+ #include <gpio.h>
+ #include <string.h>
+ #include <mach/iomux.h>
+@@ -51,3 +54,115 @@ BAREBOX_CMD_START(dboard_nand_protect)
+ 	BAREBOX_CMD_OPTS("[on|off]")
+ 	BAREBOX_CMD_GROUP(CMD_GRP_HWMANIP)
+ BAREBOX_CMD_END
++
++
++/*
++ *   dboard_info command
++ */
++
++static const char * db_prod_codes[] = {
++	"DBB512R512F-R0",
++	"DBB512R512F-R1",
++	"DBB128R128F-R2",
++	"DBB128R128F-R3",
++	"DBB256R512F-R4"
++};
++
++
++static int do_read_eeprom(
++                          const char *dev,  // Device to read
++                          loff_t start,     // Offset
++                          loff_t size,      // Size in bytes
++                          void *buff,       // Destination buffer
++                          int stride        // Size of a chunk (for endianness)
++                          )
++{
++	int fd;
++	int r;
++
++	fd = open_and_lseek(dev, stride | O_RDONLY, start);
++	if (fd < 0)
++		return 1;
++
++	r = read(fd, buff, size);
++	if (r != size)
++		return 1;
++
++	close(fd);
++
++	return 0;
++}
++
++static int do_read_mac(uint8_t mac[])
++{
++	return do_read_eeprom("/dev/eeprom1", 0x9A, 6, mac, O_RWSIZE_1);
++}
++
++static int do_read_uuid(uint8_t uuid[])
++{
++	return do_read_eeprom("/dev/eeprom1", 0x80, 16, uuid, O_RWSIZE_1);
++}
++
++static int do_read_protocol(uint16_t * pcol)
++{
++	return do_read_eeprom("/dev/eeprom0", 0x00, 2, pcol, O_RWSIZE_2);
++}
++
++static int do_read_rev(uint16_t * rev)
++{
++	return do_read_eeprom("/dev/eeprom0", 0x02, 2, rev, O_RWSIZE_2);
++}
++
++static int do_read_date(uint64_t * date)
++{
++	return do_read_eeprom("/dev/eeprom0", 0x04, 8, date, O_RWSIZE_8);
++}
++
++static void do_print_hex(uint8_t buff[], size_t size)
++{
++	size_t i;
++
++	if (size > 0) {
++		printf("%02X", buff[0]);
++		for (i = 1; i < size; ++i)
++			printf(":%02X", buff[i]);
++	}
++}
++
++static int do_dbinfo(int argc, char *argv[])
++{
++	uint8_t mac[6];
++	uint8_t uuid[16];
++	uint16_t pcol, rev;
++	uint64_t date;
++
++	if (do_read_mac(mac) || do_read_uuid(uuid) || do_read_protocol(&pcol) ||
++		do_read_rev(&rev) || do_read_date(&date))
++		return 1;
++
++	  printf("MAC:       "); do_print_hex(mac, 6);
++	printf("\nUUID:      "); do_print_hex(uuid, 16);
++	printf("\n");
++
++	/* EEPROM magic pattern or new EEPROM */
++	if (rev == 0x0302 || rev == 0xffff)
++	{
++		printf("\nNot tested. Unknown revision.\n");
++	}
++	else
++	{
++		printf("\nCode:      %s", db_prod_codes[rev]);
++		printf("\nProtocol:  %hu", pcol);
++		printf("\nRevision:  %hu", rev);
++		printf("\nTested on: %llu (Unix epoch time)\n", date);
++	}
++
++	return 0;
++}
++
++BAREBOX_CMD_START(dboard_info)
++	.cmd		= do_dbinfo,
++	BAREBOX_CMD_DESC("Show information about this DevelBoard")
++	BAREBOX_CMD_GROUP(CMD_GRP_INFO)
++	BAREBOX_CMD_COMPLETE(empty_complete)
++BAREBOX_CMD_END
+-- 
+1.9.1
+
