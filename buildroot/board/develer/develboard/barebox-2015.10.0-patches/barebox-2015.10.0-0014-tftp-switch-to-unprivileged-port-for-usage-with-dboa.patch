@@ -1,0 +1,25 @@
+From e74e4a02cdce5da8359dd9e92bf1b9628ffe5fbc Mon Sep 17 00:00:00 2001
+From: Giovanni Bajo <rasky@develer.com>
+Date: Fri, 27 Nov 2015 01:51:38 +0100
+Subject: [PATCH] tftp: switch to unprivileged port (for usage with dboard)
+
+---
+ fs/tftp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/tftp.c b/fs/tftp.c
+index 56d4365..0f1c5df 100644
+--- a/fs/tftp.c
++++ b/fs/tftp.c
+@@ -33,7 +33,7 @@
+ #include <kfifo.h>
+ #include <linux/sizes.h>
+ 
+-#define TFTP_PORT	69	/* Well known TFTP port number */
++#define TFTP_PORT	13991	/* TFTP board used by dboard */
+ 
+ /* Seconds to wait before remote server is allowed to resend a lost packet */
+ #define TIMEOUT		5
+-- 
+2.6.0
+
