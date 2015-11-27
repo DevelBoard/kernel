@@ -1,0 +1,34 @@
+From 2630c4369236f5df0d1d225c1333bd7f6a817921 Mon Sep 17 00:00:00 2001
+From: Giovanni Bajo <rasky@develer.com>
+Date: Fri, 27 Nov 2015 18:29:18 +0100
+Subject: [PATCH] Fix DHCP when the interface already has an IP
+
+---
+ net/dhcp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/dhcp.c b/net/dhcp.c
+index fb8a713..e8c6394 100644
+--- a/net/dhcp.c
++++ b/net/dhcp.c
+@@ -674,6 +674,8 @@ int dhcp(int retries, struct dhcp_req_param *param)
+ 	if (!retries)
+ 		retries = DHCP_DEFAULT_RETRY;
+ 
++	net_set_ip(0);
++
+ 	dhcp_con = net_udp_new(0xffffffff, PORT_BOOTPS, dhcp_handler, NULL);
+ 	if (IS_ERR(dhcp_con)) {
+ 		ret = PTR_ERR(dhcp_con);
+@@ -684,8 +686,6 @@ int dhcp(int retries, struct dhcp_req_param *param)
+ 	if (ret)
+ 		goto out1;
+ 
+-	net_set_ip(0);
+-
+ 	dhcp_start = get_time_ns();
+ 	ret = bootp_request(); /* Basically same as BOOTP */
+ 	if (ret)
+-- 
+2.6.0
+
