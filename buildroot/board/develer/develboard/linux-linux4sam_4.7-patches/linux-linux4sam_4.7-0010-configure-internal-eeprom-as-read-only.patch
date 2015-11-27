@@ -1,0 +1,24 @@
+From 9cf8ad2053ad1411d92adf2641cfcb4b103d21e2 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Fri, 27 Nov 2015 17:03:57 +0100
+Subject: [PATCH] configure internal eeprom as read-only
+
+---
+ arch/arm/boot/dts/at91-sama5d4_develboard.dts | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard.dts b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
+index dea6b37..4b17a38 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
+@@ -111,6 +111,7 @@
+ 					compatible = "24c02";
+ 					reg = <0x50>;
+ 					pagesize = <16>;
++					read-only;
+ 				};
+ 
+ 				/**
+-- 
+1.9.1
+
