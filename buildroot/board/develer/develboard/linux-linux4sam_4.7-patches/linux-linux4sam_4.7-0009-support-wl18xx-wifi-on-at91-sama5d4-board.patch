@@ -1,4 +1,4 @@
-From 224b5581201f46eb8ef7b3a267310d8696e4a541 Mon Sep 17 00:00:00 2001
+From 155e3124f87a14921ac5e0b9b289e93125fbdbb0 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 16 Nov 2015 15:37:33 +0100
 Subject: [PATCH] support wl18xx wifi on at91 sama5d4 board
@@ -12,7 +12,7 @@ Organization: Develer S.r.l.
  4 files changed, 180 insertions(+)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
-index e1094cd..e996909 100644
+index e1094cd..aa6d31b 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
 @@ -50,6 +50,36 @@
@@ -33,7 +33,7 @@ index e1094cd..e996909 100644
 +					reg = <1>;
 +					bus-width = <4>;
 +					interrupt-parent = <&pioE>;
-+					interrupts = <8 IRQ_TYPE_NONE>;
++					interrupts = <8 IRQ_TYPE_EDGE_RISING>;
 +					wlan-pwr-gpio = <&pioC 27 GPIO_ACTIVE_HIGH>;
 +					wlan-en-gpio = <&pioC 28 GPIO_ACTIVE_HIGH>;
 +					status = "okay";
@@ -44,7 +44,7 @@ index e1094cd..e996909 100644
 +				wifi {
 +					pinctrl_wlan_irq: wlan_irq {
 +						atmel,pins = <
-+							AT91_PIOE 8  AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP  /* WLAN_IRQ */
++							AT91_PIOE 8 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN  /* WLAN_IRQ */
 +						>;
 +					};
 +				};
