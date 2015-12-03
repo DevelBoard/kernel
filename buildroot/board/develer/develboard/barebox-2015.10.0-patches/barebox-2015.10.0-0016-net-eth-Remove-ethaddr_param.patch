@@ -1,7 +1,8 @@
-From 09430d58dc32ef99e827e5ae683416c3a879d4fc Mon Sep 17 00:00:00 2001
+From 4b3c5ffcc8b1ceb2c25e8f1c1e10700b5e582aa0 Mon Sep 17 00:00:00 2001
 From: Jan Remmet <j.remmet@phytec.de>
 Date: Thu, 19 Nov 2015 13:58:51 +0100
 Subject: [PATCH] net: eth: Remove ethaddr_param
+Organization: Develer S.r.l.
 
 commit d00db554 introduce ethaddr_param. But it is not initialized, so
 devinfo fails to show the mac. Remove it and use edev->ethaddr.
@@ -49,5 +50,5 @@ index b22e556..6ab9908 100644
  	if (edev->init)
  		edev->init(edev);
 -- 
-2.6.0
+1.9.1
 

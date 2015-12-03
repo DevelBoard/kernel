@@ -1,7 +1,8 @@
-From 2630c4369236f5df0d1d225c1333bd7f6a817921 Mon Sep 17 00:00:00 2001
+From a45d73a7fa4305d7f4581e49de55fa8272bc37ff Mon Sep 17 00:00:00 2001
 From: Giovanni Bajo <rasky@develer.com>
 Date: Fri, 27 Nov 2015 18:29:18 +0100
 Subject: [PATCH] Fix DHCP when the interface already has an IP
+Organization: Develer S.r.l.
 
 ---
  net/dhcp.c | 4 ++--
@@ -30,5 +31,5 @@ index fb8a713..e8c6394 100644
  	ret = bootp_request(); /* Basically same as BOOTP */
  	if (ret)
 -- 
-2.6.0
+1.9.1
 

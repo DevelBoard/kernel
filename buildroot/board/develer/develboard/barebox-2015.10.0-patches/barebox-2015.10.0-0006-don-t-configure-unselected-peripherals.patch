@@ -1,4 +1,4 @@
-From f1523c833c089ff7cd8c138b660c5c00ddc11121 Mon Sep 17 00:00:00 2001
+From cb989148308450bec9f85686342eabb7da6bbb32 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Tue, 21 Jul 2015 10:45:04 +0200
 Subject: [PATCH] don't configure unselected peripherals
@@ -9,7 +9,7 @@ Organization: Develer S.r.l.
  1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index b5718c2..ec00d1b 100644
+index 7c09148..59f3fd4 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -218,10 +218,13 @@ static void ek_add_device_mci(void) {}
@@ -26,7 +26,7 @@ index b5718c2..ec00d1b 100644
  /**
   * AT24MAC402 Standard 2-Kbit EEPROM
   * First half address range: 0x00-0x7F
-@@ -243,12 +246,16 @@ static struct at24_platform_data at24mac402_eui_sn = {
+@@ -244,12 +247,16 @@ static struct at24_platform_data at24mac402_eui_sn = {
  	.page_size = 1,
  	.flags = AT24_FLAG_READONLY,
  };
@@ -43,7 +43,7 @@ index b5718c2..ec00d1b 100644
  	{
  		.platform_data = &at24mac402_eeprom,
  		I2C_BOARD_INFO("at24", 0x50),
-@@ -257,12 +264,16 @@ static struct i2c_board_info i2c_devices[] = {
+@@ -258,12 +265,16 @@ static struct i2c_board_info i2c_devices[] = {
  		.platform_data = &at24mac402_eui_sn,
  		I2C_BOARD_INFO("at24", 0x58),
  	},

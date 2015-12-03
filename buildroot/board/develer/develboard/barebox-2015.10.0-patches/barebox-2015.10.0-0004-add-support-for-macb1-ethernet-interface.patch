@@ -1,4 +1,4 @@
-From 1634488b6c90be4a82c319bf0d280b0486e00ae7 Mon Sep 17 00:00:00 2001
+From 1487062161575af5ec415cab6fb7c570aa33da51 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Wed, 6 May 2015 10:22:55 +0200
 Subject: [PATCH] add support for macb1 ethernet interface
@@ -13,7 +13,7 @@ Organization: Develer S.r.l.
  5 files changed, 39 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index 85edc4f..86d243d 100644
+index 4f6f8f3..add347d 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -92,11 +92,20 @@ static void ek_add_device_nand(void)

@@ -1,4 +1,4 @@
-From 11d67c127695ca8d58cf48ce35cdfa81b5213419 Mon Sep 17 00:00:00 2001
+From 4019d2142c5de2f5f3e6794e02492ad60a98da0b Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Fri, 20 Feb 2015 17:44:04 +0100
 Subject: [PATCH] load sd card environment at boot

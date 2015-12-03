@@ -1,8 +1,9 @@
-From 2700b36a358143ed56bcd9539195a5238b3b64fb Mon Sep 17 00:00:00 2001
+From 71b5eedeff9cd5f5036a4c00f19155a2a6f52aca Mon Sep 17 00:00:00 2001
 From: Giovanni Bajo <rasky@develer.com>
 Date: Fri, 27 Nov 2015 01:51:21 +0100
 Subject: [PATCH] Add dboard_net_discover command to configure nfs/tftp
  services
+Organization: Develer S.r.l.
 
 ---
  commands/dboard.c | 166 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -190,5 +191,5 @@ index 0f49a3b..fa8e059 100644
 +	BAREBOX_CMD_COMPLETE(command_var_complete)
 +BAREBOX_CMD_END
 -- 
-2.6.0
+1.9.1
 

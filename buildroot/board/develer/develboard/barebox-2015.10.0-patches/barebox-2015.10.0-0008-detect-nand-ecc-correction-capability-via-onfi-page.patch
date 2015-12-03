@@ -1,4 +1,4 @@
-From bf31ae9a4c9c438c05f3e54cd009a56354a68dd6 Mon Sep 17 00:00:00 2001
+From f47a7a59a66edd274d5f65dde377a99b804e1e70 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Wed, 7 Oct 2015 15:46:40 +0200
 Subject: [PATCH] detect nand ecc correction capability via onfi page
@@ -10,7 +10,7 @@ Organization: Develer S.r.l.
  2 files changed, 12 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index aef64c8..5d545bb 100644
+index c507eb3..c3b64dc 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -45,8 +45,6 @@ static struct atmel_nand_data nand_pdata = {

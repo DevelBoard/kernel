@@ -1,15 +1,15 @@
-From ce42611ace5a5496f481a2e404d5002561e148a4 Mon Sep 17 00:00:00 2001
+From a8c632517b5d253c9e094c03989ef395b5e98198 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Thu, 12 Mar 2015 11:08:04 +0100
 Subject: [PATCH] add support for eeprom at24mac402
 Organization: Develer S.r.l.
 
 ---
- .../arm/boards/sama5d4_xplained/sama5d4_xplained.c | 31 ++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ .../arm/boards/sama5d4_xplained/sama5d4_xplained.c | 32 ++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
 diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
-index 02c178a..3b24d14 100644
+index 02c178a..56508db 100644
 --- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 +++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
 @@ -30,6 +30,7 @@
@@ -20,7 +20,7 @@ index 02c178a..3b24d14 100644
  #include <linux/clk.h>
  #include <linux/stat.h>
  #include <envfs.h>
-@@ -175,11 +176,41 @@ struct qt1070_platform_data qt1070_pdata = {
+@@ -175,11 +176,42 @@ struct qt1070_platform_data qt1070_pdata = {
  	.irq_pin	= AT91_PIN_PE10,
  };
  
@@ -32,6 +32,7 @@ index 02c178a..3b24d14 100644
 +static struct at24_platform_data at24mac402_eeprom = {
 +	.byte_len = SZ_2K / 8,
 +	.page_size = 16,
++	.flags = AT24_FLAG_READONLY,
 +};
 +
 +/**

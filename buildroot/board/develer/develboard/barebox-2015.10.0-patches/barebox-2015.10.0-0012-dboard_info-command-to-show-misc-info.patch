@@ -1,7 +1,8 @@
-From 5b8d3f7820e8df489aacecb446b8cdb4a8ec7905 Mon Sep 17 00:00:00 2001
+From 040a1e1c986ea46bee4f7305145518275f45321e Mon Sep 17 00:00:00 2001
 From: Pietro Lorefice <pietro@develer.com>
 Date: Thu, 26 Nov 2015 15:57:41 +0100
 Subject: [PATCH] dboard_info command to show misc info
+Organization: Develer S.r.l.
 
 ---
  commands/dboard.c | 171 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
