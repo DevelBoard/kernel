@@ -1,0 +1,290 @@
+From de8356aee8dad4fdb8bb90387bee14b0f18e8e2a Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Mon, 23 Nov 2015 15:55:36 +0100
+Subject: [PATCH] support wl18xx bluetooth on at91 sama5d4 develboard
+Organization: Develer S.r.l.
+
+---
+ .../arm/boot/dts/at91-sama5d4_develboard_eva01.dts | 17 +++++
+ drivers/bluetooth/btwilink.c                       | 10 +++
+ drivers/misc/ti-st/st_kim.c                        | 81 ++++++++++++++++++++--
+ drivers/misc/ti-st/st_ll.c                         |  4 +-
+ include/linux/ti_wilink_st.h                       |  2 +
+ 5 files changed, 105 insertions(+), 9 deletions(-)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
+index aa6d31b..6c0b116 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
+@@ -71,6 +71,11 @@
+ 				};
+ 			};
+ 
++			/* WL18xx Bluetooth UART */
++			usart1: serial@f8030000 {
++				status = "okay";
++			};
++
+ 			pinctrl@fc06a000 {
+ 				wifi {
+ 					pinctrl_wlan_irq: wlan_irq {
+@@ -82,4 +87,16 @@
+ 			};
+ 		};
+ 	};
++
++	kim {
++		compatible = "kim";
++		nshutdown_gpio = <&pioC 28 GPIO_ACTIVE_HIGH>;
++		dev_name = "/dev/ttyS4";
++		flow_cntrl = <1>;
++		baud_rate = <3000000>;
++	};
++
++	btwilink {
++		compatible = "btwilink";
++	};
+ };
+diff --git a/drivers/bluetooth/btwilink.c b/drivers/bluetooth/btwilink.c
+index f038dba..95adec3 100644
+--- a/drivers/bluetooth/btwilink.c
++++ b/drivers/bluetooth/btwilink.c
+@@ -30,6 +30,7 @@
+ 
+ #include <linux/ti_wilink_st.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ 
+ /* Bluetooth Driver Version */
+ #define VERSION               "1.0"
+@@ -286,6 +287,14 @@ static int ti_st_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
++static const struct of_device_id btwilink_of_match[] = {
++{
++	.compatible = "btwilink",
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(of, btwilink_of_match);
++
+ static int bt_ti_probe(struct platform_device *pdev)
+ {
+ 	static struct ti_st *hst;
+@@ -350,6 +359,7 @@ static struct platform_driver btwilink_driver = {
+ 	.driver = {
+ 		.name = "btwilink",
+ 		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(btwilink_of_match),
+ 	},
+ };
+ 
+diff --git a/drivers/misc/ti-st/st_kim.c b/drivers/misc/ti-st/st_kim.c
+index 21c2337..93b644f 100644
+--- a/drivers/misc/ti-st/st_kim.c
++++ b/drivers/misc/ti-st/st_kim.c
+@@ -37,13 +37,21 @@
+ #include <linux/ti_wilink_st.h>
+ #include <linux/module.h>
+ 
++#include <linux/of.h>
++#include <linux/of_device.h>
++
+ 
+ #define MAX_ST_DEVICES	3	/* Imagine 1 on each UART for now */
+ static struct platform_device *st_kim_devices[MAX_ST_DEVICES];
+ 
++struct ti_st_plat_data *kim_get_platform_data(struct platform_device *pdev);
++
+ /**********************************************************************/
+ /* internal functions */
+ 
++static struct ti_st_plat_data *kim_pdata;
++static struct ti_st_plat_data *of_parse_platform_data(struct platform_device *pdev);
++
+ /**
+  * st_get_plat_device -
+  *	function which returns the reference to the platform device
+@@ -462,7 +470,7 @@ long st_kim_start(void *kim_data)
+ 	struct kim_data_s	*kim_gdata = (struct kim_data_s *)kim_data;
+ 
+ 	pr_info(" %s", __func__);
+-	pdata = kim_gdata->kim_pdev->dev.platform_data;
++	pdata = kim_get_platform_data(kim_gdata->kim_pdev);
+ 
+ 	do {
+ 		/* platform specific enabling code here */
+@@ -523,7 +531,7 @@ long st_kim_stop(void *kim_data)
+ 	long err = 0;
+ 	struct kim_data_s	*kim_gdata = (struct kim_data_s *)kim_data;
+ 	struct ti_st_plat_data	*pdata =
+-		kim_gdata->kim_pdev->dev.platform_data;
++		kim_get_platform_data(kim_gdata->kim_pdev);
+ 	struct tty_struct	*tty = kim_gdata->core_data->tty;
+ 
+ 	reinit_completion(&kim_gdata->ldisc_installed);
+@@ -715,13 +723,64 @@ static const struct file_operations list_debugfs_fops = {
+  * board-*.c file
+  */
+ 
++static const struct of_device_id kim_of_match[] = {
++{
++	.compatible = "kim",
++	},
++	{}
++};
++MODULE_DEVICE_TABLE(of, kim_of_match);
++
++static struct ti_st_plat_data *of_parse_platform_data(struct platform_device *pdev)
++{
++	struct device_node *np = pdev->dev.of_node;
++	const u32 *dt_property;
++	int len;
++
++	struct ti_st_plat_data *pdata = kzalloc(sizeof(struct ti_st_plat_data), GFP_KERNEL);
++	if (!pdata) {
++		dev_err(&pdev->dev, "can't allocate device_tree platform data\n");
++		return 0;
++	}
++
++	dt_property = of_get_property(np, "dev_name", &len);
++	if (dt_property)
++		memcpy(&pdata->dev_name, dt_property, len);
++
++	of_property_read_u32(np, "nshutdown_gpio", (u32 *) &pdata->nshutdown_gpio);
++	of_property_read_u32(np, "flow_cntrl", (u32 *) &pdata->flow_cntrl);
++	of_property_read_u32(np, "baud_rate", (u32 *) &pdata->baud_rate);
++
++	return pdata;
++}
++
++struct ti_st_plat_data *kim_get_platform_data(struct platform_device *pdev)
++{
++	return kim_pdata;
++}
++
+ static struct dentry *kim_debugfs_dir;
+ static int kim_probe(struct platform_device *pdev)
+ {
+ 	struct kim_data_s	*kim_gdata;
+-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
++	struct ti_st_plat_data	*pdata;
+ 	int err;
+ 
++	kim_pdata = 0;
++
++	if (pdev->dev.platform_data)
++		kim_pdata = kmemdup(pdev->dev.platform_data,
++			sizeof(struct ti_st_plat_data), GFP_KERNEL);
++	else if (pdev->dev.of_node)
++		kim_pdata = of_parse_platform_data(pdev);
++
++	if (!kim_pdata) {
++		pr_err("platform data is missing");
++		return -ENODEV;
++	}
++
++	pdata = kim_get_platform_data(pdev);
++
+ 	if ((pdev->id != -1) && (pdev->id < MAX_ST_DEVICES)) {
+ 		/* multiple devices could exist */
+ 		st_kim_devices[pdev->id] = pdev;
+@@ -733,7 +792,8 @@ static int kim_probe(struct platform_device *pdev)
+ 	kim_gdata = kzalloc(sizeof(struct kim_data_s), GFP_ATOMIC);
+ 	if (!kim_gdata) {
+ 		pr_err("no mem to allocate");
+-		return -ENOMEM;
++		err = -ENOMEM;
++		goto err_gdata_init;
+ 	}
+ 	platform_set_drvdata(pdev, kim_gdata);
+ 
+@@ -800,13 +860,16 @@ err_sysfs_group:
+ err_core_init:
+ 	kfree(kim_gdata);
+ 
++err_gdata_init:
++	kfree(kim_pdata);
++
+ 	return err;
+ }
+ 
+ static int kim_remove(struct platform_device *pdev)
+ {
+ 	/* free the GPIOs requested */
+-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
++	struct ti_st_plat_data	*pdata = kim_get_platform_data(pdev);
+ 	struct kim_data_s	*kim_gdata;
+ 
+ 	kim_gdata = platform_get_drvdata(pdev);
+@@ -826,12 +889,15 @@ static int kim_remove(struct platform_device *pdev)
+ 
+ 	kfree(kim_gdata);
+ 	kim_gdata = NULL;
++	kfree(kim_pdata);
++	kim_pdata = NULL;
++
+ 	return 0;
+ }
+ 
+ static int kim_suspend(struct platform_device *pdev, pm_message_t state)
+ {
+-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
++	struct ti_st_plat_data	*pdata = kim_get_platform_data(pdev);
+ 
+ 	if (pdata->suspend)
+ 		return pdata->suspend(pdev, state);
+@@ -841,7 +907,7 @@ static int kim_suspend(struct platform_device *pdev, pm_message_t state)
+ 
+ static int kim_resume(struct platform_device *pdev)
+ {
+-	struct ti_st_plat_data	*pdata = pdev->dev.platform_data;
++	struct ti_st_plat_data	*pdata = kim_get_platform_data(pdev);
+ 
+ 	if (pdata->resume)
+ 		return pdata->resume(pdev);
+@@ -859,6 +925,7 @@ static struct platform_driver kim_platform_driver = {
+ 	.driver = {
+ 		.name = "kim",
+ 		.owner = THIS_MODULE,
++		.of_match_table = of_match_ptr(kim_of_match),
+ 	},
+ };
+ 
+diff --git a/drivers/misc/ti-st/st_ll.c b/drivers/misc/ti-st/st_ll.c
+index 93b4d67..268987b 100644
+--- a/drivers/misc/ti-st/st_ll.c
++++ b/drivers/misc/ti-st/st_ll.c
+@@ -53,7 +53,7 @@ static void ll_device_want_to_sleep(struct st_data_s *st_data)
+ 
+ 	/* communicate to platform about chip asleep */
+ 	kim_data = st_data->kim_data;
+-	pdata = kim_data->kim_pdev->dev.platform_data;
++	pdata = kim_get_platform_data(kim_data->kim_pdev);
+ 	if (pdata->chip_asleep)
+ 		pdata->chip_asleep(NULL);
+ }
+@@ -86,7 +86,7 @@ static void ll_device_want_to_wakeup(struct st_data_s *st_data)
+ 
+ 	/* communicate to platform about chip wakeup */
+ 	kim_data = st_data->kim_data;
+-	pdata = kim_data->kim_pdev->dev.platform_data;
++	pdata = kim_get_platform_data(kim_data->kim_pdev);
+ 	if (pdata->chip_awake)
+ 		pdata->chip_awake(NULL);
+ }
+diff --git a/include/linux/ti_wilink_st.h b/include/linux/ti_wilink_st.h
+index 884d626..07a2c91 100644
+--- a/include/linux/ti_wilink_st.h
++++ b/include/linux/ti_wilink_st.h
+@@ -448,4 +448,6 @@ struct ti_st_plat_data {
+ 	int (*chip_awake) (struct kim_data_s *);
+ };
+ 
++extern struct ti_st_plat_data *kim_get_platform_data(struct platform_device *pdev);
++
+ #endif /* TI_WILINK_ST_H */
+-- 
+1.9.1
+
