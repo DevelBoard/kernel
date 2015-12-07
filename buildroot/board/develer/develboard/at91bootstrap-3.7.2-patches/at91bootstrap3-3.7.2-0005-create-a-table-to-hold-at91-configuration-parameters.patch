@@ -1,0 +1,62 @@
+From 74eed2b529532204e7258bc3bb89a4850bada09f Mon Sep 17 00:00:00 2001
+From: Mirko Damiani <mirko@develer.com>
+Date: Thu, 10 Dec 2015 12:57:34 +0100
+Subject: [PATCH] create a table to hold at91 configuration parameters
+Organization: Develer S.r.l.
+
+---
+ include/common.h | 22 ++++++++++++++++++++++
+ main.c           |  6 ++++++
+ 2 files changed, 28 insertions(+)
+
+diff --git a/include/common.h b/include/common.h
+index 042aaa8..06300b8 100644
+--- a/include/common.h
++++ b/include/common.h
+@@ -89,4 +89,26 @@ static inline unsigned int swap_uint32(unsigned int data)
+ }
+ 
+ 
++#define STATIC_ASSERT(COND,MSG) \
++	typedef char static_assertion_##MSG[(COND) ? 1 : -1]
++
++typedef unsigned char uint8_t;
++typedef unsigned short uint16_t;
++typedef unsigned int uint32_t;
++
++STATIC_ASSERT(sizeof(uint8_t) == 1, sizeof_uint32_t);
++STATIC_ASSERT(sizeof(uint16_t) == 2, sizeof_uint32_t);
++STATIC_ASSERT(sizeof(uint32_t) == 4, sizeof_uint32_t);
++
++struct at91_param_table_t {
++	char signature[16];
++	uint16_t version;
++	uint8_t boot_origin;
++	uint8_t dummy;
++};
++
++STATIC_ASSERT(sizeof(struct at91_param_table_t) == 20, sizeof_at91_param_table);
++
++extern const struct at91_param_table_t _at91_parameters;
++
+ #endif /* #ifdef __COMMON_H__ */
+diff --git a/main.c b/main.c
+index b810f59..6abcf4b 100644
+--- a/main.c
++++ b/main.c
+@@ -42,6 +42,12 @@
+ #include "act8865.h"
+ #include "secure.h"
+ 
++
++const struct at91_param_table_t _at91_parameters = {
++	"AT91_PARAMETERS", 1, 0, 0,
++};
++
++
+ extern int load_kernel(struct image_info *img_info);
+ 
+ typedef int (*load_function)(struct image_info *img_info);
+-- 
+1.9.1
+

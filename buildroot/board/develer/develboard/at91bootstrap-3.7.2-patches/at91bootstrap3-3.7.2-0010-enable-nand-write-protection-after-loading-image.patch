@@ -1,4 +1,4 @@
-From a0d80c3c4b91aac9a5ad71a2386635f081b6206f Mon Sep 17 00:00:00 2001
+From 8af8185d98680e3d6e5b95f17707b5366ac5f572 Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 2 Nov 2015 10:28:16 +0100
 Subject: [PATCH] enable nand write protection after loading image
@@ -11,10 +11,10 @@ Organization: Develer S.r.l.
  3 files changed, 20 insertions(+)
 
 diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
-index dc15ecb..8083630 100644
+index 6c0bf7f..e48aa27 100644
 --- a/board/sama5d4_xplained/sama5d4_xplained.c
 +++ b/board/sama5d4_xplained/sama5d4_xplained.c
-@@ -799,6 +799,7 @@ void nandflash_hw_init(void)
+@@ -703,6 +703,7 @@ void nandflash_hw_init(void)
  		{"D5",	AT91C_PIN_PC(10), 0, PIO_PULLUP, PIO_PERIPH_A},
  		{"D6",	AT91C_PIN_PC(11), 0, PIO_PULLUP, PIO_PERIPH_A},
  		{"D7",	AT91C_PIN_PC(12), 0, PIO_PULLUP, PIO_PERIPH_A},
