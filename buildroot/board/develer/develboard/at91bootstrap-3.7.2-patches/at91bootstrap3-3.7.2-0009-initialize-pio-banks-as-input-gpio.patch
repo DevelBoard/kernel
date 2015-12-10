@@ -1,4 +1,4 @@
-From cfcae5a78d3a462b21ba6bd096d4d0c95be41b53 Mon Sep 17 00:00:00 2001
+From 85754772971bfe0029711afdd0c2b49cf2b2093e Mon Sep 17 00:00:00 2001
 From: Mirko Damiani <mirko@develer.com>
 Date: Mon, 2 Nov 2015 10:07:23 +0100
 Subject: [PATCH] initialize pio banks as input gpio
@@ -29,7 +29,7 @@ index 29da9ec..ab0330f 100644
  	bool "Call User specific Hardware Initialization"
  	help
 diff --git a/board/sama5d4_xplained/sama5d4_xplained.c b/board/sama5d4_xplained/sama5d4_xplained.c
-index e57e645..dc15ecb 100644
+index 1333ccd..6c0bf7f 100644
 --- a/board/sama5d4_xplained/sama5d4_xplained.c
 +++ b/board/sama5d4_xplained/sama5d4_xplained.c
 @@ -92,6 +92,29 @@ static void initialize_dbgu(void)
@@ -62,7 +62,7 @@ index e57e645..dc15ecb 100644
  #ifdef CONFIG_DDR2
  static void ddramc_reg_config(struct ddramc_register *ddramc_config)
  {
-@@ -639,6 +662,9 @@ void at91_disable_mac_clock(void)
+@@ -543,6 +566,9 @@ void at91_disable_mac_clock(void)
  #ifdef CONFIG_HW_INIT
  void hw_init(void)
  {
