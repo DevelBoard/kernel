@@ -1,0 +1,28 @@
+From 4f916ed718c839f8b9ed64ba392a6bb5b32f0dd0 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Thu, 7 Jan 2016 18:00:31 +0100
+Subject: [PATCH] dts: usart1 (BT) enabled on eva01 dts
+
+---
+ arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
+index aa6d31b..7dd3f28 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_eva01.dts
+@@ -71,6 +71,11 @@
+ 				};
+ 			};
+ 
++			/* WL18xx Bluetooth UART */
++			usart1: serial@f8030000 {
++				status = "okay";
++			};
++
+ 			pinctrl@fc06a000 {
+ 				wifi {
+ 					pinctrl_wlan_irq: wlan_irq {
+-- 
+1.9.1
+
