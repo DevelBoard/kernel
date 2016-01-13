@@ -1,0 +1,36 @@
+From c19443cfb478c5929d6d8822b549ef1c07eb80e0 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Tue, 12 Jan 2016 16:27:23 +0100
+Subject: [PATCH] sama5d4: support for panel RFF700H-AIW-DNC
+
+---
+ arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+index d78ebf4..8754d42 100644
+--- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
++++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+@@ -224,6 +224,19 @@ static struct fb_videomode at91_tft_vga_modes[] = {
+ 		.sync		= 0,
+ 		.vmode		= FB_VMODE_NONINTERLACED,
+ 	},
++	{
++		.name		= "RFF700H-AIW",
++		.refresh	= 60,
++		.xres		= 800,		.yres		= 480,
++		.pixclock	= KHZ2PICOS(32260),
++
++		.left_margin	= 2,		.right_margin	= 2,
++		.upper_margin	= 2,		.lower_margin	= 2,
++		.hsync_len	= 256,		.vsync_len	= 45,
++
++		.sync		= 0,
++		.vmode		= FB_VMODE_NONINTERLACED,
++	},
+ };
+ 
+ /* Output mode is TFT 24 bits */
+-- 
+1.9.1
+
