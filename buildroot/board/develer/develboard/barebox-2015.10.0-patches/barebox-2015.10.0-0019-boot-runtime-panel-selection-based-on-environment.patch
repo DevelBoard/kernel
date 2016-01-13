@@ -53,25 +53,25 @@ index 9bdc640..054f3d7 100644
 +
 +	ret = stat(env_cfg, &s);
 +	if (ret) {
-+		pr_info("no configuration file found, skipping\n");
++		pr_info("no configuration file found\n");
 +		return 0;
 +	}
 +
 +	ret = execute_command(2, src_cmd);
 +	if (ret) {
-+		pr_warning("couldn't source config file, skipping\n");
++		pr_warning("couldn't source config file\n");
 +		return 0;
 +	}
 +
 +	var = getenv("panel_id");
 +	if (!var) {
-+		pr_info("no panel id defined, skipping configuration\n");
++		pr_info("no panel id defined\n");
 +		return 0;
 +	}
 +
 +	panel_id = simple_strtol(var, NULL, 0);
 +	if (panel_id < 0 || panel_id >= ARRAY_SIZE(at91_tft_vga_modes)) {
-+		pr_warning("invalid panel id %d, skipping configuration\n");
++		pr_warning("invalid panel id %ld\n", panel_id);
 +		return 0;
 +	}
 +
