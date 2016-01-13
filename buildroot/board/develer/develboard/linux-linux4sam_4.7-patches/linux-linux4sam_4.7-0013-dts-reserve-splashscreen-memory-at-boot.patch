@@ -1,0 +1,33 @@
+From ff047662ba88cba919a70025fa0f22f84bbe965b Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Tue, 12 Jan 2016 16:19:55 +0100
+Subject: [PATCH] dts: reserve splashscreen memory at boot
+
+---
+ arch/arm/boot/dts/at91-sama5d4_develboard.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard.dts b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
+index 4b17a38..cad0913 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard.dts
+@@ -57,6 +57,16 @@
+ 		reg = <0x20000000 0x20000000>;
+ 	};
+ 
++	reserved-memory {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges;
++
++		splashscreen {
++			reg = <0x23000000 0x200000>;
++		};
++	};
++
+ 	clocks {
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
+-- 
+1.9.1
+
