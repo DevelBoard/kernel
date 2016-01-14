@@ -1,0 +1,30 @@
+From 3b041d18343d2bd9a231031fadaeabfc903dd988 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Tue, 12 Jan 2016 16:11:21 +0100
+Subject: [PATCH] atmel-hlcdc: fbdev initialization during module loading
+
+---
+ drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+index 3005871..a37c3a7 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+@@ -544,6 +544,13 @@ static int atmel_hlcdc_dc_load(struct drm_device *dev)
+ 	/* force connectors detection */
+ 	drm_helper_hpd_irq_event(dev);
+ 
++	/* early fb initialization */
++	dc->fbdev = drm_fbdev_cma_init(dev, 24,
++			dev->mode_config.num_crtc,
++			dev->mode_config.num_connector);
++	if (IS_ERR(dc->fbdev))
++		dc->fbdev = NULL;
++
+ 	return 0;
+ 
+ err_periph_clk_disable:
+-- 
+1.9.1
+
