@@ -1,0 +1,36 @@
+From 568602f75f5abde55eab4e17866ad9d2514eed96 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Wed, 20 Jan 2016 14:42:58 +0100
+Subject: [PATCH] sama5d4: support for panel DLC0430EZG-T-2
+
+---
+ arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+index a13803c..e5195cd 100644
+--- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
++++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+@@ -239,6 +239,19 @@ static struct fb_videomode at91_tft_vga_modes[] = {
+ 		.sync		= 0,
+ 		.vmode		= FB_VMODE_NONINTERLACED,
+ 	},
++	{
++		.name		= "DLC0430EZG-T-2",
++		.refresh	= 60,
++		.xres		= 480,		.yres		= 272,
++		.pixclock	= KHZ2PICOS(9000),
++
++		.left_margin	= 2,		.right_margin	= 2,
++		.upper_margin	= 2,		.lower_margin	= 2,
++		.hsync_len	= 41,		.vsync_len	= 10,
++
++		.sync		= 0,
++		.vmode		= FB_VMODE_NONINTERLACED,
++	},
+ };
+ 
+ /* Output mode is TFT 24 bits */
+-- 
+1.9.1
+
