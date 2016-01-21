@@ -1,0 +1,29 @@
+From 7ebcef50d5a79eddb85a51cf832283e4ce75f2b5 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Wed, 20 Jan 2016 17:50:27 +0100
+Subject: [PATCH] dts: enable ADC 4-wires touchscreen support
+
+---
+ arch/arm/boot/dts/at91-sama5d4_develboard_shield_4_3.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_4_3.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_4_3.dts
+index db42ca7..a7e1f8a 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_4_3.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_4_3.dts
+@@ -65,6 +65,12 @@
+ 					};
+ 				};
+ 			};
++
++			/* ADC touchscreen wires */
++			adc0: adc@fc034000 {
++				atmel,adc-ts-wires = <4>;
++				status = "okay";
++			};
+ 		};
+ 	};
+ 
+-- 
+1.9.1
+
