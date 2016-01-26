@@ -1,0 +1,39 @@
+From a9787b88ba5bcb0da6c237be8016cf527d593c26 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Tue, 26 Jan 2016 12:42:25 +0100
+Subject: [PATCH] dts: enable RS232 and RS485
+
+---
+ arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+index 882acc5..ac863e6 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+@@ -98,6 +98,22 @@
+ 				};
+ 			};
+ 
++			/* RS232 */
++			usart2: serial@fc008000 {
++				status = "okay";
++			};
++
++			/* RS485 */
++			usart0: serial@f802c000 {
++				/delete-property/ dmas;
++				/delete-property/ dma-names;
++				atmel,use-dma-tx;
++				atmel,use-dma-rx;
++				linux,rs485-enabled-at-boot-time;
++				rs485-rts-delay = <0 0>;
++				status = "okay";
++			};
++
+ 			pinctrl@fc06a000 {
+ 				can {
+ 					pinctrl_can: can-0 {
+-- 
+1.9.1
+

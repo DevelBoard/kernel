@@ -1,0 +1,147 @@
+From 2842266efcc3bf9335415aeee3936246e5a27f82 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Fri, 22 Jan 2016 16:46:36 +0100
+Subject: [PATCH] dts: add support for lcd panel AM-800480STMQW-T00_DS_001 and
+ touchscreen
+
+---
+ .../dts/at91-sama5d4_develboard_shield_7_2.dts     | 72 ++++++++++++++++++++++
+ drivers/gpu/drm/panel/panel-simple.c               | 27 ++++++++
+ 2 files changed, 99 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+index 9fac17b0..882acc5 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+@@ -58,6 +58,29 @@
+ 
+ 	ahb {
+ 		apb {
++			hlcdc: hlcdc@f0000000 {
++				status = "okay";
++
++				hlcdc-display-controller {
++					pinctrl-names = "default";
++					pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb888>;
++
++					port@0 {
++						hlcdc_panel_output: endpoint@0 {
++							reg = <0>;
++							remote-endpoint = <&panel_input>;
++						};
++					};
++				};
++			};
++
++			/* ADC touchscreen wires */
++			adc0: adc@fc034000 {
++				atmel,adc-ts-wires = <4>;
++				status = "okay";
++			};
++
++			/* CAN controller */
+ 			spi0: spi@f8010000 {
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&pinctrl_spi0 &pinctrl_can>;
+@@ -86,4 +109,53 @@
+ 			};
+ 		};
+ 	};
++
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&hlcdc_pwm 0 50000 0>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <7>;
++		power-supply = <&bl_reg>;
++		status = "okay";
++	};
++
++	bl_reg: backlight_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "backlight-power-supply";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		status = "okay";
++	};
++
++	panel: panel {
++		compatible = "ampire,am-800480stmqw-t00", "simple-panel";
++		backlight = <&backlight>;
++		power-supply = <&panel_reg>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		port@0 {
++			reg = <0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&hlcdc_panel_output>;
++			};
++		};
++	};
++
++	panel_reg: panel_regulator {
++		compatible = "regulator-fixed";
++		regulator-name = "panel-power-supply";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pioA 25 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
++		regulator-boot-on;
++		status = "okay";
++	};
+ };
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index a13c771..09c73f2 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -717,6 +717,30 @@ static const struct panel_desc shelly_sca07010_bfn_lnn = {
+ 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+ };
+ 
++static const struct drm_display_mode ampire_am_800480stmqw_t00_mode = {
++	.clock = 33260,
++	.hdisplay = 800,
++	.hsync_start = 800,
++	.hsync_end = 800 + 256,
++	.htotal = 800 + 256,
++	.vdisplay = 480,
++	.vsync_start = 480,
++	.vsync_end = 480 + 45,
++	.vtotal = 480 + 45,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc ampire_am_800480stmqw_t00 = {
++	.modes = &ampire_am_800480stmqw_t00_mode,
++	.num_modes = 1,
++	.bpc = 6,
++	.size = {
++		.width = 152,
++		.height = 91,
++	},
++	.bus_format = MEDIA_BUS_FMT_RGB565_1X16,
++};
++
+ static const struct of_device_id platform_of_match[] = {
+ 	{
+ 		.compatible = "auo,b101aw03",
+@@ -770,6 +794,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "shelly,sca07010-bfn-lnn",
+ 		.data = &shelly_sca07010_bfn_lnn,
+ 	}, {
++		.compatible = "ampire,am-800480stmqw-t00",
++		.data = &ampire_am_800480stmqw_t00,
++	}, {
+ 		/* sentinel */
+ 	}
+ };
+-- 
+1.9.1
+
