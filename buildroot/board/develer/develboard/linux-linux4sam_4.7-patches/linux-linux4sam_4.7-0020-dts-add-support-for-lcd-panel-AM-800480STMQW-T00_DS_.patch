@@ -1,4 +1,4 @@
-From 2842266efcc3bf9335415aeee3936246e5a27f82 Mon Sep 17 00:00:00 2001
+From d9d2caa52f06db7915d74498ba1100466ffe23c3 Mon Sep 17 00:00:00 2001
 From: Pietro Lorefice <pietro@develer.com>
 Date: Fri, 22 Jan 2016 16:46:36 +0100
 Subject: [PATCH] dts: add support for lcd panel AM-800480STMQW-T00_DS_001 and
@@ -10,7 +10,7 @@ Subject: [PATCH] dts: add support for lcd panel AM-800480STMQW-T00_DS_001 and
  2 files changed, 99 insertions(+)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
-index 9fac17b0..882acc5 100644
+index 9fac17b07930..882acc54926e 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
 @@ -58,6 +58,29 @@
@@ -98,11 +98,11 @@ index 9fac17b0..882acc5 100644
 +	};
  };
 diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index a13c771..09c73f2 100644
+index 8cea219a5a54..8d89e618eed8 100644
 --- a/drivers/gpu/drm/panel/panel-simple.c
 +++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -717,6 +717,30 @@ static const struct panel_desc shelly_sca07010_bfn_lnn = {
- 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+@@ -740,6 +740,30 @@ static const struct panel_desc dlc_dlc0430ezg_t_2 = {
+ 	.bus_format = MEDIA_BUS_FMT_RGB565_1X16,
  };
  
 +static const struct drm_display_mode ampire_am_800480stmqw_t00_mode = {
@@ -132,16 +132,16 @@ index a13c771..09c73f2 100644
  static const struct of_device_id platform_of_match[] = {
  	{
  		.compatible = "auo,b101aw03",
-@@ -770,6 +794,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "shelly,sca07010-bfn-lnn",
- 		.data = &shelly_sca07010_bfn_lnn,
+@@ -795,6 +819,9 @@ static const struct of_device_id platform_of_match[] = {
  	}, {
+ 		.compatible = "dlc,dlc0430ezg-t-2",
+ 		.data = &dlc_dlc0430ezg_t_2,
++	}, {
 +		.compatible = "ampire,am-800480stmqw-t00",
 +		.data = &ampire_am_800480stmqw_t00,
-+	}, {
+ 	}, {
  		/* sentinel */
  	}
- };
 -- 
-1.9.1
+2.14.1
 
