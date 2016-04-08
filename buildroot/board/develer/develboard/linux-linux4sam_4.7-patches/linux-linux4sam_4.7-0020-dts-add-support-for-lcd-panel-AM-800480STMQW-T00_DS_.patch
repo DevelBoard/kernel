@@ -1,4 +1,4 @@
-From d9d2caa52f06db7915d74498ba1100466ffe23c3 Mon Sep 17 00:00:00 2001
+From 24f51e490765ae7be918fcce03776b060ec0d4a5 Mon Sep 17 00:00:00 2001
 From: Pietro Lorefice <pietro@develer.com>
 Date: Fri, 22 Jan 2016 16:46:36 +0100
 Subject: [PATCH] dts: add support for lcd panel AM-800480STMQW-T00_DS_001 and
@@ -10,7 +10,7 @@ Subject: [PATCH] dts: add support for lcd panel AM-800480STMQW-T00_DS_001 and
  2 files changed, 99 insertions(+)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
-index 9fac17b07930..882acc54926e 100644
+index dd99c1022226..c3e8383742c3 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
 @@ -58,6 +58,29 @@

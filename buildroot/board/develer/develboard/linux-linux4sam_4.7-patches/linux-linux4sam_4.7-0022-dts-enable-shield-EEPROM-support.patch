@@ -1,0 +1,33 @@
+From 5de0ce0b602eff075470715d3a95c13f6c84ea93 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Fri, 8 Apr 2016 09:35:32 +0200
+Subject: [PATCH] dts: enable shield EEPROM support
+
+---
+ arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+index 18fa9d76ab6c..4b160b8f103d 100644
+--- a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+@@ -114,6 +114,16 @@
+ 				status = "okay";
+ 			};
+ 
++			/* Shield EEPROM */
++			i2c0: i2c@f8014000 {
++				status = "okay";
++
++				24c128@51 {
++					compatible = "atmel,24c128";
++					reg = <0x51>;
++				};
++			};
++
+ 			pinctrl@fc06a000 {
+ 				can {
+ 					pinctrl_can: can-0 {
+-- 
+2.14.1
+

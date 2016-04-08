@@ -1,4 +1,4 @@
-From 086c0c69bfd803d3c27df7470b00e67989b48254 Mon Sep 17 00:00:00 2001
+From 9e3c4e7af9f20b66ed4fc3274c42ad6879752cae Mon Sep 17 00:00:00 2001
 From: Pietro Lorefice <pietro@develer.com>
 Date: Thu, 21 Jan 2016 16:10:50 +0100
 Subject: [PATCH] dts: new dts for LCD 7.2" shield with support for CAN bus

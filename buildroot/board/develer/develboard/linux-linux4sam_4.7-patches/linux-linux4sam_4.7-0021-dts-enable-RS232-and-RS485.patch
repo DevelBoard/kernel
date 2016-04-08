@@ -1,4 +1,4 @@
-From 38671a8057f0d8e1575e72b979853a59c29e27d7 Mon Sep 17 00:00:00 2001
+From 217129542282d1a7b3311c62f5c77e42df1a15c9 Mon Sep 17 00:00:00 2001
 From: Pietro Lorefice <pietro@develer.com>
 Date: Tue, 26 Jan 2016 12:42:25 +0100
 Subject: [PATCH] dts: enable RS232 and RS485
@@ -8,7 +8,7 @@ Subject: [PATCH] dts: enable RS232 and RS485
  1 file changed, 16 insertions(+)
 
 diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
-index 882acc54926e..ac863e694696 100644
+index c3e8383742c3..18fa9d76ab6c 100644
 --- a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
 +++ b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
 @@ -98,6 +98,22 @@
