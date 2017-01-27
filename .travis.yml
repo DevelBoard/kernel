@@ -17,9 +17,9 @@ cache:
 
 before_install:
     # git-lfs
-    - wget "https://github.com/github/git-lfs/releases/download/v1.0.2/git-lfs-linux-amd64-1.0.2.tar.gz"
-    - tar xf git-lfs-linux-amd64-1.0.2.tar.gz
-    - export PATH=$PATH:$PWD/git-lfs-1.0.2
+    - wget "https://github.com/git-lfs/git-lfs/releases/download/v1.5.5/git-lfs-linux-amd64-1.5.5.tar.gz"
+    - tar xf git-lfs-linux-amd64-1.5.5.tar.gz
+    - export PATH=$PATH:$PWD/git-lfs-1.5.5
     - git lfs init
     # git-credentials
     - touch ~/.git-credentials
