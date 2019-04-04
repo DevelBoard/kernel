@@ -1,0 +1,55 @@
+From 464ff2d21abc6e317187d24c0b283c522bc726a8 Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Wed, 20 Jan 2016 16:50:39 +0100
+Subject: [PATCH] sama5d4: reserve framebuffer memory
+
+---
+ .../arm/boards/sama5d4_xplained/sama5d4_xplained.c | 25 ++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
+
+diff --git a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+index e5195cd..7000d1f 100644
+--- a/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
++++ b/arch/arm/boards/sama5d4_xplained/sama5d4_xplained.c
+@@ -13,6 +13,7 @@
+ #include <init.h>
+ #include <environment.h>
+ #include <asm/armlinux.h>
++#include <asm/mmu.h>
+ #include <asm/sections.h>
+ #include <partition.h>
+ #include <fs.h>
+@@ -461,6 +462,30 @@ static const struct devfs_partition sama5d4_xplained_nand0_partitions[] = {
+ 	}
+ };
+ 
++#if defined(CONFIG_DRIVER_VIDEO_ATMEL_HLCD)
++static int sama5d4_xplained_reserve_fb(void)
++{
++	struct resource *fbmem;
++
++	fbmem = request_sdram_region("framebuffer",
++			(unsigned long)FB_ADDRESS,
++			(unsigned long)MAX_FB_SIZE);
++	if (IS_ERR(fbmem)) {
++		pr_err("failed to allocate framebuffer memory\n");
++		return PTR_ERR(fbmem);
++	}
++
++	remap_range((void *)fbmem->start, fbmem->end - fbmem->start + 1,
++		mmu_get_pte_uncached_flags());
++
++	pr_info("framebuffer: 0x%08x -> 0x%08x (size %s)\n",
++		fbmem->start, fbmem->end, size_human_readable(MAX_FB_SIZE));
++
++	return 0;
++}
++coredevice_initcall(sama5d4_xplained_reserve_fb);
++#endif
++
+ static int sama5d4_xplained_devices_init(void)
+ {
+ 	ek_add_device_i2c();
+-- 
+1.9.1
+

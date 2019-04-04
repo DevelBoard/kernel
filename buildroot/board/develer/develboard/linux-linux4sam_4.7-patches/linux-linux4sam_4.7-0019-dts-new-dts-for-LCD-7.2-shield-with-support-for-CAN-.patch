@@ -1,0 +1,121 @@
+From 9e3c4e7af9f20b66ed4fc3274c42ad6879752cae Mon Sep 17 00:00:00 2001
+From: Pietro Lorefice <pietro@develer.com>
+Date: Thu, 21 Jan 2016 16:10:50 +0100
+Subject: [PATCH] dts: new dts for LCD 7.2" shield with support for CAN bus
+
+---
+ arch/arm/boot/dts/Makefile                         |  1 +
+ .../dts/at91-sama5d4_develboard_shield_7_2.dts     | 89 ++++++++++++++++++++++
+ 2 files changed, 90 insertions(+)
+ create mode 100644 arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 37ee1ae7875d..ca733a1b7790 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -81,6 +81,7 @@ dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_develboard_eva01.dtb
+ dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_develboard_eva01_r2.dtb
+ dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_develboard_eva01_r3.dtb
+ dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_develboard_shield_4_3.dtb
++dtb-$(CONFIG_ARCH_AT91)	+= at91-sama5d4_develboard_shield_7_2.dtb
+ 
+ dtb-$(CONFIG_ARCH_ATLAS6) += atlas6-evb.dtb
+ dtb-$(CONFIG_ARCH_AXXIA) += axm5516-amarillo.dtb
+diff --git a/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+new file mode 100644
+index 000000000000..dd99c1022226
+--- /dev/null
++++ b/arch/arm/boot/dts/at91-sama5d4_develboard_shield_7_2.dts
+@@ -0,0 +1,89 @@
++/*
++ * at91-sama5d4_develboard_shield_7_2.dts - Device Tree file for EVA01 LCD 7.2" Shield
++ *
++ *  Copyright (C) 2016 Develer,
++ *                2016 Pietro Lorefice <pietro@develer.com>
++ *
++ * This file is dual-licensed: you can use it either under the terms
++ * of the GPL or the X11 license, at your option. Note that this dual
++ * licensing only applies to this file, and not this project as a
++ * whole.
++ *
++ *  a) This file is free software; you can redistribute it and/or
++ *     modify it under the terms of the GNU General Public License as
++ *     published by the Free Software Foundation; either version 2 of the
++ *     License, or (at your option) any later version.
++ *
++ *     This file is distributed in the hope that it will be useful,
++ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
++ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ *     GNU General Public License for more details.
++ *
++ * Or, alternatively,
++ *
++ *  b) Permission is hereby granted, free of charge, to any person
++ *     obtaining a copy of this software and associated documentation
++ *     files (the "Software"), to deal in the Software without
++ *     restriction, including without limitation the rights to use,
++ *     copy, modify, merge, publish, distribute, sublicense, and/or
++ *     sell copies of the Software, and to permit persons to whom the
++ *     Software is furnished to do so, subject to the following
++ *     conditions:
++ *
++ *     The above copyright notice and this permission notice shall be
++ *     included in all copies or substantial portions of the Software.
++ *
++ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
++ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
++ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
++ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
++ *     OTHER DEALINGS IN THE SOFTWARE.
++ */
++#include "at91-sama5d4_develboard_eva01_r2.dts"
++
++/ {
++	model = "Atmel SAMA5D4 DevelBoard EVA01 LCD 7.2\" Shield";
++	compatible = "atmel,sama5d4-develboard-shield-7-2", "atmel,sama5d4-develboard-eva01-r2", "atmel,sama5d4-develboard-eva01", "atmel,sama5d4-develboard", "atmel,sama5d4", "atmel,sama5";
++
++	clocks {
++		can_clk: can_clk {
++			compatible = "fixed-clock";
++			#clock-cells = <0>;
++			clock-frequency = <16000000>;
++		};
++	};
++
++	ahb {
++		apb {
++			spi0: spi@f8010000 {
++				pinctrl-names = "default";
++				pinctrl-0 = <&pinctrl_spi0 &pinctrl_can>;
++				cs-gpios = <&pioC 3 0>, <0>, <0>, <0>;
++				status = "okay";
++               
++				can0: can@0 {
++					compatible = "microchip,mcp2515";
++					reg = <0>;
++					clocks = <&can_clk>;
++					interrupt-parent = <&pioD>;
++					interrupts = <24 IRQ_TYPE_EDGE_FALLING>;
++					spi-max-frequency = <10000000>;
++					status = "okay";
++				};
++			};
++
++			pinctrl@fc06a000 {
++				can {
++					pinctrl_can: can-0 {
++						atmel,pins = <
++							AT91_PIOD 24 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_DOWN  /* CAN_IRQ */
++						>;
++					}; 
++				};
++			};
++		};
++	};
++};
+-- 
+2.14.1
+
