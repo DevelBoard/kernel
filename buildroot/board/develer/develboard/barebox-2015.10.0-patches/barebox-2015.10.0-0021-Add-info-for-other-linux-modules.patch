@@ -1,0 +1,28 @@
+From e88e19b9a3c21e2f50217c39b2122a0e7f8c3c2d Mon Sep 17 00:00:00 2001
+From: Daniele Basile <asterix@develer.com>
+Date: Thu, 22 Sep 2016 11:36:39 +0200
+Subject: [PATCH] Add info for other linux modules.
+
+---
+ commands/dboard.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/commands/dboard.c b/commands/dboard.c
+index fa8e059..6a536cf 100644
+--- a/commands/dboard.c
++++ b/commands/dboard.c
+@@ -75,7 +75,10 @@ static const struct db_model_t db_models[] = {
+ 	{ 1, 512, 512 },
+ 	{ 2, 128, 128 },
+ 	{ 3, 128, 128 },
+-	{ 4, 256, 512 }
++	{ 4, 256, 512 },
++	{ 5, 128, 512 },
++	{ 6, 128, 256 },
++	{ 7, 256, 256 }
+ };
+ 
+ 
+-- 
+2.7.4
+
